@@ -1,0 +1,64 @@
+{
+    "name": "laminas/laminas-cli",
+    "description": "Command-line interface for Laminas projects",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "laminas",
+        "cli",
+        "console",
+        "command"
+    ],
+    "support": {
+        "docs": "https://docs.laminas.dev/laminas-cli/",
+        "issues": "https://github.com/mezzio/laminas-cli/issues",
+        "source": "https://github.com/mezzio/laminas-cli",
+        "rss": "https://github.com/mezzio/laminas-cli/releases.atom",
+        "chat": "https://laminas.dev/chat",
+        "forum": "https://discourse.laminas.dev"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev",
+            "dev-develop": "1.1.x-dev"
+        },
+        "laminas": {
+            "config-provider": "Laminas\\Cli\\ConfigProvider",
+            "module": "Laminas\\Cli"
+        }
+    },
+    "require": {
+        "php": "^7.1",
+        "ocramius/package-versions": "^1.0",
+        "psr/container": "^1.0",
+        "symfony/console": "^4.0 || ^5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5.20 || ^8.5.2 || ^9.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laminas\\Cli\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaminasTest\\Cli\\": "test/"
+        }
+    },
+    "bin": [
+        "bin/laminas-cli"
+    ],
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+    }
+}
