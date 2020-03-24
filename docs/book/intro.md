@@ -26,9 +26,6 @@ use Symfony\Component\Console\Command\Command;
 
 class MyCommand extends Command
 {
-    /** @var string */
-    protected static $defaultName = 'my-namespace:my-command';
-
     // ...
 }
 ```
@@ -49,8 +46,10 @@ and register the command for the cli tool:
 
 ```php
 return [
-    'cli' => [
-        MyNamespace\Command\MyCommand::class,
+    'laminas-cli' => [
+        'commands' => [
+            'package:command-name' => MyNamespace\Command\MyCommand::class,
+        ],
     ],
 ];
 ```
