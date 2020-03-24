@@ -25,6 +25,9 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     exit(1);
 }
 
+// Set the main application directory as the current working directory
+chdir(dirname($a) . '/../');
+
 $container = ContainerResolver::resolve();
 $config = $container->get('config')['laminas-cli'] ?? [];
 
