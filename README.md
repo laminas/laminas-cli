@@ -25,8 +25,10 @@ Symfony console command and add register the command for the cli:
 
 ```php
 return [
-    'cli' => [
-        MyCommand::class,
+    'laminas-cli' => [
+        'commands' => [
+            'package:command-name' => MyCommand::class,
+        ],
     ],
 ];
 ```
@@ -43,8 +45,3 @@ return [
     ],
 ];
 ```
-
-> NOTE
->
-> Please provide always `protected static $defaultName` within the command to use built-in
-> lazy loading.

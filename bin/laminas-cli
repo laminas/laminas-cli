@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     require $a;
@@ -24,13 +25,10 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
 }
 
 $container = require 'config/container.php';
-$commands = $container->get('config')['cli'] ?? [];
+$config = $container->get('config')['laminas-cli'] ?? [];
 
 $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
 
 $application = new Application('laminas-cli', $version);
-foreach ($commands as $command) {
-    $application->add($container->get($command));
-}
-
+$application->setCommandLoader(new ContainerCommandLoader($container, $config['commands']));
 $application->run();
