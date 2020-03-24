@@ -42,7 +42,7 @@ final class ContainerResolver
             return self::resolveMvcContainer();
         }
 
-        throw new RuntimeException('Cannot detect DI container');
+        throw new RuntimeException('Cannot detect PSR-11 container');
     }
 
     /**
@@ -52,7 +52,7 @@ final class ContainerResolver
     {
         $container = include 'config/container.php';
         if (! $container instanceof ContainerInterface) {
-            throw new RuntimeException('Cannot detect DI container');
+            throw new RuntimeException('Failed to load PSR-11 container');
         }
 
         return $container;
