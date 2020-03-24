@@ -23,10 +23,6 @@
         "branch-alias": {
             "dev-master": "1.0.x-dev",
             "dev-develop": "1.1.x-dev"
-        },
-        "laminas": {
-            "config-provider": "Laminas\\Cli\\ConfigProvider",
-            "module": "Laminas\\Cli"
         }
     },
     "require": {
