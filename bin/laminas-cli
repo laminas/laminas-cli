@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
+use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     require $a;
