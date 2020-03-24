@@ -9,8 +9,10 @@
 
 declare(strict_types=1);
 
+use Laminas\Cli\CommandResolver;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     require $a;
@@ -29,8 +31,8 @@ $commands = $container->get('config')['cli'] ?? [];
 $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
 
 $application = new Application('laminas-cli', $version);
-foreach ($commands as $command) {
-    $application->add($container->get($command));
-}
-
+$application->setCommandLoader(new ContainerCommandLoader(
+    $container,
+    (new CommandResolver($commands))->resolve()
+));
 $application->run();
