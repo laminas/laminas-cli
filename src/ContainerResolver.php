@@ -33,32 +33,49 @@ final class ContainerResolver
     public static function resolve() : ContainerInterface
     {
         if (file_exists('config/container.php')) {
-            $container = include 'config/container.php';
-            if ($container instanceof ContainerInterface) {
-                return $container;
-            }
-        } elseif (file_exists('config/application.config.php')
+            return self::resolveDefaultContainer();
+        }
+
+        if (file_exists('config/application.config.php')
             && class_exists(ServiceManager::class)
         ) {
-            $appConfig = include 'config/application.config.php';
-            if (file_exists('config/development.config.php')) {
-                $appConfig = ArrayUtils::merge(
-                    $appConfig,
-                    include 'config/development.config.php'
-                );
-            }
-
-            $smConfig = new ServiceManagerConfig($appConfig['service_manager'] ?? []);
-
-            $serviceManager = new ServiceManager();
-            $smConfig->configureServiceManager($serviceManager);
-            $serviceManager->setService('ApplicationConfig', $appConfig);
-
-            $serviceManager->get('ModuleManager')->loadModules();
-
-            return $serviceManager;
+            return self::resolveMvcContainer();
         }
 
         throw new RuntimeException('Cannot detect DI container');
+    }
+
+    /**
+     * @throws RuntimeException When file contains not a valid PSR-11 container.
+     */
+    private static function resolveDefaultContainer() : ContainerInterface
+    {
+        $container = include 'config/container.php';
+        if (! $container instanceof ContainerInterface) {
+            throw new RuntimeException('Cannot detect DI container');
+        }
+
+        return $container;
+    }
+
+    private static function resolveMvcContainer() : ContainerInterface
+    {
+        $appConfig = include 'config/application.config.php';
+        if (file_exists('config/development.config.php')) {
+            $appConfig = ArrayUtils::merge(
+                $appConfig,
+                include 'config/development.config.php'
+            );
+        }
+
+        $smConfig = new ServiceManagerConfig($appConfig['service_manager'] ?? []);
+
+        $serviceManager = new ServiceManager();
+        $smConfig->configureServiceManager($serviceManager);
+        $serviceManager->setService('ApplicationConfig', $appConfig);
+
+        $serviceManager->get('ModuleManager')->loadModules();
+
+        return $serviceManager;
     }
 }
