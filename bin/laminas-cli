@@ -9,9 +9,10 @@
 
 declare(strict_types=1);
 
+use Laminas\Cli\ContainerCommandLoader;
+use Laminas\Cli\ContainerResolver;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     require $a;
@@ -24,11 +25,14 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     exit(1);
 }
 
-$container = require 'config/container.php';
+// Set the main application directory as the current working directory
+chdir(dirname($a) . '/../');
+
+$container = ContainerResolver::resolve();
 $config = $container->get('config')['laminas-cli'] ?? [];
 
 $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
 
 $application = new Application('laminas-cli', $version);
-$application->setCommandLoader(new ContainerCommandLoader($container, $config['commands']));
+$application->setCommandLoader(new ContainerCommandLoader($container, $config['commands'] ?? []));
 $application->run();
