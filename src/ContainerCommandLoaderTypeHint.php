@@ -16,7 +16,7 @@ use Symfony\Component\Console\CommandLoader\ContainerCommandLoader as SymfonyCon
 /**
  * @internal
  */
-final class ContainerCommandLoader extends SymfonyContainerCommandLoader
+final class ContainerCommandLoaderTypeHint extends SymfonyContainerCommandLoader
 {
     public function get(string $name) : Command
     {
