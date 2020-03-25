@@ -65,7 +65,7 @@ class ConfigProvider
     public function __invoke() : array
     {
         return [
-            'cli' => $this->getCliConfig(),
+            'laminas-cli' => $this->getCliConfig(),
             'dependencies' => $this->getDependencyConfig(),
         ];
     }
@@ -73,7 +73,9 @@ class ConfigProvider
     public function getCliConfig() : array
     {
         return [
-            Command\MyCommand::class,
+            'commands' => [
+                Command\MyCommand::class,
+            ],
         ];    
     }
 
@@ -100,7 +102,7 @@ class Module
         $configProvider = new ConfigProvider();
 
         return [
-            'cli' => $configProvider->getCliConfig(),
+            'laminas-cli' => $configProvider->getCliConfig(),
             'service_manager' => $configProvider->getDependencyConfig(),
         ];
     }
