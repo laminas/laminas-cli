@@ -36,7 +36,7 @@ class MyCommand extends Command
 return [
     'dependencies' => [
         'invokables' => [
-            MyNamespace\Command\MyCommand::class,   
+            MyNamespace\Command\MyCommand::class => MyNamespace\Command\MyCommand::class,
         ],
     ],
 ];
@@ -83,7 +83,7 @@ class ConfigProvider
     {
         return [
             'invokables' => [
-                Command\MyCommand::class,
+                Command\MyCommand::class => Command\MyCommand::class,
             ],
         ];
     }
