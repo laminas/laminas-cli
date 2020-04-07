@@ -20,4 +20,4 @@
 
 - [ ] Lazy loading command, so we do not need initialise all commands on run.
 
-- [ ] Should we wrap also Symfony console application so our bin/laminas-cli is simpler?
+- [ ] Should we wrap also Symfony console application so our bin/laminas is simpler?

@@ -127,11 +127,11 @@ by the tool.
 To list all available commands run:
 
 ```bash
-$ vendor/bin/laminas-cli
+$ vendor/bin/laminas
 ```
 
 To execute a specific command run:
 
 ```bash
-$ vendor/bin/laminas-cli <command-name>
+$ vendor/bin/laminas <command-name>
 ```

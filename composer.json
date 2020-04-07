@@ -51,7 +51,7 @@
         }
     },
     "bin": [
-        "bin/laminas-cli"
+        "bin/laminas"
     ],
     "scripts": {
         "check": [
