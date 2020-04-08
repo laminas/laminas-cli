@@ -1,5 +1,8 @@
 # laminas-cli
 
+[![Build Status](https://travis-ci.com/laminas/laminas-cli.svg?branch=master)](https://travis-ci.com/laminas/laminas-cli)
+[![Coverage Status](https://coveralls.io/repos/github/laminas/laminas-cli/badge.svg?branch=master)](https://coveralls.io/github/laminas/laminas-cli?branch=master)
+
 Command-line interface for Laminas projects
 
 ## Installation
