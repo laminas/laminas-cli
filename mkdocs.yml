@@ -7,4 +7,4 @@ site_name: laminas-cli
 site_description: 'Command-line interface for Laminas projects'
 repo_url: 'https://github.com/laminas/laminas-cli'
 extra:
-    project: Laminas
+    project: Components
