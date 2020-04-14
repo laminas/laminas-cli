@@ -11,8 +11,12 @@ declare(strict_types=1);
 namespace LaminasTest\Cli;
 
 use Laminas\Cli\ContainerCommandLoader;
+use Laminas\Cli\ContainerResolver;
+use Laminas\Cli\LazyLoadingCommand;
+use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 
 class ContainerCommandLoaderTest extends TestCase
 {
@@ -30,7 +34,24 @@ class ContainerCommandLoaderTest extends TestCase
 
         $command = $loader->get('foo-bar-command');
 
-        self::assertInstanceOf(TestAsset\ExampleCommand::class, $command);
+        self::assertInstanceOf(Command::class, $command);
         self::assertSame('foo-bar-command', $command->getName());
+    }
+
+    public function testGetCommandReturnsLazyCommand()
+    {
+        $cwd = getcwd();
+        chdir(__DIR__ . '/TestAsset');
+        $container = ContainerResolver::resolve();
+        chdir($cwd);
+
+        $config = $container->get('ApplicationConfig');;
+
+        $loader = new ContainerCommandLoader($container, $config['laminas-cli']['commands']);
+
+        $command = $loader->get('example:command-with-deps');
+
+        self::assertInstanceOf(Command::class, $command);
+        self::assertInstanceOf(LazyLoadingCommand::class, $command);
     }
 }
