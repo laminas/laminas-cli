@@ -45,7 +45,7 @@ class ContainerCommandLoaderTest extends TestCase
         $container = ContainerResolver::resolve();
         chdir($cwd);
 
-        $config = $container->get('ApplicationConfig');;
+        $config = $container->get('ApplicationConfig');
 
         $loader = new ContainerCommandLoader($container, $config['laminas-cli']['commands']);
 
