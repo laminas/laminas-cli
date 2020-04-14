@@ -26,11 +26,17 @@ class ContainerCommandLoaderTest extends TestCase
             'foo-bar-command' => TestAsset\ExampleCommand::class,
         ];
 
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->has(TestAsset\ExampleCommand::class)->willReturn(true);
-        $container->get(TestAsset\ExampleCommand::class)->willReturn(new TestAsset\ExampleCommand());
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->method('has')
+            ->with(TestAsset\ExampleCommand::class)
+            ->willReturn(true);
+        $container
+            ->method('get')
+            ->with(TestAsset\ExampleCommand::class)
+            ->willReturn(new TestAsset\ExampleCommand());
 
-        $loader = new ContainerCommandLoader($container->reveal(), $commands);
+        $loader = new ContainerCommandLoader($container, $commands);
 
         $command = $loader->get('foo-bar-command');
 
