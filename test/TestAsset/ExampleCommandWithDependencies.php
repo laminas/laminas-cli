@@ -17,6 +17,7 @@ class ExampleCommandWithDependencies extends Command
     /** @var string */
     protected static $defaultName = 'example:command-with-deps';
 
+    /** @var ExampleDependency */
     private $dependency;
 
     public function __construct(ExampleDependency $dependency)

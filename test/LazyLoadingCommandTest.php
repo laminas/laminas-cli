@@ -19,6 +19,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function chdir;
+use function getcwd;
+
 class LazyLoadingCommandTest extends TestCase
 {
     public function testDoesNotLoadDependenciesBeforeNeededButStillHasSameName()
@@ -50,7 +53,7 @@ class LazyLoadingCommandTest extends TestCase
         $output = new NullOutput();
 
         self::expectException(Exception::class);
-        self::expectExceptionMessage(ExampleDependency::$exceptionMessage);
+        self::expectExceptionMessage(ExampleDependency::EXCEPTION_MESSAGE);
 
         $command->run($input, $output);
     }

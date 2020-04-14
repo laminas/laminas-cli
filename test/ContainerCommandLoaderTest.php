@@ -13,10 +13,12 @@ namespace LaminasTest\Cli;
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
 use Laminas\Cli\LazyLoadingCommand;
-use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
+
+use function chdir;
+use function getcwd;
 
 class ContainerCommandLoaderTest extends TestCase
 {

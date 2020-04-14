@@ -13,12 +13,17 @@ namespace Laminas\Cli;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 
+use function array_keys;
+
 /**
  * @internal
  */
 final class ContainerCommandLoaderTypeHint implements CommandLoaderInterface
 {
+    /** @var ContainerInterface */
     private $container;
+
+    /** @var string[] */
     private $commandMap;
 
     public function __construct(ContainerInterface $container, array $commandMap)
@@ -32,12 +37,15 @@ final class ContainerCommandLoaderTypeHint implements CommandLoaderInterface
         return new LazyLoadingCommand($name, $this->commandMap[$name], $this->container);
     }
 
-    public function has(string $name)
+    public function has(string $name) : bool
     {
         return isset($this->commandMap[$name]) && $this->container->has($this->commandMap[$name]);
     }
 
-    public function getNames()
+    /**
+     * @return string[]
+     */
+    public function getNames() : array
     {
         return array_keys($this->commandMap);
     }

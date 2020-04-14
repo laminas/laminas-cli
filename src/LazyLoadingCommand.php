@@ -22,7 +22,7 @@ class LazyLoadingCommand extends Command
     /** @var string */
     private $commandClass;
 
-    /** @var \Psr\Container\ContainerInterface */
+    /** @var ContainerInterface */
     private $container;
 
     public function __construct(string $name, string $commandClass, ContainerInterface $container)
@@ -32,7 +32,7 @@ class LazyLoadingCommand extends Command
         $this->commandClass = $commandClass;
         $this->container = $container;
 
-        /** @var \Symfony\Component\Console\Command\Command $command */
+        /** @var Command $command */
         $command = (new ReflectionClass($commandClass))->newInstanceWithoutConstructor();
         $command->setDefinition(new InputDefinition());
         $command->setName($name);
@@ -44,9 +44,9 @@ class LazyLoadingCommand extends Command
         $this->setHelp($command->getHelp());
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        /** @var \Symfony\Component\Console\Command\Command $command */
+        /** @var Command $command */
         $command = $this->container->get($this->commandClass);
 
         return $command->execute($input, $output);

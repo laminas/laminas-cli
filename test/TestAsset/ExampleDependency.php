@@ -14,10 +14,13 @@ use Exception;
 
 class ExampleDependency
 {
-    public static $exceptionMessage = 'ExampleDependency should not be fetched from container';
+    public const EXCEPTION_MESSAGE = 'ExampleDependency should not be fetched from container';
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
-        throw new Exception(self::$exceptionMessage);
+        throw new Exception(self::EXCEPTION_MESSAGE);
     }
 }

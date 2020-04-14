@@ -10,12 +10,11 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerInterface;
 
-class ExampleCommandWithDependenciesFactory implements FactoryInterface
+class ExampleCommandWithDependenciesFactory
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container) : ExampleCommandWithDependencies
     {
         $dependency = $container->get(ExampleDependency::class);
 
