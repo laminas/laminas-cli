@@ -17,7 +17,10 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LazyLoadingCommand extends Command
+/**
+ * @internal
+ */
+final class LazyLoadingCommand extends Command
 {
     /** @var string */
     private $commandClass;
