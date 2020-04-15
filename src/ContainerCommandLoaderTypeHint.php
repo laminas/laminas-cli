@@ -10,19 +10,43 @@ declare(strict_types=1);
 
 namespace Laminas\Cli;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\CommandLoader\ContainerCommandLoader as SymfonyContainerCommandLoader;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
+
+use function array_keys;
 
 /**
  * @internal
  */
-final class ContainerCommandLoaderTypeHint extends SymfonyContainerCommandLoader
+final class ContainerCommandLoaderTypeHint implements CommandLoaderInterface
 {
-    public function get(string $name) : Command
-    {
-        $command = parent::get($name);
-        $command->setName($name);
+    /** @var ContainerInterface */
+    private $container;
 
-        return $command;
+    /** @var string[] */
+    private $commandMap;
+
+    public function __construct(ContainerInterface $container, array $commandMap)
+    {
+        $this->container = $container;
+        $this->commandMap = $commandMap;
+    }
+
+    public function get(string $name) : LazyLoadingCommand
+    {
+        return new LazyLoadingCommand($name, $this->commandMap[$name], $this->container);
+    }
+
+    public function has(string $name) : bool
+    {
+        return isset($this->commandMap[$name]) && $this->container->has($this->commandMap[$name]);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNames() : array
+    {
+        return array_keys($this->commandMap);
     }
 }

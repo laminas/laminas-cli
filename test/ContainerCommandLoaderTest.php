@@ -11,8 +11,14 @@ declare(strict_types=1);
 namespace LaminasTest\Cli;
 
 use Laminas\Cli\ContainerCommandLoader;
+use Laminas\Cli\ContainerResolver;
+use Laminas\Cli\LazyLoadingCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
+
+use function chdir;
+use function getcwd;
 
 class ContainerCommandLoaderTest extends TestCase
 {
@@ -22,15 +28,38 @@ class ContainerCommandLoaderTest extends TestCase
             'foo-bar-command' => TestAsset\ExampleCommand::class,
         ];
 
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->has(TestAsset\ExampleCommand::class)->willReturn(true);
-        $container->get(TestAsset\ExampleCommand::class)->willReturn(new TestAsset\ExampleCommand());
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->method('has')
+            ->with(TestAsset\ExampleCommand::class)
+            ->willReturn(true);
+        $container
+            ->method('get')
+            ->with(TestAsset\ExampleCommand::class)
+            ->willReturn(new TestAsset\ExampleCommand());
 
-        $loader = new ContainerCommandLoader($container->reveal(), $commands);
+        $loader = new ContainerCommandLoader($container, $commands);
 
         $command = $loader->get('foo-bar-command');
 
-        self::assertInstanceOf(TestAsset\ExampleCommand::class, $command);
+        self::assertInstanceOf(Command::class, $command);
         self::assertSame('foo-bar-command', $command->getName());
+    }
+
+    public function testGetCommandReturnsLazyCommand()
+    {
+        $cwd = getcwd();
+        chdir(__DIR__ . '/TestAsset');
+        $container = ContainerResolver::resolve();
+        chdir($cwd);
+
+        $config = $container->get('ApplicationConfig');
+
+        $loader = new ContainerCommandLoader($container, $config['laminas-cli']['commands']);
+
+        $command = $loader->get('example:command-with-deps');
+
+        self::assertInstanceOf(Command::class, $command);
+        self::assertInstanceOf(LazyLoadingCommand::class, $command);
     }
 }
