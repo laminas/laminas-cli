@@ -74,7 +74,7 @@ class ConfigProvider
     {
         return [
             'commands' => [
-                Command\MyCommand::class,
+                'package:command-name' => Command\MyCommand::class,
             ],
         ];    
     }
