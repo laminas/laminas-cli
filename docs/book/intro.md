@@ -14,7 +14,7 @@ you have to the following:
 1. Use `laminas/laminas-cli` as dev dependency:
 
 ```bash
-$ composer require --dev laminas/laminas-cli
+$ composer require laminas/laminas-cli
 ```
 
 2. Add the command to the library:
