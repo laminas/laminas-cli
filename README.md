@@ -9,7 +9,7 @@ Command-line interface for Laminas projects
 
 ### Via Composer
 
-Install the library globally using [Composer](https://getcomposer.org):
+Install the library using [Composer](https://getcomposer.org):
 
 ```bash
 $ composer require laminas/laminas-cli
