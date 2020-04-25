@@ -51,6 +51,7 @@ final class LazyLoadingCommand extends Command
     {
         /** @var Command $command */
         $command = $this->container->get($this->commandClass);
+        $command->setApplication($this->getApplication());
 
         return $command->execute($input, $output);
     }
