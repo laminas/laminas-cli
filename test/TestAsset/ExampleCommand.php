@@ -18,7 +18,8 @@ class ExampleCommand extends Command
 {
     /** @var string */
     protected static $defaultName = 'example:command-name';
-    protected function execute(InputInterface $input, OutputInterface $output)
+
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         return 0;
     }
