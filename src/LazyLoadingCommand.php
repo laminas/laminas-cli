@@ -12,15 +12,20 @@ namespace Laminas\Cli;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function is_a;
+use function sprintf;
+
 /**
  * @internal
  */
-final class LazyLoadingCommand extends Command
+final class LazyLoadingCommand extends Command implements CommandListenerInterface
 {
     /** @var string */
     private $commandClass;
@@ -54,5 +59,30 @@ final class LazyLoadingCommand extends Command
         $command->setApplication($this->getApplication());
 
         return $command->execute($input, $output);
+    }
+
+    public function getCommandClass() : string
+    {
+        return $this->commandClass;
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    public function __invoke(ConsoleEvent $event) : int
+    {
+        if (! is_a($this->commandClass, CommandListenerInterface::class, true)) {
+            throw new RuntimeException(sprintf(
+                'Command %s cannot be used as listener as it does not implement %s',
+                $this->getName(),
+                CommandListenerInterface::class
+            ));
+        }
+
+        /** @var Command&CommandListenerInterface $command */
+        $command = $this->container->get($this->commandClass);
+        $command->setApplication($this->getApplication());
+
+        return $command($event);
     }
 }

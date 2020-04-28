@@ -3,6 +3,7 @@ site_dir: docs/html
 nav:
     - Home: index.md
     - Introduction: intro.md
+    - Commands Chain: commands-chain.md
 site_name: laminas-cli
 site_description: 'Command-line interface for Laminas projects'
 repo_url: 'https://github.com/laminas/laminas-cli'

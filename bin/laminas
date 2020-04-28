@@ -11,8 +11,12 @@ declare(strict_types=1);
 
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
+use Laminas\Cli\LazyLoadingCommand;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     require $a;
@@ -33,6 +37,40 @@ $config = $container->get('config')['laminas-cli'] ?? [];
 
 $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
 
+$eventDispatcher = new EventDispatcher();
+$eventDispatcher->addListener(
+    ConsoleEvents::TERMINATE,
+    static function (ConsoleTerminateEvent $event) use ($config) {
+        if ($event->getExitCode() !== 0) {
+            return;
+        }
+
+        $command = $event->getCommand();
+        $class = $command instanceof LazyLoadingCommand
+            ? $command->getCommandClass()
+            : get_class($command);
+
+        if (! isset($config['listeners'][$class])
+            || ! is_array($config['listeners'][$class])
+        ) {
+            return;
+        }
+
+        foreach ($config['listeners'][$class] as $listenerCommand) {
+            $name = array_search($listenerCommand, $config['commands'] ?? [], true);
+
+            $triggerCommand = $command->getApplication()->find($name);
+            $exitCode = $triggerCommand($event);
+
+            if ($exitCode !== 0) {
+                $event->setExitCode($exitCode);
+                return;
+            }
+        }
+    }
+);
+
 $application = new Application('laminas', $version);
 $application->setCommandLoader(new ContainerCommandLoader($container, $config['commands'] ?? []));
+$application->setDispatcher($eventDispatcher);
 $application->run();
