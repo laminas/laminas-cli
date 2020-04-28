@@ -33,6 +33,6 @@ $config = $container->get('config')['laminas-cli'] ?? [];
 
 $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
 
-$application = new Application('laminas-cli', $version);
+$application = new Application('laminas', $version);
 $application->setCommandLoader(new ContainerCommandLoader($container, $config['commands'] ?? []));
 $application->run();
