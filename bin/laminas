@@ -11,11 +11,15 @@ declare(strict_types=1);
 
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
+use Laminas\Cli\InputMapper\ArrayInputMapper;
 use Laminas\Cli\LazyLoadingCommand;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
@@ -41,7 +45,7 @@ $eventDispatcher = new EventDispatcher();
 $eventDispatcher->addListener(
     ConsoleEvents::TERMINATE,
     static function (ConsoleTerminateEvent $event) use ($config) {
-        if ($event->getExitCode() !== 0) {
+        if ($event->getExitCode() !== 0 || ! $event->getInput()->isInteractive()) {
             return;
         }
 
@@ -50,17 +54,51 @@ $eventDispatcher->addListener(
             ? $command->getCommandClass()
             : get_class($command);
 
-        if (! isset($config['listeners'][$class])
-            || ! is_array($config['listeners'][$class])
+        if (! isset($config['chains'][$class])
+            || ! is_array($config['chains'][$class])
         ) {
             return;
         }
 
-        foreach ($config['listeners'][$class] as $listenerCommand) {
-            $name = array_search($listenerCommand, $config['commands'] ?? [], true);
+        $application = $command->getApplication();
+        $input = $event->getInput();
+        $output = $event->getOutput();
 
-            $triggerCommand = $command->getApplication()->find($name);
-            $exitCode = $triggerCommand($event);
+        /** @var QuestionHelper $helper */
+        $helper = $application->getHelperSet()->get('question');
+
+        foreach ($config['chains'][$class] as $nextCommandClass => $inputMapper) {
+            $nextCommandName = array_search($nextCommandClass, $config['commands'], true);
+            $nextCommand = $application->find($nextCommandName);
+
+            $question = new ChoiceQuestion(
+                PHP_EOL . "<info>Executing {$nextCommandName}</info> ({$nextCommand->getDescription()})."
+                . PHP_EOL . '<question>Do you want to continue?</question>',
+                ['Y' => 'yes, continue', 's' => 'skip command', 'n' => 'no, break'],
+                'Y'
+            );
+
+            switch (strtolower($helper->ask($input, $output, $question))) {
+                case 'y':
+                    break;
+                case 's':
+                    $output->writeln("Skipping {$nextCommandName}.");
+                    continue 2;
+                case 'n':
+                    $output->writeln("Break on {$nextCommandName}.");
+                    break 2;
+            }
+
+            if (is_array($inputMapper)) {
+                $inputMapper = new ArrayInputMapper($inputMapper);
+            } else {
+                $inputMapper = new $inputMapper();
+            }
+
+            $params = $inputMapper($input);
+            $params['command'] = $nextCommandName;
+
+            $exitCode = $application->run(new ArrayInput($params), $output);
 
             if ($exitCode !== 0) {
                 $event->setExitCode($exitCode);
