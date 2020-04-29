@@ -89,11 +89,9 @@ $eventDispatcher->addListener(
                     break 2;
             }
 
-            if (is_array($inputMapper)) {
-                $inputMapper = new ArrayInputMapper($inputMapper);
-            } else {
-                $inputMapper = new $inputMapper();
-            }
+            $inputMapper = is_array($inputMapper)
+                ? new ArrayInputMapper($inputMapper)
+                : new $inputMapper();
 
             $params = $inputMapper($input);
             $params['command'] = $nextCommandName;
