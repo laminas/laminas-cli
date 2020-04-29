@@ -105,7 +105,7 @@ return [
 Now running `vendor/bin/laminas first-command` will result with:
 
 ```console
-$ vendor/bin/laminas first-command --module=Foo
+$ vendor/bin/laminas first-command --name=Foo
 First command: Foo
 
 Executing second-command. Do you want to continue?
