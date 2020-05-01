@@ -99,6 +99,18 @@ return [
 > into input for the chained command. For options `--` prefix should be used with names, the same how
 > we define arguments in symfony console application.
 >
+> It is also possible to add additional argument or option to the next command. Just provide an array
+> as the value, for example:
+>
+> ```php
+> [
+>    'name'   => 'module', // adds "module" argument to the next command call with the value of "name" argument from the previous command
+>    '--mode' => '--type', // adds "--type" option to the next command call with the value of "--mode" option from the previous command
+>    ['additional-arg'   => 'arg-value'], // adds "additional-arg" argument to the next command call with the value "arg-value"
+>    ['--additional-opt' => 'opt-value'], // adds "--additional-opt" option to the next command call with the value "opt-value"
+> ],
+> ```
+>
 > It is also possible to provide class name (string) which implements `Laminas\Cli\InputMapper\InputMapperInterface`
 > if you need more customised mapper between input of the previous and next command.
 

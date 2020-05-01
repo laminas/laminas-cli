@@ -12,6 +12,7 @@ namespace Laminas\Cli\InputMapper;
 
 use Symfony\Component\Console\Input\InputInterface;
 
+use function is_array;
 use function ltrim;
 use function strpos;
 
@@ -29,6 +30,11 @@ final class ArrayInputMapper implements InputMapperInterface
     {
         $params = [];
         foreach ($this->map as $old => $new) {
+            if (is_array($new)) {
+                $params += $new;
+                continue;
+            }
+
             $params[$new] = strpos($old, '-') === 0
                 ? $input->getOption(ltrim($old, '-'))
                 : $input->getArgument($old);
