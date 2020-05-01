@@ -9,13 +9,8 @@
 
 declare(strict_types=1);
 
-use Laminas\Cli\ContainerCommandLoader;
+use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ContainerResolver;
-use Laminas\Cli\Listener\TerminateListener;
-use PackageVersions\Versions;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
     require $a;
@@ -31,15 +26,5 @@ if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
 // Set the main application directory as the current working directory
 chdir(dirname($a) . '/../');
 
-$container = ContainerResolver::resolve();
-$config = $container->get('config')['laminas-cli'] ?? [];
-
-$version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
-
-$dispatcher = new EventDispatcher();
-$dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
-
-$application = new Application('laminas', $version);
-$application->setCommandLoader(new ContainerCommandLoader($container, $config['commands'] ?? []));
-$application->setDispatcher($dispatcher);
-$application->run();
+$applicationFactory = new ApplicationFactory();
+exit($applicationFactory(ContainerResolver::resolve())->run());

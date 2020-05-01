@@ -85,9 +85,7 @@ final class TerminateListener
                 ? new ArrayInputMapper($inputMapper)
                 : new $inputMapper();
 
-            $params = $inputMapper($input);
-            $params['command'] = $nextCommandName;
-
+            $params = ['command' => $nextCommandName] + $inputMapper($input);
             $exitCode = $application->run(new ArrayInput($params), $output);
 
             if ($exitCode !== 0) {
