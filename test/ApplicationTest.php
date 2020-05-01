@@ -74,7 +74,7 @@ class ApplicationTest extends TestCase
     public function chainAnswer() : Generator
     {
         yield 'execute whole chain' => [
-            ['y', 'y', 'y'],
+            ['Y', 'Y', 'Y'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -85,7 +85,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'skip first chained' => [
-            ['s', 'y'],
+            ['s', 'Y'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 'Skipping example:chained-1',
@@ -98,7 +98,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'skip second chained' => [
-            ['y', 's', 'y'],
+            ['Y', 's', 'Y'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -111,7 +111,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'skip third chained' => [
-            ['y', 'y', 's'],
+            ['Y', 'Y', 's'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -124,7 +124,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'skip second and third chained' => [
-            ['y', 's', 's'],
+            ['Y', 's', 's'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -165,7 +165,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'break on second chained' => [
-            ['y', 'n', 'y'],
+            ['Y', 'n', 'Y'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -178,7 +178,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'break on second chained, skip third' => [
-            ['y', 'n', 's'],
+            ['Y', 'n', 's'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -206,7 +206,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'exit on first chained command' => [
-            ['y'],
+            ['Y'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -219,7 +219,7 @@ class ApplicationTest extends TestCase
         ];
 
         yield 'exit on second chained command' => [
-            ['y', 'y'],
+            ['Y', 'Y'],
             [
                 ExampleCommand::class . ': arg=foo, opt=bar',
                 Chained1Command::class . ': arg=foo, opt=bar',
@@ -302,7 +302,7 @@ class ApplicationTest extends TestCase
         $application = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
-        $applicationTester->setInputs(['y']);
+        $applicationTester->setInputs(['Y']);
         $statusCode = $applicationTester->run(
             [
                 'command' => 'example:command-name',
@@ -359,7 +359,7 @@ class ApplicationTest extends TestCase
         $application = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
-        $applicationTester->setInputs(['y']);
+        $applicationTester->setInputs(['Y']);
         $statusCode = $applicationTester->run(
             [
                 'command' => 'example:command-name',
@@ -389,7 +389,7 @@ class ApplicationTest extends TestCase
         $application = $this->getApplication();
 
         $applicationTester = new ApplicationTester($application);
-        $applicationTester->setInputs(['y']);
+        $applicationTester->setInputs(['Y']);
         $statusCode = $applicationTester->run(['command' => 'list']);
 
         $display = $applicationTester->getDisplay();
