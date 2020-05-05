@@ -12,6 +12,7 @@ namespace Laminas\Cli\Input;
 
 use ArrayObject;
 use InvalidArgumentException;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -108,4 +109,22 @@ trait InputParamTrait
 
         return $value;
     }
+
+    /**
+     * @param string|array|null $shortcut
+     * @param null|mixed $default
+     * @return $this
+     */
+    abstract public function addOption(
+        string $name,
+        $shortcut = null,
+        ?int $mode = null,
+        string $description = '',
+        $default = null
+    );
+
+    /**
+     * @return Application
+     */
+    abstract public function getApplication();
 }
