@@ -115,7 +115,7 @@ $this->addParam(
 ```
 
 With InputParam::TYPE_INT we can define two options for validator: `min` and `max` value.
-Value of this parameter is normalized to `interger` type.
+Value of this parameter is normalized to `integer` type.
 
 ### InputParam::TYPE_STRING
 
