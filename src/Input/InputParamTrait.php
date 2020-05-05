@@ -12,6 +12,7 @@ namespace Laminas\Cli\Input;
 
 use ArrayObject;
 use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,6 +32,7 @@ trait InputParamTrait
     /**
      * @param null|mixed $default
      * @return $this
+     * @throws RuntimeException
      */
     final public function addParam(
         string $name,
@@ -54,6 +56,12 @@ trait InputParamTrait
 
         if ($this->inputParams === null) {
             $this->inputParams = new ArrayObject();
+        } elseif (! $this->inputParams instanceof ArrayObject) {
+            throw new RuntimeException(sprintf(
+                'Command %s uses $inputParams property. It is not allowed while using %s',
+                static::class,
+                InputParamTrait::class
+            ));
         }
 
         $this->inputParams->offsetSet($name, new InputParam($name, $description, $type, $required, $default, $options));
@@ -67,7 +75,7 @@ trait InputParamTrait
      */
     final public function getParam(string $name)
     {
-        if ($this->inputParams === null || ! $this->inputParams->offsetExists($name)) {
+        if (! $this->inputParams instanceof ArrayObject || ! $this->inputParams->offsetExists($name)) {
             throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
         }
 
