@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Cli\InputMapper;
+namespace Laminas\Cli\Input\Mapper;
 
 use Symfony\Component\Console\Input\InputInterface;
 

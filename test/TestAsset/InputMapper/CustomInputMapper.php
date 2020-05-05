@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset\InputMapper;
 
-use Laminas\Cli\InputMapper\InputMapperInterface;
+use Laminas\Cli\Input\Mapper\InputMapperInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
 use function ucwords;

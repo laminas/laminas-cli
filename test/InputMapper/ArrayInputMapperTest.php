@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\InputMapper;
 
-use Laminas\Cli\InputMapper\ArrayInputMapper;
+use Laminas\Cli\Input\Mapper\ArrayInputMapper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 

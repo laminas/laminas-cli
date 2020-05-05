@@ -111,7 +111,7 @@ return [
 > ],
 > ```
 >
-> It is also possible to provide class name (string) which implements `Laminas\Cli\InputMapper\InputMapperInterface`
+> It is also possible to provide class name (string) which implements `Laminas\Cli\Input\Mapper\InputMapperInterface`
 > if you need more customised mapper between input of the previous and next command.
 
 Now running `vendor/bin/laminas first-command` will result with:
