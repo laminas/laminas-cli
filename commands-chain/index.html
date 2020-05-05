@@ -6,10 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Command-line interface for Laminas projects">  
-    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/intro/">
+    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/commands-chain/">
     <link rel="shortcut icon" href="https://docs.laminas.dev/img/trademark-laminas-foundation-rgb.svg">
 
-    <title>Introduction - laminas-cli - Laminas Docs</title>
+    <title>Commands Chain - laminas-cli - Laminas Docs</title>
 
     <link rel="stylesheet" href="https://docs.laminas.dev/css/styles.css">
     
@@ -129,8 +129,8 @@
                     
                     
                         
-                            <li class="subnavigation__list-item subnavigation__list-item--active">
-                                <a href="./" class="subnavigation__link">Introduction</a>
+                            <li class="subnavigation__list-item ">
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
                             </li>
                         
                     
@@ -143,8 +143,8 @@
                     
                     
                         
-                            <li class="subnavigation__list-item ">
-                                <a href="../commands-chain/" class="subnavigation__link">Commands Chain</a>
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Commands Chain</a>
                             </li>
                         
                     
@@ -215,25 +215,6 @@
 
     
     
-        <div class="toc">
-            <h6 class="toc__headline">On this page</h6>
-            <ul class="toc__list">
-                
-                    <li class="toc__entry">
-                        <a href="#integration-with-component" class="toc__link nav-link">Integration with component</a>
-                    </li>
-                
-                    <li class="toc__entry">
-                        <a href="#integration-for-other-applications-custom-di-container" class="toc__link nav-link">Integration for Other Applications - Custom DI Container</a>
-                    </li>
-                
-                    <li class="toc__entry">
-                        <a href="#usage" class="toc__link nav-link">Usage</a>
-                    </li>
-                
-            </ul>
-        </div>
-    
 
                 
 
@@ -249,7 +230,7 @@
 
                 
 
-                <li class="breadcrumb-item active" aria-current="page">Introduction</li>
+                <li class="breadcrumb-item active" aria-current="page">Commands Chain</li>
             
         
     </ol>
@@ -263,115 +244,120 @@
     
     
 
-    <h1 id="introduction">Introduction</h1>
-<p>laminas-cli is a command-line interface for Laminas projects.</p>
-<p>It provides seamless integration with Laminas MVC and Mezzio applications.</p>
-<p>It is easily extensible by custom command. </p>
-<h2 id="integration-with-component">Integration with component</h2>
-<p>If you'd like to add integration with laminas-cli into your components
-you have to the following:</p>
-<ol>
-<li>Use <code>laminas/laminas-cli</code> as dev dependency:</li>
-</ol>
-<pre class="highlight"><code class="language-bash">$ composer require --dev laminas/laminas-cli</code></pre>
-
-<ol>
-<li>Add the command to the library:</li>
-</ol>
-<pre class="highlight"><code class="language-php">namespace MyNamespace\Command;
+    <h1 id="commands-chain">Commands chain</h1>
+<p>Sometimes we want to execute another command straight after successful run of a command.
+Please consider the following example:</p>
+<p><code>MyApp\Command\FirstCommand.php</code>:</p>
+<pre class="highlight"><code class="language-php">namespace MyApp\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class MyCommand extends Command
+class FirstCommand extends Command
 {
-    // ...
+    /** @var string */
+    protected static $defaultName = 'first-command';
+
+    protected function configure() : void
+    {
+        $this-&gt;setName(self::$defaultName);
+        $this-&gt;addOption('name', null, InputOption::VALUE_REQUIRED, 'Module name');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output) : int
+    {
+        $output-&gt;writeln('First command: ' . $input-&gt;getOption('name'));
+
+        return 0;
+    }
 }</code></pre>
 
-<ol>
-<li>Register your command in the container:</li>
-</ol>
-<pre class="highlight"><code class="language-php">return [
-    'dependencies' =&gt; [
-        'invokables' =&gt; [
-            MyNamespace\Command\MyCommand::class =&gt; MyNamespace\Command\MyCommand::class,
-        ],
-    ],
-];</code></pre>
+<p><code>MyApp\Command\SecondCommand.php</code>:</p>
+<pre class="highlight"><code class="language-php">namespace MyApp\Command;
 
-<p>and register the command for the cli tool:</p>
-<pre class="highlight"><code class="language-php">return [
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class SecondCommand extends Command
+{
+    /** @var string */
+    protected static $defaultName = 'second-command';
+
+    protected function configure() : void
+    {
+        $this-&gt;setName(self::$defaultName);
+        $this-&gt;addOption('module', null, InputOption::VALUE_REQUIRED, 'Module name');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output) : int
+    {
+        $output-&gt;writeln('Second command: ' . $input-&gt;getOption('module'));
+
+        return 0;
+    }
+}</code></pre>
+
+<p>Then we need only configure the chain:</p>
+<pre class="highlight"><code class="language-php">namespace MyApp\Command;
+
+return [
     'laminas-cli' =&gt; [
         'commands' =&gt; [
-            'package:command-name' =&gt; MyNamespace\Command\MyCommand::class,
+            'first-command'  =&gt; Command\FirstCommand::class,
+            'second-command' =&gt; Command\SecondCommand::class,
+        ],
+        'chains' =&gt; [
+            Command\FirstCommand::class =&gt; [
+                Command\SecondCommand::class =&gt; ['--name' =&gt; '--module'],
+            ],
         ],
     ],
 ];</code></pre>
 
-<p>If the component is providing ConfigProvider (for Mezzio applications)
-please provide above inside:</p>
-<pre class="highlight"><code class="language-php">namespace MyNamespace;
+<blockquote>
+<h4>Chain configuration</h4>
+<pre class="highlight"><code class="language-php">'chains' =&gt; [
+    TriggerCommand::class =&gt; [
+        ChainCommand1::class =&gt; [input mapper definition between TriggerCommand and ChainCommand1],
+        // ...
+        ChainCommandN::class =&gt; [input mapper definition between TriggerCommand and ChainCommandN],
+    ],
+],</code></pre>
 
-class ConfigProvider
-{
-    public function __invoke() : array
-    {
-        return [
-            'laminas-cli' =&gt; $this-&gt;getCliConfig(),
-            'dependencies' =&gt; $this-&gt;getDependencyConfig(),
-        ];
-    }
+<p>Input mapper definition is the way how options and arguments of the trigger command should be mapped
+into input for the chained command. For options <code>--</code> prefix should be used with names, the same how
+we define arguments in symfony console application.</p>
+<p>It is also possible to add additional argument or option to the next command. Just provide an array
+as the value, for example:</p>
+<pre class="highlight"><code class="language-php">[
+   'name'   =&gt; 'module', // adds "module" argument to the next command call with the value of "name" argument from the previous command
+   '--mode' =&gt; '--type', // adds "--type" option to the next command call with the value of "--mode" option from the previous command
+   ['additional-arg'   =&gt; 'arg-value'], // adds "additional-arg" argument to the next command call with the value "arg-value"
+   ['--additional-opt' =&gt; 'opt-value'], // adds "--additional-opt" option to the next command call with the value "opt-value"
+],</code></pre>
 
-    public function getCliConfig() : array
-    {
-        return [
-            'commands' =&gt; [
-                'package:command-name' =&gt; Command\MyCommand::class,
-            ],
-        ];    
-    }
+<p>It is also possible to provide class name (string) which implements <code>Laminas\Cli\Input\Mapper\InputMapperInterface</code>
+if you need more customised mapper between input of the previous and next command.</p>
+</blockquote>
+<p>Now running <code>vendor/bin/laminas first-command</code> will result with:</p>
+<pre class="highlight"><code class="language-console">$ vendor/bin/laminas first-command --name=Foo
+First command: Foo
 
-    public function getDependencyConfig() : array
-    {
-        return [
-            'invokables' =&gt; [
-                Command\MyCommand::class =&gt; Command\MyCommand::class,
-            ],
-        ];
-    }
-}</code></pre>
+Executing second-command. Do you want to continue?
+  [Y] yes, continue
+  [s] skip this command,
+  [n] no, break
 
-<p>In case you want also provide <code>Module</code> class for Laminas MVC:</p>
-<pre class="highlight"><code class="language-php">namespace MyNamespace;
+&gt; yes, continue
 
-class Module
-{
-    public function getConfig() : array
-    {
-        $configProvider = new ConfigProvider();
+Second command: Foo</code></pre>
 
-        return [
-            'laminas-cli' =&gt; $configProvider-&gt;getCliConfig(),
-            'service_manager' =&gt; $configProvider-&gt;getDependencyConfig(),
-        ];
-    }
-}</code></pre>
-
-<h2 id="integration-for-other-applications-custom-di-container">Integration for Other Applications - Custom DI Container</h2>
-<p>laminas-cli supports <a href="https://github.com/laminas/laminas-mvc-skeleton">Laminas MVC</a>
-and <a href="https://github.com/mezzio/mezzio-skeleton">Mezzio</a> application out of the box.
-If you want to use the tool with different application or you have modified
-the default configuration and container cannot be detected automatically 
-you can still use the laminas-cli tool. You just need configure your PSR-11
-container and provide it that way the tool can detect it.</p>
-<p>Just create <code>config/container.php</code> file which will return an instance of
-<a href="https://www.php-fig.org/psr/psr-11/">PSR-11 Container</a> and it should be detected
-by the tool.</p>
-<h2 id="usage">Usage</h2>
-<p>To list all available commands run:</p>
-<pre class="highlight"><code class="language-bash">$ vendor/bin/laminas</code></pre>
-
-<p>To execute a specific command run:</p>
-<pre class="highlight"><code class="language-bash">$ vendor/bin/laminas &lt;command-name&gt;</code></pre>
+<p>Please note that only successful result of the first command will trigger the second command.
+The final result (exit code) of the chained commands will be the result of the last executed command.</p>
 
 
 
@@ -382,7 +368,7 @@ by the tool.</p>
         
         <li class="page-nav__item">
             
-                <a rel="prev" class="page-nav__link page-nav__link--prev" href="..">
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../intro/">
                     <i class="fa fa-chevron-left"></i> Previous
                 </a>
             
@@ -390,10 +376,6 @@ by the tool.</p>
 
         
         <li class="page-nav__item">
-            
-                <a rel="next" class="page-nav__link page-nav__link--next" href="../commands-chain/">
-                    Next <i class="fa fa-chevron-right"></i>
-                </a>
             
         </li>
     </ul>
@@ -405,7 +387,7 @@ by the tool.</p>
     <div class="help-wanted">
         <p>
             Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/intro.md" target="_blank" class="help-wanted__link">
+            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/commands-chain.md" target="_blank" class="help-wanted__link">
                 Edit this page on GitHub!
             </a>
         </p>
@@ -440,8 +422,8 @@ by the tool.</p>
                     
                     
                         
-                            <li class="subnavigation__list-item subnavigation__list-item--active">
-                                <a href="./" class="subnavigation__link">Introduction</a>
+                            <li class="subnavigation__list-item ">
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
                             </li>
                         
                     
@@ -454,8 +436,8 @@ by the tool.</p>
                     
                     
                         
-                            <li class="subnavigation__list-item ">
-                                <a href="../commands-chain/" class="subnavigation__link">Commands Chain</a>
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Commands Chain</a>
                             </li>
                         
                     
