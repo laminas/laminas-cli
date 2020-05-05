@@ -4,8 +4,17 @@
     <rule ref="./vendor/webimpress/coding-standard/ruleset.xml">
         <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
         <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidOrder"/>
+        <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidParamName"/>
         <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat"/>
         <exclude name="WebimpressCodingStandard.PHP.CorrectClassNameCase.Invalid"/>
+    </rule>
+
+    <rule ref="WebimpressCodingStandard.Commenting.VariableComment">
+        <properties>
+            <property name="allowedTags" type="array">
+                <element value="@internal"/>
+            </property>
+        </properties>
     </rule>
 
     <arg value="p"/>

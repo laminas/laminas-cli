@@ -13,7 +13,6 @@ namespace Laminas\Cli;
 use Laminas\Cli\Listener\TerminateListener;
 use PackageVersions\Versions;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 

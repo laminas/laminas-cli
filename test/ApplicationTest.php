@@ -17,6 +17,7 @@ use LaminasTest\Cli\TestAsset\Chained2Command;
 use LaminasTest\Cli\TestAsset\Chained3Command;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
 use LaminasTest\Cli\TestAsset\InputMapper\CustomInputMapper;
+use LaminasTest\Cli\TestAsset\ParamCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
@@ -405,5 +406,98 @@ class ApplicationTest extends TestCase
             strpos($display, $contains),
             'Output does not contain: ' . "\n" . $contains . "\n" . '---' . "\n" . $display
         );
+    }
+
+    public function testParamInput()
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->method('has')->willReturnMap([
+            [ParamCommand::class, true],
+            [Chained1Command::class, true],
+        ]);
+        $container->method('get')->willReturnMap([
+            [
+                'config',
+                [
+                    'laminas-cli' => [
+                        'commands' => [
+                            'example:param' => ParamCommand::class,
+                            'example:chained-1' => Chained1Command::class,
+                        ],
+                        'chains' => [
+                            ParamCommand::class => [
+                                Chained1Command::class => ['--int-param' => '--opt1'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [ParamCommand::class, new ParamCommand()],
+            [Chained1Command::class, new Chained1Command()],
+        ]);
+
+        $applicationFactory = new ApplicationFactory();
+        $application = $applicationFactory($container);
+
+        $applicationTester = new ApplicationTester($application);
+        $applicationTester->setInputs(['', '13', '-4', '5', 'Y']);
+        $statusCode = $applicationTester->run(
+            ['command' => 'example:param'],
+            ['interactive' => true]
+        );
+
+        self::assertSame(0, $statusCode);
+
+        $contains = [
+            'Invalid value: integer expected, NULL given',
+            'Invalid value 13; maximum value is 10',
+            'Invalid value -4; minimum value is 1',
+            'Int param value: 5',
+            Chained1Command::class . ': arg=, opt=5',
+        ];
+
+        $display = $applicationTester->getDisplay();
+        foreach ($contains as $str) {
+            self::assertNotFalse(strpos($display, $str), 'Output does not contain ' . $str . "\n" . $display);
+        }
+    }
+
+    public function testParamInputNonInteractiveMissingParameter()
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->method('has')->with(ParamCommand::class)->willReturn(true);
+        $container->method('get')->willReturnMap([
+            [
+                'config',
+                [
+                    'laminas-cli' => [
+                        'commands' => [
+                            'example:param' => ParamCommand::class,
+                        ],
+                    ],
+                ],
+            ],
+            [ParamCommand::class, new ParamCommand()],
+        ]);
+
+        $applicationFactory = new ApplicationFactory();
+        $application = $applicationFactory($container);
+
+        $applicationTester = new ApplicationTester($application);
+        $statusCode = $applicationTester->run(
+            ['command' => 'example:param'],
+            ['interactive' => false]
+        );
+
+        self::assertSame(1, $statusCode);
+
+        $contains = [
+            'Missing required value for --int-param parameter',
+        ];
+
+        $display = $applicationTester->getDisplay();
+        foreach ($contains as $str) {
+            self::assertNotFalse(strpos($display, $str), 'Output does not contain ' . $str . "\n" . $display);
+        }
     }
 }

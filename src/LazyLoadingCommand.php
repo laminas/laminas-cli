@@ -28,6 +28,9 @@ final class LazyLoadingCommand extends Command
     /** @var ContainerInterface */
     private $container;
 
+    /** @var null|parent */
+    private $command;
+
     public function __construct(string $name, string $commandClass, ContainerInterface $container)
     {
         parent::__construct();
@@ -49,11 +52,17 @@ final class LazyLoadingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        /** @var Command $command */
-        $command = $this->container->get($this->commandClass);
-        $command->setApplication($this->getApplication());
+        return $this->getCommand()->execute($input, $output);
+    }
 
-        return $command->execute($input, $output);
+    private function getCommand() : parent
+    {
+        if ($this->command === null) {
+            $this->command = $this->container->get($this->commandClass);
+            $this->command->setApplication($this->getApplication());
+        }
+
+        return $this->command;
     }
 
     public function getCommandClass() : string
