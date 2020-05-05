@@ -34,6 +34,7 @@ final class HelloCommand extends Command
 {
     use InputParamTrait;
 
+    /** @var string */
     public static $defaultName = 'example:hello';
 
     protected function configure() : void
