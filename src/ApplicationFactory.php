@@ -20,11 +20,9 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use function strstr;
 
 /**
- * @internal
- *
- * This factory is not registered in the container on purpose.
- * We do not want expose Laminas\Cli as a Module / ConfigProvider
- * and the factory is just for internal use.
+ * @internal This factory is not registered in the container on purpose.
+ *     We do not want expose Laminas\Cli as a Module/ConfigProvider.
+ *     It is just for internal use.
  */
 final class ApplicationFactory
 {
