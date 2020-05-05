@@ -10,14 +10,14 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-class ExampleCommand extends AbstractCommand
+class Chained1Command extends AbstractCommand
 {
     /** @var string */
-    protected static $defaultName = 'example:command-name';
+    protected static $defaultName = 'example:chained-1';
 
     /** @var string */
-    protected $argName = 'arg';
+    protected $argName = 'arg1';
 
     /** @var string */
-    protected $optName = 'opt';
+    protected $optName = 'opt1';
 }

@@ -2,6 +2,9 @@
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">
     <rule ref="./vendor/webimpress/coding-standard/ruleset.xml">
+        <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
+        <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidOrder"/>
+        <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat"/>
         <exclude name="WebimpressCodingStandard.PHP.CorrectClassNameCase.Invalid"/>
     </rule>
 

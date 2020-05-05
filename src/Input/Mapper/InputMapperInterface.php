@@ -8,16 +8,11 @@
 
 declare(strict_types=1);
 
-namespace LaminasTest\Cli\TestAsset;
+namespace Laminas\Cli\Input\Mapper;
 
-class ExampleCommand extends AbstractCommand
+use Symfony\Component\Console\Input\InputInterface;
+
+interface InputMapperInterface
 {
-    /** @var string */
-    protected static $defaultName = 'example:command-name';
-
-    /** @var string */
-    protected $argName = 'arg';
-
-    /** @var string */
-    protected $optName = 'opt';
+    public function __invoke(InputInterface $input) : array;
 }

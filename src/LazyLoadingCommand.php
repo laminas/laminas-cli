@@ -55,4 +55,9 @@ final class LazyLoadingCommand extends Command
 
         return $command->execute($input, $output);
     }
+
+    public function getCommandClass() : string
+    {
+        return $this->commandClass;
+    }
 }
