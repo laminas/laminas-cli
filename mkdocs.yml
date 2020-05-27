@@ -9,3 +9,5 @@ site_description: 'Command-line interface for Laminas projects'
 repo_url: 'https://github.com/laminas/laminas-cli'
 extra:
     project: Components
+    installation:
+        composer_dev: true
