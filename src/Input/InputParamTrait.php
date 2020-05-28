@@ -10,20 +10,26 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Input;
 
-use InvalidArgumentException;
-use Laminas\Cli\Application;
 use RuntimeException;
-use Symfony\Component\Console\Application as SymfonyConsoleApplication;
-use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
 
+/**
+ * Provide promptable input options to your command.
+ *
+ * Compose this trait in your symfony/console command in order to provide the
+ * ability to define options that will result in interactive prompts when not
+ * provided. Such parameters can be added using the `addParam()` construct. When
+ * present, you can then use `$input->getParam($name)` to retrieve the value. If
+ * the value was provided as an option, that value will be returned; otherwise,
+ * it will prompt the user for the value.
+ */
 trait InputParamTrait
 {
     /**
-     * @internal
      * @var array<string, InputParamInterface>
      */
     private $inputParams = [];
@@ -37,7 +43,8 @@ trait InputParamTrait
     {
         if (! is_array($this->inputParams)) {
             throw new RuntimeException(sprintf(
-                'Command %s uses $inputParams property. It is not allowed while using %s',
+                'Command %s uses $inputParams property; please do not override that property when using %s,'
+                . ' as it becomes incompatible with input parameter usage',
                 static::class,
                 InputParamTrait::class
             ));
@@ -58,74 +65,17 @@ trait InputParamTrait
         return $this;
     }
 
-    /**
-     * @return null|bool|int|string
-     * @throws InvalidArgumentException When the parameter does not exist.
-     * @throws InvalidArgumentException When the parameter is of an invalid type.
-     * @throws InvalidArgumentException When the parameter is required, input is
-     *     non-interactive, and no value is provided.
-     */
-    final public function getParam(string $name)
+    final public function run(InputInterface $input, OutputInterface $output)
     {
-        if (! is_array($this->inputParams) || ! isset($this->inputParams[$name])) {
-            throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
-        }
-
-        $application = $this->getApplication();
-        if (! $application instanceof Application) {
-            throw new InvalidArgumentException(sprintf(
-                'Input parameters only work when using %s (currently using %s)',
-                Application::class,
-                is_object($application) ? get_class($application) : gettype($application)
-            ));
-        }
-
-        /** @var Application $application */
-        /** @var InputInterface $input */
-        $input = $application->getInput();
-
-        /** @var OutputInterface $output */
-        $output = $application->getOutput();
-
-        $value = $input->getOption($name);
-        $inputParam = $this->inputParams[$name];
-
-        if (! $inputParam instanceof InputParamInterface) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid parameter type; must be of type %s',
-                InputParamInterface::class
-            ));
-        }
-
-        $question = $inputParam->getQuestion();
-
-        if ($value === null && ! $input->isInteractive()) {
-            $value = $inputParam->getDefault();
-        }
-
-        if ($value !== null) {
-            $validator = $question->getValidator();
-            if ($validator) {
-                $validator($value);
-            }
-
-            $normalizer = $question->getNormalizer();
-
-            return $normalizer === null ? $value : $normalizer($value);
-        }
-
-        if (! $input->isInteractive() && $inputParam->isRequired()) {
-            throw new InvalidArgumentException(sprintf('Missing required value for --%s parameter', $name));
-        }
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelperSet()->get('question');
-        $value = $helper->ask($input, $output, $question);
-
-        // set the option value so it can be reused in chains
-        $input->setOption($name, $value);
-
-        return $value;
+        parent::run(
+            new ParamAwareInput(
+                $input,
+                $output,
+                $this->getHelperSet()->get('question'),
+                $this->inputParams
+            ),
+            $output
+        );
     }
 
     /**
@@ -142,7 +92,7 @@ trait InputParamTrait
     );
 
     /**
-     * @return SymfonyConsoleApplication
+     * @return HelperSet
      */
-    abstract public function getApplication();
+    abstract public function getHelperSet();
 }
