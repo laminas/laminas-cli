@@ -10,13 +10,12 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Input;
 
-use ArrayObject;
 use InvalidArgumentException;
+use Laminas\Cli\Application;
 use RuntimeException;
-use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Application as SymfonyConsoleApplication;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function sprintf;
@@ -25,38 +24,18 @@ trait InputParamTrait
 {
     /**
      * @internal
-     * @var null|ArrayObject<string, InputParam>
+     * @var array<string, InputParamInterface>
      */
-    private $inputParams;
+    private $inputParams = [];
 
     /**
      * @param null|mixed $default
      * @return $this
      * @throws RuntimeException
      */
-    final public function addParam(
-        string $name,
-        string $description,
-        string $type,
-        bool $required = false,
-        $default = null,
-        array $options = []
-    ) : self {
-        $mode = $type === InputParam::TYPE_BOOL
-            ? InputOption::VALUE_NONE
-            : InputOption::VALUE_REQUIRED;
-
-        $this->addOption(
-            $name,
-            null,
-            $mode,
-            $description
-            // default null, on purpose
-        );
-
-        if ($this->inputParams === null) {
-            $this->inputParams = new ArrayObject();
-        } elseif (! $this->inputParams instanceof ArrayObject) {
+    final public function addParam(InputParamInterface $param): self
+    {
+        if (! is_array($this->inputParams)) {
             throw new RuntimeException(sprintf(
                 'Command %s uses $inputParams property. It is not allowed while using %s',
                 static::class,
@@ -64,30 +43,61 @@ trait InputParamTrait
             ));
         }
 
-        $this->inputParams->offsetSet($name, new InputParam($name, $description, $type, $required, $default, $options));
+        $name = $param->getName();
+
+        $this->addOption(
+            $name,
+            $param->getShortcut(),
+            $param->getOptionMode(),
+            $param->getDescription()
+            // default null, on purpose
+        );
+
+        $this->inputParams[$name] = $param;
 
         return $this;
     }
 
     /**
      * @return null|bool|int|string
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException When the parameter does not exist.
+     * @throws InvalidArgumentException When the parameter is of an invalid type.
+     * @throws InvalidArgumentException When the parameter is required, input is
+     *     non-interactive, and no value is provided.
      */
     final public function getParam(string $name)
     {
-        if (! $this->inputParams instanceof ArrayObject || ! $this->inputParams->offsetExists($name)) {
+        if (! is_array($this->inputParams) || ! isset($this->inputParams[$name])) {
             throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
         }
 
+        $application = $this->getApplication();
+        if (! $application instanceof Application) {
+            throw new InvalidArgumentException(sprintf(
+                'Input parameters only work when using %s (currently using %s)',
+                Application::class,
+                is_object($application) ? get_class($application) : gettype($application)
+            ));
+        }
+
+        /** @var Application $application */
         /** @var InputInterface $input */
-        $input = $this->getApplication()->getInput();
+        $input = $application->getInput();
 
         /** @var OutputInterface $output */
-        $output = $this->getApplication()->getOutput();
+        $output = $application->getOutput();
 
         $value = $input->getOption($name);
-        $inputParam = $this->inputParams->offsetGet($name);
-        $question = $inputParam->getQuestion($name);
+        $inputParam = $this->inputParams[$name];
+
+        if (! $inputParam instanceof InputParamInterface) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid parameter type; must be of type %s',
+                InputParamInterface::class
+            ));
+        }
+
+        $question = $inputParam->getQuestion();
 
         if ($value === null && ! $input->isInteractive()) {
             $value = $inputParam->getDefault();
@@ -132,7 +142,7 @@ trait InputParamTrait
     );
 
     /**
-     * @return Application
+     * @return SymfonyConsoleApplication
      */
     abstract public function getApplication();
 }

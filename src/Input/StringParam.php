@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @see       https://github.com/laminas/laminas-cli for the canonical source repository
+ * @copyright https://github.com/laminas/laminas-cli/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas/laminas-cli/blob/master/LICENSE.md New BSD License
+ */
+
+declare(strict_types=1);
+
+namespace Laminas\Cli\Input;
+
+use RuntimeException;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\Question;
+
+final class StringParam implements InputParamInterface
+{
+    use ValidatedQuestionTrait;
+
+    /** @var null|string */
+    private $pattern;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public function getOptionMode(): ?int
+    {
+        return InputOption::VALUE_REQUIRED;
+    }
+
+    public function getQuestion(): Question
+    {
+        $question = $this->createQuestion();
+
+        $question->setValidator(function ($value) {
+            if ($value === null && ! $this->required) {
+                return null;
+            }
+
+            if (! is_string($value)) {
+                throw new RuntimeException(sprintf('Invalid value: string expected, %s given', gettype($value)));
+            }
+
+            if ($this->pattern !== null && ! preg_match($this->pattern, $value)) {
+                throw new RuntimeException('Invalid value: does not match pattern: ' . $this->pattern);
+            }
+
+            return $value;
+        });
+
+        return $question;
+    }
+
+    public function setPattern(string $pattern): self
+    {
+        $this->pattern = $pattern;
+        return $this;
+    }
+}
