@@ -20,7 +20,7 @@ class ParamCommand extends Command
 {
     use InputParamTrait;
 
-    protected function configure() : void
+    protected function configure(): void
     {
         $this->addParam(
             'int-param',
@@ -35,7 +35,7 @@ class ParamCommand extends Command
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $int = $this->getParam('int-param');
         $output->writeln('Int param value: ' . $int);

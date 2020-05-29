@@ -14,9 +14,14 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
+use function gettype;
+use function is_string;
+use function preg_match;
+use function sprintf;
+
 final class StringParam implements InputParamInterface
 {
-    use ValidatedQuestionTrait;
+    use StandardQuestionTrait;
 
     /** @var null|string */
     private $pattern;

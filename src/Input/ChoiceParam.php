@@ -14,9 +14,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
+use function sprintf;
+
 final class ChoiceParam implements InputParamInterface
 {
-    use InputParamMethodsTrait;
+    use InputParamTrait;
 
     /** @var array */
     private $haystack;

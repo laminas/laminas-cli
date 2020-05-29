@@ -14,5 +14,5 @@ use Symfony\Component\Console\Input\InputInterface;
 
 interface InputMapperInterface
 {
-    public function __invoke(InputInterface $input) : array;
+    public function __invoke(InputInterface $input): array;
 }

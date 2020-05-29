@@ -29,17 +29,17 @@ use function strpos;
 
 class ApplicationTest extends TestCase
 {
-    public static function getValidConfiguration() : array
+    public static function getValidConfiguration(): array
     {
         return [
             'commands' => [
                 'example:command-name' => ExampleCommand::class,
-                'example:chained-1' => Chained1Command::class,
-                'example:chained-2' => Chained2Command::class,
-                'example:chained-3' => Chained3Command::class,
+                'example:chained-1'    => Chained1Command::class,
+                'example:chained-2'    => Chained2Command::class,
+                'example:chained-3'    => Chained3Command::class,
             ],
-            'chains' => [
-                ExampleCommand::class => [
+            'chains'   => [
+                ExampleCommand::class  => [
                     Chained1Command::class => ['arg' => 'arg1', '--opt' => '--opt1'],
                     Chained3Command::class => ['arg' => 'arg3', '--opt' => '--opt3'],
                 ],
@@ -50,7 +50,7 @@ class ApplicationTest extends TestCase
         ];
     }
 
-    private function getApplication(array $exitCodes = []) : Application
+    private function getApplication(array $exitCodes = []): Application
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
@@ -72,7 +72,7 @@ class ApplicationTest extends TestCase
         return $applicationFactory($container);
     }
 
-    public function chainAnswer() : Generator
+    public function chainAnswer(): Generator
     {
         yield 'execute whole chain' => [
             ['Y', 'Y', 'Y'],
@@ -235,11 +235,10 @@ class ApplicationTest extends TestCase
 
     /**
      * @dataProvider chainAnswer
-     *
      * @param string[] $answers
      * @param string[] $contains
      * @param string[] $doesNotContain
-     * @param int[] $exitCodes
+     * @param int[]    $exitCodes
      */
     public function testChainCommand(array $answers, array $contains, array $doesNotContain, array $exitCodes = [])
     {
@@ -250,8 +249,8 @@ class ApplicationTest extends TestCase
         $statusCode = $applicationTester->run(
             [
                 'command' => 'example:command-name',
-                'arg' => 'foo',
-                '--opt' => 'bar',
+                'arg'     => 'foo',
+                '--opt'   => 'bar',
             ],
             [
                 'interactive' => true,
@@ -282,9 +281,9 @@ class ApplicationTest extends TestCase
                     'laminas-cli' => [
                         'commands' => [
                             'example:command-name' => ExampleCommand::class,
-                            'example:chained-1' => Chained1Command::class,
+                            'example:chained-1'    => Chained1Command::class,
                         ],
-                        'chains' => [
+                        'chains'   => [
                             ExampleCommand::class => [
                                 Chained1Command::class => [
                                     ['arg1' => 'hey'],
@@ -300,15 +299,15 @@ class ApplicationTest extends TestCase
         ]);
 
         $applicationFactory = new ApplicationFactory();
-        $application = $applicationFactory($container);
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
         $applicationTester->setInputs(['Y']);
         $statusCode = $applicationTester->run(
             [
                 'command' => 'example:command-name',
-                'arg' => 'foo',
-                '--opt' => 'bar',
+                'arg'     => 'foo',
+                '--opt'   => 'bar',
             ],
             [
                 'interactive' => true,
@@ -342,9 +341,9 @@ class ApplicationTest extends TestCase
                     'laminas-cli' => [
                         'commands' => [
                             'example:command-name' => ExampleCommand::class,
-                            'example:chained-1' => Chained1Command::class,
+                            'example:chained-1'    => Chained1Command::class,
                         ],
-                        'chains' => [
+                        'chains'   => [
                             ExampleCommand::class => [
                                 Chained1Command::class => CustomInputMapper::class,
                             ],
@@ -357,15 +356,15 @@ class ApplicationTest extends TestCase
         ]);
 
         $applicationFactory = new ApplicationFactory();
-        $application = $applicationFactory($container);
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
         $applicationTester->setInputs(['Y']);
         $statusCode = $applicationTester->run(
             [
                 'command' => 'example:command-name',
-                'arg' => 'foo',
-                '--opt' => 'bar',
+                'arg'     => 'foo',
+                '--opt'   => 'bar',
             ],
             [
                 'interactive' => true,
@@ -421,10 +420,10 @@ class ApplicationTest extends TestCase
                 [
                     'laminas-cli' => [
                         'commands' => [
-                            'example:param' => ParamCommand::class,
+                            'example:param'     => ParamCommand::class,
                             'example:chained-1' => Chained1Command::class,
                         ],
-                        'chains' => [
+                        'chains'   => [
                             ParamCommand::class => [
                                 Chained1Command::class => ['--int-param' => '--opt1'],
                             ],
@@ -437,7 +436,7 @@ class ApplicationTest extends TestCase
         ]);
 
         $applicationFactory = new ApplicationFactory();
-        $application = $applicationFactory($container);
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
         $applicationTester->setInputs(['', '13', '-4', '5', 'Y']);
@@ -481,10 +480,10 @@ class ApplicationTest extends TestCase
         ]);
 
         $applicationFactory = new ApplicationFactory();
-        $application = $applicationFactory($container);
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
-        $statusCode = $applicationTester->run(
+        $statusCode        = $applicationTester->run(
             ['command' => 'example:param'],
             ['interactive' => false]
         );

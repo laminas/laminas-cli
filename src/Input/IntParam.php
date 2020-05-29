@@ -14,9 +14,14 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
+use function gettype;
+use function is_int;
+use function is_numeric;
+use function sprintf;
+
 final class IntParam implements InputParamInterface
 {
-    use ValidatedQuestionTrait;
+    use StandardQuestionTrait;
 
     /** @var null|int */
     private $max;

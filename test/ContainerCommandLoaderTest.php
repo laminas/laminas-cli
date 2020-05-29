@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
-use Laminas\Cli\ContainerCommandLoader;
+use laminas\cli\containercommandloader;
 use Laminas\Cli\ContainerResolver;
 use Laminas\Cli\LazyLoadingCommand;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +38,7 @@ class ContainerCommandLoaderTest extends TestCase
             ->with(TestAsset\ExampleCommand::class)
             ->willReturn(new TestAsset\ExampleCommand());
 
-        $loader = new ContainerCommandLoader($container, $commands);
+        $loader = new containercommandloader($container, $commands);
 
         $command = $loader->get('foo-bar-command');
 
@@ -55,7 +55,7 @@ class ContainerCommandLoaderTest extends TestCase
 
         $config = $container->get('ApplicationConfig');
 
-        $loader = new ContainerCommandLoader($container, $config['laminas-cli']['commands']);
+        $loader = new containercommandloader($container, $config['laminas-cli']['commands']);
 
         $command = $loader->get('example:command-with-deps');
 

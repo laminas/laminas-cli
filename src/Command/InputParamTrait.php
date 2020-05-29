@@ -17,6 +17,7 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function is_array;
 use function sprintf;
 
 /**
@@ -31,13 +32,10 @@ use function sprintf;
  */
 trait InputParamTrait
 {
-    /**
-     * @var array<string, InputParamInterface>
-     */
+    /** @var array array<string, InputParamInterface> */
     private $inputParams = [];
 
     /**
-     * @param null|mixed $default
      * @return $this
      * @throws RuntimeException
      */
@@ -82,7 +80,7 @@ trait InputParamTrait
 
     /**
      * @param string|array|null $shortcut
-     * @param null|mixed $default
+     * @param null|mixed        $default
      * @return $this
      */
     abstract public function addOption(

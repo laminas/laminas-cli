@@ -31,13 +31,13 @@ class TerminateListenerTest extends TestCase
     /** @var MockObject|OutputInterface */
     private $output;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->command = $this->createMock(Command::class);
-        $this->input = $this->createMock(InputInterface::class);
-        $this->output = $this->createMock(OutputInterface::class);
+        $this->input   = $this->createMock(InputInterface::class);
+        $this->output  = $this->createMock(OutputInterface::class);
     }
 
     public function testSkipIfExitStatusIsNotZero()
@@ -46,7 +46,7 @@ class TerminateListenerTest extends TestCase
         $this->command->expects($this->never())->method('getApplication');
 
         $listener = new TerminateListener(ApplicationTest::getValidConfiguration());
-        $event = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 1);
+        $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 1);
 
         $listener($event);
     }
@@ -57,7 +57,7 @@ class TerminateListenerTest extends TestCase
         $this->command->expects($this->never())->method('getApplication');
 
         $listener = new TerminateListener(ApplicationTest::getValidConfiguration());
-        $event = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
+        $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
 
         $listener($event);
     }
@@ -68,7 +68,7 @@ class TerminateListenerTest extends TestCase
         $this->command->expects($this->never())->method('getApplication');
 
         $listener = new TerminateListener([]);
-        $event = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
+        $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
 
         $listener($event);
     }
@@ -83,7 +83,7 @@ class TerminateListenerTest extends TestCase
                 ExampleCommand::class => true,
             ],
         ]);
-        $event = new ConsoleTerminateEvent($command, $this->input, $this->output, 0);
+        $event    = new ConsoleTerminateEvent($command, $this->input, $this->output, 0);
 
         $listener($event);
     }

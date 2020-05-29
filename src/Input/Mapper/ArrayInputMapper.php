@@ -26,7 +26,7 @@ final class ArrayInputMapper implements InputMapperInterface
         $this->map = $map;
     }
 
-    public function __invoke(InputInterface $input) : array
+    public function __invoke(InputInterface $input): array
     {
         $params = [];
         foreach ($this->map as $old => $new) {

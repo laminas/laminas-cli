@@ -42,7 +42,7 @@ trait InputParamTrait
     private $required = false;
 
     /** @var null|string */
-    private $shortcut = null;
+    private $shortcut;
 
     /**
      * Default value to use if none provided.

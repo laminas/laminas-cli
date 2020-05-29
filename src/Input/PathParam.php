@@ -15,16 +15,19 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
+use function array_map;
 use function file_exists;
 use function gettype;
 use function in_array;
 use function is_dir;
 use function is_string;
+use function preg_replace;
+use function scandir;
 use function sprintf;
 
 final class PathParam implements InputParamInterface
 {
-    use ValidatedQuestionTrait;
+    use StandardQuestionTrait;
 
     public const TYPE_DIR  = 'dir';
     public const TYPE_FILE = 'file';

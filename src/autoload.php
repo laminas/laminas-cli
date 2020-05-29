@@ -19,7 +19,9 @@ use function strstr;
 $version = strstr(Versions::getVersion('symfony/console'), '@', true);
 
 if (str_replace('v', '', $version) >= '5.0.0') {
+    // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase
     class_alias(ContainerCommandLoaderTypeHint::class, ContainerCommandLoader::class);
 } else {
+    // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase
     class_alias(ContainerCommandLoaderNoTypeHint::class, ContainerCommandLoader::class);
 }

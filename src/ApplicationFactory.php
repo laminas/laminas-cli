@@ -36,6 +36,7 @@ final class ApplicationFactory
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
 
         $application = new Application('laminas', $version);
+        // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase
         $application->setCommandLoader(new ContainerCommandLoader($container, $config['commands'] ?? []));
         $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);

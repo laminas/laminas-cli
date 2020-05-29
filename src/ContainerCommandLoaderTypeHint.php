@@ -28,16 +28,16 @@ final class ContainerCommandLoaderTypeHint implements CommandLoaderInterface
 
     public function __construct(ContainerInterface $container, array $commandMap)
     {
-        $this->container = $container;
+        $this->container  = $container;
         $this->commandMap = $commandMap;
     }
 
-    public function get(string $name) : LazyLoadingCommand
+    public function get(string $name): LazyLoadingCommand
     {
         return new LazyLoadingCommand($name, $this->commandMap[$name], $this->container);
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return isset($this->commandMap[$name]) && $this->container->has($this->commandMap[$name]);
     }
@@ -45,7 +45,7 @@ final class ContainerCommandLoaderTypeHint implements CommandLoaderInterface
     /**
      * @return string[]
      */
-    public function getNames() : array
+    public function getNames(): array
     {
         return array_keys($this->commandMap);
     }

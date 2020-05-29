@@ -17,6 +17,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function is_array;
+use function sprintf;
+
 class ParamAwareInput implements InputInterface, StreamableInputInterface
 {
     /** @var QuestionHelper */
@@ -28,9 +31,7 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     /** @var OutputInterface */
     private $output;
 
-    /**
-     * @var array<string, InputParamInterface>
-     */
+    /** @var array array<string, InputParamInterface> */
     private $params;
 
     public function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $helper, array $params)
@@ -54,7 +55,7 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
             throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
         }
 
-        $value = $this->input->getOption($name);
+        $value      = $this->input->getOption($name);
         $inputParam = $this->params[$name];
 
         if (! $inputParam instanceof InputParamInterface) {
@@ -94,7 +95,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return null|string
      */
     public function getFirstArgument()
     {
@@ -102,7 +105,10 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @param string|array $values
+     * @return bool
      */
     public function hasParameterOption($values, bool $onlyParams = false)
     {
@@ -110,7 +116,11 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @param string|array $values
+     * @param mixed        $default
+     * @return null|mixed
      */
     public function getParameterOption($values, $default = false, bool $onlyParams = false)
     {
@@ -118,7 +128,7 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function bind(InputDefinition $definition)
     {
@@ -126,7 +136,7 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validate()
     {
@@ -134,7 +144,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return array
      */
     public function getArguments()
     {
@@ -142,7 +154,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return null|mixed
      */
     public function getArgument(string $name)
     {
@@ -150,7 +164,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @param string|string[]|null $value The argument value
      */
     public function setArgument(string $name, $value)
     {
@@ -158,7 +174,10 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @param string|int $name
+     * @return bool
      */
     public function hasArgument($name)
     {
@@ -166,7 +185,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return array
      */
     public function getOptions()
     {
@@ -174,7 +195,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return null|mixed
      */
     public function getOption(string $name)
     {
@@ -182,7 +205,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @param string|string[]|bool|null $value The option value
      */
     public function setOption(string $name, $value)
     {
@@ -190,7 +215,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return bool
      */
     public function hasOption(string $name)
     {
@@ -198,7 +225,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return bool
      */
     public function isInteractive()
     {
@@ -206,7 +235,7 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setInteractive(bool $interactive)
     {
@@ -214,7 +243,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @param null|resource $stream
      */
     public function setStream($stream)
     {
@@ -225,7 +256,9 @@ class ParamAwareInput implements InputInterface, StreamableInputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return null|resource
      */
     public function getStream()
     {

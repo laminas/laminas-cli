@@ -33,14 +33,14 @@ abstract class AbstractCommand extends Command
         $this->statusCode = $statusCode;
     }
 
-    protected function configure() : void
+    protected function configure(): void
     {
         $this->setDescription('Description of ' . static::$defaultName);
         $this->addArgument($this->argName, InputArgument::OPTIONAL);
         $this->addOption($this->optName, null, InputOption::VALUE_OPTIONAL);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln(
             static::class

@@ -14,9 +14,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
+use function sprintf;
+
 final class BoolParam implements InputParamInterface
 {
-    use InputParamMethodsTrait;
+    use InputParamTrait;
 
     public function __construct(string $name)
     {

@@ -52,7 +52,7 @@ class LazyLoadingCommandTest extends TestCase
 
         $command = new LazyLoadingCommand($commandName, ExampleCommandWithDependencies::class, $container);
 
-        $input = new ArrayInput([]);
+        $input  = new ArrayInput([]);
         $output = new NullOutput();
 
         self::expectException(Exception::class);
@@ -79,7 +79,7 @@ class LazyLoadingCommandTest extends TestCase
 
         $lazyCommand->setApplication($application);
 
-        $input = new ArrayInput([]);
+        $input  = new ArrayInput([]);
         $output = new NullOutput();
 
         $lazyCommand->run($input, $output);
