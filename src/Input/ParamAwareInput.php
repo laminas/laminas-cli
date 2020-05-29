@@ -20,7 +20,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function is_array;
 use function sprintf;
 
-class ParamAwareInput implements InputInterface, StreamableInputInterface
+/**
+ * Decorate an input instance to add a `getParam()` method.
+ *
+ * @internal
+ */
+final class ParamAwareInput implements InputInterface, StreamableInputInterface
 {
     /** @var QuestionHelper */
     private $helper;
