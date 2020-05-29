@@ -65,9 +65,12 @@ trait InputParamTrait
         return $this;
     }
 
+    /**
+     * @return int
+     */
     final public function run(InputInterface $input, OutputInterface $output)
     {
-        parent::run(
+        return parent::run(
             new ParamAwareInput(
                 $input,
                 $output,
