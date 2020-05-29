@@ -24,15 +24,19 @@ class ParamCommand extends Command
     protected function configure(): void
     {
         $this->addParam(
-            (new IntParam('int-param', $min = 1, $max = 10))
+            (new IntParam('int-param'))
                 ->setDescription('Param description')
                 ->setRequiredFlag(true)
+                ->setMin(1)
+                ->setMax(10)
         );
     }
 
+    /**
+     * @param ParamAwareInput $input
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var ParamAwareInput $input */
         $int = $input->getParam('int-param');
         $output->writeln('Int param value: ' . $int);
 

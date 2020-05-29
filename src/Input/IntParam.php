@@ -29,11 +29,9 @@ final class IntParam implements InputParamInterface
     /** @var null|int */
     private $min;
 
-    public function __construct(string $name, ?int $min = null, ?int $max = null)
+    public function __construct(string $name)
     {
         $this->name = $name;
-        $this->min  = $min;
-        $this->max  = $max;
     }
 
     public function getOptionMode(): ?int
@@ -74,5 +72,17 @@ final class IntParam implements InputParamInterface
         });
 
         return $question;
+    }
+
+    public function setMin(?int $min): self
+    {
+        $this->min = $min;
+        return $this;
+    }
+
+    public function setMax(?int $max): self
+    {
+        $this->max = $max;
+        return $this;
     }
 }
