@@ -25,10 +25,25 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 
 use function array_filter;
 use function current;
+use function putenv;
 use function strpos;
 
 class ApplicationTest extends TestCase
 {
+    public function setUp(): void
+    {
+        // @todo Remove following line once // https://github.com/symfony/symfony/issues/37046
+        //     is addressed
+        putenv('ALLOW_MULTI_PROMPT');
+    }
+
+    public function tearDown(): void
+    {
+        // @todo Remove following line once // https://github.com/symfony/symfony/issues/37046
+        //     is addressed
+        putenv('ALLOW_MULTI_PROMPT');
+    }
+
     public static function getValidConfiguration(): array
     {
         return [
@@ -409,6 +424,9 @@ class ApplicationTest extends TestCase
 
     public function testParamInput()
     {
+        // @todo Remove following line once // https://github.com/symfony/symfony/issues/37046
+        //     is addressed
+        putenv('ALLOW_MULTI_PROMPT=1');
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
             [ParamCommand::class, true],

@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function getenv;
 use function is_array;
 use function sprintf;
 
@@ -70,6 +71,12 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
 
         $question = $inputParam->getQuestion();
 
+        // @todo Remove once https://github.com/symfony/symfony/issues/37046 is
+        //     addressed
+        if ($question->getMaxAttempts() === null && getenv('ALLOW_MULTI_PROMPT')) {
+            $question->setMaxAttempts(1000);
+        }
+
         if ($value === null && ! $this->input->isInteractive()) {
             $value = $inputParam->getDefault();
         }
@@ -111,9 +118,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
      * {@inheritDoc}
      *
      * @param string|array $values
+     * @param bool         $onlyParams
      * @return bool
      */
-    public function hasParameterOption($values, bool $onlyParams = false)
+    public function hasParameterOption($values, $onlyParams = false)
     {
         return $this->input->hasParameterOption($values, $onlyParams);
     }
@@ -123,9 +131,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
      *
      * @param string|array $values
      * @param mixed        $default
+     * @param bool         $onlyParams
      * @return null|mixed
      */
-    public function getParameterOption($values, $default = false, bool $onlyParams = false)
+    public function getParameterOption($values, $default = false, $onlyParams = false)
     {
         return $this->input->getParameterOption($values, $onlyParams);
     }
@@ -159,9 +168,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
     /**
      * {@inheritDoc}
      *
+     * @param string $name
      * @return null|mixed
      */
-    public function getArgument(string $name)
+    public function getArgument($name)
     {
         return $this->input->getArgument($name);
     }
@@ -169,9 +179,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
     /**
      * {@inheritDoc}
      *
+     * @param string               $name
      * @param string|string[]|null $value The argument value
      */
-    public function setArgument(string $name, $value)
+    public function setArgument($name, $value)
     {
         $this->input->setArgument($name, $value);
     }
@@ -200,9 +211,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
     /**
      * {@inheritDoc}
      *
+     * @param string $name
      * @return null|mixed
      */
-    public function getOption(string $name)
+    public function getOption($name)
     {
         return $this->input->getOption($name);
     }
@@ -210,9 +222,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
     /**
      * {@inheritDoc}
      *
+     * @param string                    $name
      * @param string|string[]|bool|null $value The option value
      */
-    public function setOption(string $name, $value)
+    public function setOption($name, $value)
     {
         $this->input->setOption($name, $value);
     }
@@ -220,9 +233,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
     /**
      * {@inheritDoc}
      *
+     * @param string $name
      * @return bool
      */
-    public function hasOption(string $name)
+    public function hasOption($name)
     {
         return $this->input->hasOption($name);
     }
@@ -239,8 +253,10 @@ final class ParamAwareInput implements InputInterface, StreamableInputInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @param bool $interactive
      */
-    public function setInteractive(bool $interactive)
+    public function setInteractive($interactive)
     {
         $this->input->setInteractive($interactive);
     }
