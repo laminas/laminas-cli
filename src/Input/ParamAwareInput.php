@@ -22,8 +22,6 @@ use function sprintf;
 
 /**
  * Decorate an input instance to add a `getParam()` method.
- *
- * @internal
  */
 final class ParamAwareInput implements InputInterface, StreamableInputInterface
 {
