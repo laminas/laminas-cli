@@ -145,7 +145,11 @@ final class IntParam implements InputParamInterface
 {
     use StandardQuestionTrait;
 
-    public function __construct(string $name, ?int $min = null, ?int $max = null);
+    public function __construct(string $name);
+
+    public function setMin(?int $min): self;
+
+    public function setMax(?int $max): self;
 }
 ```
 
