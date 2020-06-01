@@ -11,7 +11,9 @@ declare(strict_types=1);
 namespace Laminas\Cli\Command;
 
 use Laminas\Cli\Input\InputParamInterface;
-use Laminas\Cli\Input\ParamAwareInput;
+use Laminas\Cli\Input\NonHintedParamAwareInput;
+use Laminas\Cli\Input\TypeHintedParamAwareInput;
+use PackageVersions\Versions;
 use RuntimeException;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function is_array;
 use function sprintf;
+use function str_replace;
+use function strstr;
 
 /**
  * Provide promptable input options to your command.
@@ -70,8 +74,13 @@ trait InputParamTrait
      */
     final public function run(InputInterface $input, OutputInterface $output)
     {
+        $consoleVersion      = strstr(Versions::getVersion('symfony/console'), '@', true);
+        $inputDecoratorClass = str_replace('v', '', $consoleVersion) >= '5.0.0'
+            ? TypeHintedParamAwareInput::class
+            : NonHintedParamAwareInput::class;
+
         return parent::run(
-            new ParamAwareInput(
+            new $inputDecoratorClass(
                 $input,
                 $output,
                 $this->getHelperSet()->get('question'),
