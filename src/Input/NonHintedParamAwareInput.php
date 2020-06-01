@@ -17,7 +17,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function getenv;
 use function is_array;
 use function sprintf;
 
@@ -25,6 +24,8 @@ use function sprintf;
  * Decorate an input instance to add a `getParam()` method.
  *
  * Compatible with symfony/console version 4 series.
+ *
+ * @internal
  *
  * @todo Remove when we drop support for symfony/console 4.
  */

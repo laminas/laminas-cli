@@ -213,7 +213,7 @@ expects a string:
 
 ```php
 use Laminas\Cli\Command\InputParamTrait;
-use Laminas\Cli\Input\ParamAwareInput;
+use Laminas\Cli\Input\ParamAwareInputInterface;
 use Laminas\Cli\Input\StringParam;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -236,9 +236,11 @@ final class HelloCommand extends Command
         );
     }
 
+    /**
+     * @param ParamAwareInputInterface $input
+     */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        /** @var ParamAwareInput $input */
         $name = $input->getParam('name');
         $output->writeln('Hello ' . $name . '!');
 
@@ -247,14 +249,17 @@ final class HelloCommand extends Command
 }
 ```
 
-> ### ParamAwareInput
+> ### ParamAwareInputInterface
 >
-> Internally, `InputParamTrait` decorates the input instance from the
-> application with the class `ParamAwareInput`. This class implements each of
-> `Symfony\Component\Console\Input\InputInterface` and `StreamableInputInterface`,
-> and adds the method `getParam()` for retrieving the input parameter. To ensure
-> IDE completion and static analysis work as expected, you should typehint the
-> `$input` argument via an annotation before you call `getParam()`.
+> Internally, we decorate the input instance from the
+> application with a class implementing our own `ParamAwareInputInterface`. This
+> interface extends each of `Symfony\Component\Console\Input\InputInterface` and
+> `StreamableInputInterface`, and adds the method `getParam(string $name)` for
+> retrieving the input parameter. To ensure IDE completion and static analysis
+> work as expected, you should typehint the `$input` argument as a
+> `ParamAwareInputInterface` via a parameter annotation. (You cannot do so via
+> type hint, as it would break compatibility with the `AbstractCommand`
+> signature.)
 
 Adding parameters is similar to adding arguments or options, with one key
 difference: you provide an instance, instead of a series of values. The

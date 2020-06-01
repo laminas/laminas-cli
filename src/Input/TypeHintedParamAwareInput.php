@@ -11,14 +11,12 @@ declare(strict_types=1);
 namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
-use PackageVersions\Versions;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function getenv;
 use function is_array;
 use function sprintf;
 
@@ -26,6 +24,8 @@ use function sprintf;
  * Decorate an input instance to add a `getParam()` method.
  *
  * Compatible with symfony/console 5.0+.
+ *
+ * @internal
  */
 final class TypeHintedParamAwareInput implements ParamAwareInputInterface
 {
@@ -121,7 +121,6 @@ final class TypeHintedParamAwareInput implements ParamAwareInputInterface
      * {@inheritDoc}
      *
      * @param string|array $values
-     * @param bool         $onlyParams
      * @return bool
      */
     public function hasParameterOption($values, bool $onlyParams = false)
@@ -134,7 +133,6 @@ final class TypeHintedParamAwareInput implements ParamAwareInputInterface
      *
      * @param string|array $values
      * @param mixed        $default
-     * @param bool         $onlyParams
      * @return null|mixed
      */
     public function getParameterOption($values, $default = false, bool $onlyParams = false)
