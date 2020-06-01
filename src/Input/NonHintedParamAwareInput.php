@@ -75,12 +75,6 @@ final class NonHintedParamAwareInput implements ParamAwareInputInterface
 
         $question = $inputParam->getQuestion();
 
-        // @todo Remove once https://github.com/symfony/symfony/issues/37046 is
-        //     addressed
-        if ($question->getMaxAttempts() === null && getenv('ALLOW_MULTI_PROMPT')) {
-            $question->setMaxAttempts(1000);
-        }
-
         if ($value === null && ! $this->input->isInteractive()) {
             $value = $inputParam->getDefault();
         }

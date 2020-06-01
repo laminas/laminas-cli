@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
+use PackageVersions\Versions;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -75,7 +76,7 @@ final class TypeHintedParamAwareInput implements ParamAwareInputInterface
 
         // @todo Remove once https://github.com/symfony/symfony/issues/37046 is
         //     addressed
-        if ($question->getMaxAttempts() === null && getenv('ALLOW_MULTI_PROMPT')) {
+        if ($question->getMaxAttempts() === null) {
             $question->setMaxAttempts(1000);
         }
 
