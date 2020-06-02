@@ -18,7 +18,7 @@ interface ParamAwareInputInterface extends
     StreamableInputInterface
 {
     /**
-     * @return null|mixed
+     * @return mixed
      */
     public function getParam(string $name);
 }

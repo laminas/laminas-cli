@@ -47,7 +47,7 @@ trait InputParamTrait
     /**
      * Default value to use if none provided.
      *
-     * @return null|mixed
+     * @return mixed
      */
     public function getDefault()
     {

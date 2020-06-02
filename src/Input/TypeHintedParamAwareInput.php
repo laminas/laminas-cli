@@ -50,7 +50,7 @@ final class TypeHintedParamAwareInput implements ParamAwareInputInterface
     }
 
     /**
-     * @return null|mixed
+     * @return mixed
      * @throws InvalidArgumentException When the parameter does not exist.
      * @throws InvalidArgumentException When the parameter is of an invalid type.
      * @throws InvalidArgumentException When the parameter is required, input is
@@ -133,11 +133,11 @@ final class TypeHintedParamAwareInput implements ParamAwareInputInterface
      *
      * @param string|array $values
      * @param mixed        $default
-     * @return null|mixed
+     * @return mixed
      */
     public function getParameterOption($values, $default = false, bool $onlyParams = false)
     {
-        return $this->input->getParameterOption($values, $onlyParams);
+        return $this->input->getParameterOption($values, $default, $onlyParams);
     }
 
     /**
@@ -169,7 +169,7 @@ final class TypeHintedParamAwareInput implements ParamAwareInputInterface
     /**
      * {@inheritDoc}
      *
-     * @return null|mixed
+     * @return mixed
      */
     public function getArgument(string $name)
     {
@@ -210,7 +210,7 @@ final class TypeHintedParamAwareInput implements ParamAwareInputInterface
     /**
      * {@inheritDoc}
      *
-     * @return null|mixed
+     * @return mixed
      */
     public function getOption(string $name)
     {
