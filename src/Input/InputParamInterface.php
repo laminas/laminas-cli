@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable WebimpressCodingStandard.Functions.ReturnType
 
 /**
  * @see       https://github.com/laminas/laminas-cli for the canonical source repository
@@ -38,12 +38,22 @@ interface InputParamInterface
 
     /**
      * @param mixed $defaultValue
+     * @return $this
      */
-    public function setDefault($defaultValue): self;
+    public function setDefault($defaultValue): InputParamInterface;
 
-    public function setDescription(string $description): self;
+    /**
+     * @return $this
+     */
+    public function setDescription(string $description): InputParamInterface;
 
-    public function setShortcut(string $shortcut): self;
+    /**
+     * @return $this
+     */
+    public function setShortcut(string $shortcut): InputParamInterface;
 
-    public function setRequiredFlag(bool $required): self;
+    /**
+     * @return $this
+     */
+    public function setRequiredFlag(bool $required): InputParamInterface;
 }

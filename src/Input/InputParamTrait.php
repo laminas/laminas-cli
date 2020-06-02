@@ -77,25 +77,25 @@ trait InputParamTrait
     /**
      * @param mixed $defaultValue
      */
-    public function setDefault($defaultValue): self
+    public function setDefault($defaultValue): InputParamInterface
     {
         $this->default = $defaultValue;
         return $this;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(string $description): InputParamInterface
     {
         $this->description = $description;
         return $this;
     }
 
-    public function setShortcut(?string $shortcut): self
+    public function setShortcut(?string $shortcut): InputParamInterface
     {
         $this->shortcut = $shortcut;
         return $this;
     }
 
-    public function setRequiredFlag(bool $required): self
+    public function setRequiredFlag(bool $required): InputParamInterface
     {
         $this->required = $required;
         return $this;
