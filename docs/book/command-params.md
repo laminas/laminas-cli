@@ -176,7 +176,7 @@ final class PathParam implements InputParamInterface
      */
     public function setPathType(string $type): self;
 
-    public function pathMustExist(bool $flag): self;
+    public function setPathMustExist(bool $flag): self;
 }
 ```
 

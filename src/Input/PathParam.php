@@ -118,7 +118,7 @@ final class PathParam implements InputParamInterface
         return $this;
     }
 
-    public function pathMustExist(bool $flag): self
+    public function setPathMustExist(bool $flag): self
     {
         $this->mustExist = $flag;
         return $this;
