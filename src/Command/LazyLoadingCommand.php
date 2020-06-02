@@ -12,10 +12,13 @@ namespace Laminas\Cli\Command;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function sprintf;
 
 /**
  * @internal
@@ -55,11 +58,10 @@ final class LazyLoadingCommand extends Command
         return $this->getCommand()->run($input, $output);
     }
 
+    // phpcs:ignore WebimpressCodingStandard.Functions.ReturnType.InvalidNoReturn
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // intentionally empty; method will never be called, as `run()` has been
-        // overridden.
-        return 0;
+        throw new RuntimeException(sprintf('The method %s should never be called.', __METHOD__));
     }
 
     private function getCommand(): parent
