@@ -92,7 +92,7 @@ trait ParamAwareCommandTrait
 
     /**
      * @param string|array|null $shortcut
-     * @param mixed             $default Defaults to null.
+     * @param null|mixed        $default Defaults to null.
      * @return $this
      */
     abstract public function addOption(
