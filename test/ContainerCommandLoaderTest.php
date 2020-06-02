@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable WebimpressCodingStandard.PHP.CorrectClassNameCase
 
 /**
  * @see       https://github.com/laminas/laminas-cli for the canonical source repository
@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
-use laminas\cli\containercommandloader;
+use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
 use Laminas\Cli\LazyLoadingCommand;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +38,7 @@ class ContainerCommandLoaderTest extends TestCase
             ->with(TestAsset\ExampleCommand::class)
             ->willReturn(new TestAsset\ExampleCommand());
 
-        $loader = new containercommandloader($container, $commands);
+        $loader = new ContainerCommandLoader($container, $commands);
 
         $command = $loader->get('foo-bar-command');
 
@@ -55,7 +55,7 @@ class ContainerCommandLoaderTest extends TestCase
 
         $config = $container->get('ApplicationConfig');
 
-        $loader = new containercommandloader($container, $config['laminas-cli']['commands']);
+        $loader = new ContainerCommandLoader($container, $config['laminas-cli']['commands']);
 
         $command = $loader->get('example:command-with-deps');
 
