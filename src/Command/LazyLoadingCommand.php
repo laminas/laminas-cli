@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Cli;
+namespace Laminas\Cli\Command;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;

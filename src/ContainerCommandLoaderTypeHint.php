@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Laminas\Cli;
 
+use Laminas\Cli\Command\LazyLoadingCommand;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 

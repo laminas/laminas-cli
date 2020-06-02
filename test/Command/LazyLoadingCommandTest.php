@@ -8,11 +8,11 @@
 
 declare(strict_types=1);
 
-namespace LaminasTest\Cli;
+namespace LaminasTest\Cli\Command;
 
 use Exception;
+use Laminas\Cli\Command\LazyLoadingCommand;
 use Laminas\Cli\ContainerResolver;
-use Laminas\Cli\LazyLoadingCommand;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
 use LaminasTest\Cli\TestAsset\ExampleCommandWithDependencies;
 use LaminasTest\Cli\TestAsset\ExampleDependency;
@@ -30,7 +30,7 @@ class LazyLoadingCommandTest extends TestCase
     public function testDoesNotLoadDependenciesBeforeNeededButStillHasSameName()
     {
         $cwd = getcwd();
-        chdir(__DIR__ . '/TestAsset');
+        chdir(__DIR__ . '/../TestAsset');
         $container = ContainerResolver::resolve();
         chdir($cwd);
 
@@ -44,7 +44,7 @@ class LazyLoadingCommandTest extends TestCase
     public function testLoadsDependenciesWhenExecuted()
     {
         $cwd = getcwd();
-        chdir(__DIR__ . '/TestAsset');
+        chdir(__DIR__ . '/../TestAsset');
         $container = ContainerResolver::resolve();
         chdir($cwd);
 

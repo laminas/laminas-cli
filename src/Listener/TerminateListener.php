@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Listener;
 
+use Laminas\Cli\Command\LazyLoadingCommand;
 use Laminas\Cli\Input\Mapper\ArrayInputMapper;
-use Laminas\Cli\LazyLoadingCommand;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
