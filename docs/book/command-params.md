@@ -204,7 +204,7 @@ final class StringParam implements InputParamInterface
 ## Adding input parameters to a command
 
 In order to define input parameters in your command, you will need to compose
-`Laminas\Cli\Command\InputParamTrait` in your command class definition. The
+`Laminas\Cli\Command\ParamAwareCommandTrait` in your command class definition. The
 class provides a method, `addParam()`, for adding an input parameter. The method
 accepts a single parameter, a `Laminas\Cli\Input\InputParamInterface` instance.
 
@@ -212,7 +212,7 @@ Please consider the following command, which adds a "name" parameter that
 expects a string:
 
 ```php
-use Laminas\Cli\Command\InputParamTrait;
+use Laminas\Cli\Command\ParamAwareCommandTrait;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use Laminas\Cli\Input\StringParam;
 use Symfony\Component\Console\Command\Command;
@@ -221,7 +221,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class HelloCommand extends Command
 {
-    use InputParamTrait;
+    use ParamAwareCommandTrait;
 
     /** @var string */
     public static $defaultName = 'example:hello';

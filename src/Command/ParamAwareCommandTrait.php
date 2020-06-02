@@ -34,7 +34,7 @@ use function strstr;
  * the value was provided as an option, that value will be returned; otherwise,
  * it will prompt the user for the value.
  */
-trait InputParamTrait
+trait ParamAwareCommandTrait
 {
     /** @var array array<string, InputParamInterface> */
     private $inputParams = [];

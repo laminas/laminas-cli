@@ -10,16 +10,16 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-use Laminas\Cli\Command\InputParamTrait;
+use Laminas\Cli\Command\ParamAwareCommandTrait;
 use Laminas\Cli\Input\IntParam;
-use Laminas\Cli\Input\ParamAwareInput;
+use Laminas\Cli\Input\ParamAwareInputInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ParamCommand extends Command
 {
-    use InputParamTrait;
+    use ParamAwareCommandTrait;
 
     protected function configure(): void
     {
@@ -33,7 +33,7 @@ class ParamCommand extends Command
     }
 
     /**
-     * @param ParamAwareInput $input
+     * @param ParamAwareInputInterface $input
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
