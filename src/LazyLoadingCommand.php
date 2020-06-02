@@ -50,10 +50,19 @@ final class LazyLoadingCommand extends Command
         $this->setHelp($command->getHelp());
     }
 
+    /**
+     * @return int
+     */
+    public function run(InputInterface $input, OutputInterface $output)
+    {
+        return $this->getCommand()->run($input, $output);
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // run, vs execute, to ensure parameter and name binding occur correctly
-        return $this->getCommand()->run($input, $output);
+        // intentionally empty; method will never be called, as `run()` has been
+        // overridden.
+        return 0;
     }
 
     private function getCommand(): parent
