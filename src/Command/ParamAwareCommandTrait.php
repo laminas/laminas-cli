@@ -69,10 +69,7 @@ trait ParamAwareCommandTrait
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    final public function run(InputInterface $input, OutputInterface $output)
+    final public function run(InputInterface $input, OutputInterface $output): int
     {
         $consoleVersion      = strstr(Versions::getVersion('symfony/console'), '@', true);
         $inputDecoratorClass = str_replace('v', '', $consoleVersion) >= '5.0.0'

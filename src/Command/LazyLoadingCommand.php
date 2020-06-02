@@ -50,10 +50,7 @@ final class LazyLoadingCommand extends Command
         $this->setHelp($command->getHelp());
     }
 
-    /**
-     * @return int
-     */
-    public function run(InputInterface $input, OutputInterface $output)
+    public function run(InputInterface $input, OutputInterface $output): int
     {
         return $this->getCommand()->run($input, $output);
     }
