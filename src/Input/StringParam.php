@@ -79,7 +79,7 @@ final class StringParam implements InputParamInterface
 
     private function validatePattern(string $pattern): bool
     {
-        set_error_handler(function ($errno, $errstr) {
+        set_error_handler(static function ($errno, $errstr) {
             if (! strstr($errstr, 'preg_match')) {
                 return false;
             }
