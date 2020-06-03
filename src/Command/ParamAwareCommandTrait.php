@@ -50,7 +50,7 @@ trait ParamAwareCommandTrait
                 'Command %s uses $inputParams property; please do not override that property when using %s,'
                 . ' as it becomes incompatible with input parameter usage',
                 static::class,
-                InputParamTrait::class
+                __NAMESPACE__ . '\ParamAwareCommandTrait'
             ));
         }
 
