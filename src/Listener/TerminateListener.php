@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Listener;
 
+use Laminas\Cli\Command\LazyLoadingCommand;
 use Laminas\Cli\Input\Mapper\ArrayInputMapper;
-use Laminas\Cli\LazyLoadingCommand;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -37,33 +37,34 @@ final class TerminateListener
         $this->config = $config;
     }
 
-    public function __invoke(ConsoleTerminateEvent $event) : void
+    public function __invoke(ConsoleTerminateEvent $event): void
     {
         if ($event->getExitCode() !== 0 || ! $event->getInput()->isInteractive()) {
             return;
         }
 
         $command = $event->getCommand();
-        $class = $command instanceof LazyLoadingCommand
+        $class   = $command instanceof LazyLoadingCommand
             ? $command->getCommandClass()
             : get_class($command);
 
-        if (! isset($this->config['chains'][$class])
+        if (
+            ! isset($this->config['chains'][$class])
             || ! is_array($this->config['chains'][$class])
         ) {
             return;
         }
 
         $application = $command->getApplication();
-        $input = $event->getInput();
-        $output = $event->getOutput();
+        $input       = $event->getInput();
+        $output      = $event->getOutput();
 
         /** @var QuestionHelper $helper */
         $helper = $application->getHelperSet()->get('question');
 
         foreach ($this->config['chains'][$class] as $nextCommandClass => $inputMapper) {
             $nextCommandName = array_search($nextCommandClass, $this->config['commands'], true);
-            $nextCommand = $application->find($nextCommandName);
+            $nextCommand     = $application->find($nextCommandName);
 
             $question = new ChoiceQuestion(
                 PHP_EOL . "<info>Executing {$nextCommandName}</info> ({$nextCommand->getDescription()})."
@@ -85,7 +86,7 @@ final class TerminateListener
                 ? new ArrayInputMapper($inputMapper)
                 : new $inputMapper();
 
-            $params = ['command' => $nextCommandName] + $inputMapper($input);
+            $params   = ['command' => $nextCommandName] + $inputMapper($input);
             $exitCode = $application->run(new ArrayInput($params), $output);
 
             if ($exitCode !== 0) {

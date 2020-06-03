@@ -10,34 +10,34 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-use Laminas\Cli\Input\InputParam;
-use Laminas\Cli\Input\InputParamTrait;
+use Laminas\Cli\Command\ParamAwareCommandTrait;
+use Laminas\Cli\Input\IntParam;
+use Laminas\Cli\Input\ParamAwareInputInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ParamCommand extends Command
 {
-    use InputParamTrait;
+    use ParamAwareCommandTrait;
 
-    protected function configure() : void
+    protected function configure(): void
     {
         $this->addParam(
-            'int-param',
-            'Param description',
-            InputParam::TYPE_INT,
-            true,
-            null,
-            [
-                'min' => 1,
-                'max' => 10,
-            ]
+            (new IntParam('int-param'))
+                ->setDescription('Param description')
+                ->setRequiredFlag(true)
+                ->setMin(1)
+                ->setMax(10)
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    /**
+     * @param ParamAwareInputInterface $input
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $int = $this->getParam('int-param');
+        $int = $input->getParam('int-param');
         $output->writeln('Int param value: ' . $int);
 
         return 0;

@@ -18,6 +18,7 @@ class ExampleCommandWithDependencies extends Command
     protected static $defaultName = 'example:command-with-deps';
 
     /** @var ExampleDependency */
+    // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements
     private $dependency;
 
     public function __construct(ExampleDependency $dependency)

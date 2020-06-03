@@ -13,6 +13,7 @@ namespace Laminas\Cli;
 use Laminas\Cli\Listener\TerminateListener;
 use PackageVersions\Versions;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -25,7 +26,7 @@ use function strstr;
  */
 final class ApplicationFactory
 {
-    public function __invoke(ContainerInterface $container) : Application
+    public function __invoke(ContainerInterface $container): Application
     {
         $config = $container->get('config')['laminas-cli'] ?? [];
 
@@ -35,6 +36,7 @@ final class ApplicationFactory
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
 
         $application = new Application('laminas', $version);
+        // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase
         $application->setCommandLoader(new ContainerCommandLoader($container, $config['commands'] ?? []));
         $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);

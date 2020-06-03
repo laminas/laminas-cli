@@ -14,7 +14,7 @@ use Psr\Container\ContainerInterface;
 
 class ExampleCommandWithDependenciesFactory
 {
-    public function __invoke(ContainerInterface $container) : ExampleCommandWithDependencies
+    public function __invoke(ContainerInterface $container): ExampleCommandWithDependencies
     {
         $dependency = $container->get(ExampleDependency::class);
 

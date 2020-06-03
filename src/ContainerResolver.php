@@ -30,13 +30,14 @@ final class ContainerResolver
      *
      * @throws RuntimeException When cannot locate PSR-11 container for the application.
      */
-    public static function resolve() : ContainerInterface
+    public static function resolve(): ContainerInterface
     {
         if (file_exists('config/container.php')) {
             return self::resolveDefaultContainer();
         }
 
-        if (file_exists('config/application.config.php')
+        if (
+            file_exists('config/application.config.php')
             && class_exists(ServiceManager::class)
         ) {
             return self::resolveMvcContainer();
@@ -48,7 +49,7 @@ final class ContainerResolver
     /**
      * @throws RuntimeException When file contains not a valid PSR-11 container.
      */
-    private static function resolveDefaultContainer() : ContainerInterface
+    private static function resolveDefaultContainer(): ContainerInterface
     {
         $container = include 'config/container.php';
         if (! $container instanceof ContainerInterface) {
@@ -58,7 +59,7 @@ final class ContainerResolver
         return $container;
     }
 
-    private static function resolveMvcContainer() : ContainerInterface
+    private static function resolveMvcContainer(): ContainerInterface
     {
         $appConfig = include 'config/application.config.php';
         if (file_exists('config/development.config.php')) {

@@ -8,11 +8,17 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Cli\Input\Mapper;
+namespace Laminas\Cli\Input;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\StreamableInputInterface;
 
-interface InputMapperInterface
+interface ParamAwareInputInterface extends
+    InputInterface,
+    StreamableInputInterface
 {
-    public function __invoke(InputInterface $input): array;
+    /**
+     * @return mixed
+     */
+    public function getParam(string $name);
 }

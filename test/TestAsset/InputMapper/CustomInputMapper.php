@@ -17,10 +17,10 @@ use function ucwords;
 
 class CustomInputMapper implements InputMapperInterface
 {
-    public function __invoke(InputInterface $input) : array
+    public function __invoke(InputInterface $input): array
     {
         return [
-            'arg1' => ucwords($input->getArgument('arg') . ' ' . $input->getOption('opt')),
+            'arg1'   => ucwords($input->getArgument('arg') . ' ' . $input->getOption('opt')),
             '--opt1' => 'my-value',
         ];
     }

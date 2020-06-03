@@ -1,26 +1,21 @@
 <?xml version="1.0"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">
-    <rule ref="./vendor/webimpress/coding-standard/ruleset.xml">
-        <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
-        <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidOrder"/>
-        <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidParamName"/>
-        <exclude name="WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat"/>
-        <exclude name="WebimpressCodingStandard.PHP.CorrectClassNameCase.Invalid"/>
-    </rule>
+    xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">
 
-    <rule ref="WebimpressCodingStandard.Commenting.VariableComment">
-        <properties>
-            <property name="allowedTags" type="array">
-                <element value="@internal"/>
-            </property>
-        </properties>
-    </rule>
+    <arg name="basepath" value="." />
+    <arg name="cache" value=".phpcs-cache" />
+    <arg name="colors" />
+    <arg name="extensions" value="php" />
+    <arg name="parallel" value="80" />
 
+    <!-- Show progress -->
     <arg value="p"/>
-    <arg name="colors"/>
 
+    <!-- Paths to check -->
     <file>bin</file>
     <file>src</file>
     <file>test</file>
+
+    <!-- Include all rules from Laminas Coding Standard -->
+    <rule ref="LaminasCodingStandard" />
 </ruleset>

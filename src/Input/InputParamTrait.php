@@ -10,129 +10,94 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Input;
 
-use ArrayObject;
-use InvalidArgumentException;
-use RuntimeException;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-
-use function sprintf;
-
+/**
+ * Provide the majority of methods needed to implement InputParamInterface.
+ *
+ * This trait provides definitions for all but the following methods of the
+ * InputParamInterface:
+ *
+ * - getOptionMode()
+ * - getQuestion()
+ *
+ * Additionally, it defines the `$name` property, allowing implementations to
+ * set it in their constructors without needing to define the property
+ * themselves.
+ */
 trait InputParamTrait
 {
-    /**
-     * @internal
-     * @var null|ArrayObject<string, InputParam>
-     */
-    private $inputParams;
+    /** @var mixed */
+    private $default;
+
+    /** @var string */
+    private $description = '';
 
     /**
-     * @param null|mixed $default
-     * @return $this
-     * @throws RuntimeException
+     * Parameter name; must be set by class composing trait!
+     *
+     * @var string
      */
-    final public function addParam(
-        string $name,
-        string $description,
-        string $type,
-        bool $required = false,
-        $default = null,
-        array $options = []
-    ) : self {
-        $mode = $type === InputParam::TYPE_BOOL
-            ? InputOption::VALUE_NONE
-            : InputOption::VALUE_REQUIRED;
+    private $name;
 
-        $this->addOption(
-            $name,
-            null,
-            $mode,
-            $description
-            // default null, on purpose
-        );
+    /** @var bool */
+    private $required = false;
 
-        if ($this->inputParams === null) {
-            $this->inputParams = new ArrayObject();
-        } elseif (! $this->inputParams instanceof ArrayObject) {
-            throw new RuntimeException(sprintf(
-                'Command %s uses $inputParams property. It is not allowed while using %s',
-                static::class,
-                InputParamTrait::class
-            ));
-        }
+    /** @var null|string */
+    private $shortcut;
 
-        $this->inputParams->offsetSet($name, new InputParam($name, $description, $type, $required, $default, $options));
+    /**
+     * Default value to use if none provided.
+     *
+     * @return mixed
+     */
+    public function getDefault()
+    {
+        return $this->default;
+    }
 
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getShortcut(): ?string
+    {
+        return $this->shortcut;
+    }
+
+    public function isRequired(): bool
+    {
+        return $this->required;
+    }
+
+    /**
+     * @param mixed $defaultValue
+     */
+    public function setDefault($defaultValue): InputParamInterface
+    {
+        $this->default = $defaultValue;
         return $this;
     }
 
-    /**
-     * @return null|bool|int|string
-     * @throws InvalidArgumentException
-     */
-    final public function getParam(string $name)
+    public function setDescription(string $description): InputParamInterface
     {
-        if (! $this->inputParams instanceof ArrayObject || ! $this->inputParams->offsetExists($name)) {
-            throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
-        }
-
-        /** @var InputInterface $input */
-        $input = $this->getApplication()->getInput();
-
-        /** @var OutputInterface $output */
-        $output = $this->getApplication()->getOutput();
-
-        $value = $input->getOption($name);
-        $inputParam = $this->inputParams->offsetGet($name);
-        $question = $inputParam->getQuestion($name);
-
-        if ($value === null && ! $input->isInteractive()) {
-            $value = $inputParam->getDefault();
-        }
-
-        if ($value !== null) {
-            $validator = $question->getValidator();
-            if ($validator) {
-                $validator($value);
-            }
-
-            $normalizer = $question->getNormalizer();
-
-            return $normalizer === null ? $value : $normalizer($value);
-        }
-
-        if (! $input->isInteractive() && $inputParam->isRequired()) {
-            throw new InvalidArgumentException(sprintf('Missing required value for --%s parameter', $name));
-        }
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelperSet()->get('question');
-        $value = $helper->ask($input, $output, $question);
-
-        // set the option value so it can be reused in chains
-        $input->setOption($name, $value);
-
-        return $value;
+        $this->description = $description;
+        return $this;
     }
 
-    /**
-     * @param string|array|null $shortcut
-     * @param null|mixed $default
-     * @return $this
-     */
-    abstract public function addOption(
-        string $name,
-        $shortcut = null,
-        ?int $mode = null,
-        string $description = '',
-        $default = null
-    );
+    public function setShortcut(?string $shortcut): InputParamInterface
+    {
+        $this->shortcut = $shortcut;
+        return $this;
+    }
 
-    /**
-     * @return Application
-     */
-    abstract public function getApplication();
+    public function setRequiredFlag(bool $required): InputParamInterface
+    {
+        $this->required = $required;
+        return $this;
+    }
 }

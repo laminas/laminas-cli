@@ -13,17 +13,17 @@ namespace LaminasTest\Cli\TestAsset;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
-    'modules' => [],
+    'modules'                 => [],
     'module_listener_options' => [],
-    'laminas-cli' => [
+    'laminas-cli'             => [
         'commands' => [
             'example:command-with-deps' => ExampleCommandWithDependencies::class,
         ],
     ],
-    'service_manager' => [
+    'service_manager'         => [
         'factories' => [
             ExampleCommandWithDependencies::class => ExampleCommandWithDependenciesFactory::class,
-            ExampleDependency::class => InvokableFactory::class,
+            ExampleDependency::class              => InvokableFactory::class,
         ],
     ],
 ];

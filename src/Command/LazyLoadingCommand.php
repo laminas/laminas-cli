@@ -8,14 +8,17 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Cli;
+namespace Laminas\Cli\Command;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function sprintf;
 
 /**
  * @internal
@@ -36,7 +39,7 @@ final class LazyLoadingCommand extends Command
         parent::__construct();
 
         $this->commandClass = $commandClass;
-        $this->container = $container;
+        $this->container    = $container;
 
         /** @var Command $command */
         $command = (new ReflectionClass($commandClass))->newInstanceWithoutConstructor();
@@ -50,12 +53,18 @@ final class LazyLoadingCommand extends Command
         $this->setHelp($command->getHelp());
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    public function run(InputInterface $input, OutputInterface $output): int
     {
-        return $this->getCommand()->execute($input, $output);
+        return $this->getCommand()->run($input, $output);
     }
 
-    private function getCommand() : parent
+    // phpcs:ignore WebimpressCodingStandard.Functions.ReturnType.InvalidNoReturn
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        throw new RuntimeException(sprintf('The method %s should never be called.', __METHOD__));
+    }
+
+    private function getCommand(): parent
     {
         if ($this->command === null) {
             $this->command = $this->container->get($this->commandClass);
@@ -65,7 +74,7 @@ final class LazyLoadingCommand extends Command
         return $this->command;
     }
 
-    public function getCommandClass() : string
+    public function getCommandClass(): string
     {
         return $this->commandClass;
     }

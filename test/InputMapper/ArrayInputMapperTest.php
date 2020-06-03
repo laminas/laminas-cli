@@ -1,10 +1,10 @@
 <?php
 
 /**
-* @see       https://github.com/laminas/laminas-cli for the canonical source repository
-* @copyright https://github.com/laminas/laminas-cli/blob/master/COPYRIGHT.md
-* @license   https://github.com/laminas/laminas-cli/blob/master/LICENSE.md New BSD License
-*/
+ * @see       https://github.com/laminas/laminas-cli for the canonical source repository
+ * @copyright https://github.com/laminas/laminas-cli/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas/laminas-cli/blob/master/LICENSE.md New BSD License
+ */
 
 declare(strict_types=1);
 
@@ -29,18 +29,18 @@ class ArrayInputMapperTest extends TestCase
         ]);
 
         $mapper = new ArrayInputMapper([
-            'arg1' => 'first-arg',
-            'arg2' => 'second-arg',
+            'arg1'   => 'first-arg',
+            'arg2'   => 'second-arg',
             '--opt1' => '--first-opt',
             '--opt2' => 'third-arg',
         ]);
 
         self::assertSame(
             [
-                'first-arg' => 'foo-arg-1',
-                'second-arg' => 'bar-arg-2',
+                'first-arg'   => 'foo-arg-1',
+                'second-arg'  => 'bar-arg-2',
                 '--first-opt' => true,
-                'third-arg' => 'baz',
+                'third-arg'   => 'baz',
             ],
             $mapper($input)
         );
@@ -55,13 +55,13 @@ class ArrayInputMapperTest extends TestCase
         $mapper = new ArrayInputMapper([
             ['arg1' => 'foo'],
             ['--opt1' => 'bar'],
-            'name' => 'module',
+            'name'   => 'module',
             '--mode' => '--mode',
         ]);
 
         self::assertSame(
             [
-                'arg1' => 'foo',
+                'arg1'   => 'foo',
                 '--opt1' => 'bar',
                 'module' => 'FooBar',
                 '--mode' => 'dev',
