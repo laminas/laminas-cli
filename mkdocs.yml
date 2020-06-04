@@ -3,7 +3,7 @@ site_dir: docs/html
 nav:
     - Home: index.md
     - Introduction: intro.md
-    - Commands Chain: commands-chain.md
+    - Command Chains: command-chains.md
     - Command Params: command-params.md
 site_name: laminas-cli
 site_description: 'Command-line interface for Laminas projects'
