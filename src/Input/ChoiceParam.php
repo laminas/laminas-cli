@@ -32,7 +32,7 @@ final class ChoiceParam implements InputParamInterface
         $this->haystack = $haystack;
     }
 
-    public function getOptionMode(): ?int
+    public function getOptionMode(): int
     {
         return InputOption::VALUE_REQUIRED;
     }

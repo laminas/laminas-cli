@@ -31,7 +31,7 @@ class InputParamAwareTraitTest extends TestCase
                 $this->name = 'test';
             }
 
-            public function getOptionMode(): ?int
+            public function getOptionMode(): int
             {
                 return InputOption::VALUE_NONE;
             }

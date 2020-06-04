@@ -37,7 +37,7 @@ final class StringParam implements InputParamInterface
         $this->name = $name;
     }
 
-    public function getOptionMode(): ?int
+    public function getOptionMode(): int
     {
         return InputOption::VALUE_REQUIRED;
     }

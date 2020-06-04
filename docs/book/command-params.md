@@ -51,7 +51,7 @@ interface InputParamInterface
     /**
      * Return the Symfony\Component\Console\Input\InputOption::VALUE_* type.
      */
-    public function getOptionMode(): ?int;
+    public function getOptionMode(): int;
 
     public function getShortcut(): ?string;
 

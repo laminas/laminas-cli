@@ -28,7 +28,7 @@ interface InputParamInterface
     /**
      * Return the InputOption VALUE_* type.
      */
-    public function getOptionMode(): ?int;
+    public function getOptionMode(): int;
 
     public function getShortcut(): ?string;
 
