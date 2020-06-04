@@ -448,7 +448,7 @@ class ApplicationTest extends TestCase
         self::assertSame(0, $statusCode);
 
         $contains = [
-            'Invalid value: integer expected, NULL given',
+            'Invalid value: integer expected, null given',
             'Invalid value 13; maximum value is 10',
             'Invalid value -4; minimum value is 1',
             'Int param value: 5',

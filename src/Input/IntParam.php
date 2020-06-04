@@ -14,7 +14,7 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
-use function gettype;
+use function get_debug_type;
 use function is_int;
 use function is_numeric;
 use function sprintf;
@@ -57,7 +57,10 @@ final class IntParam implements InputParamInterface
             }
 
             if (! is_int($value)) {
-                throw new RuntimeException(sprintf('Invalid value: integer expected, %s given', gettype($value)));
+                throw new RuntimeException(sprintf(
+                    'Invalid value: integer expected, %s given',
+                    get_debug_type($value)
+                ));
             }
 
             if ($this->min !== null && $value < $this->min) {

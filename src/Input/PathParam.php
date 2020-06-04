@@ -17,11 +17,12 @@ use Symfony\Component\Console\Question\Question;
 
 use function array_map;
 use function file_exists;
-use function gettype;
+use function get_debug_type;
 use function in_array;
 use function is_dir;
 use function is_string;
 use function preg_replace;
+use function rtrim;
 use function scandir;
 use function sprintf;
 
@@ -80,7 +81,7 @@ final class PathParam implements InputParamInterface
             }
 
             if (! is_string($value)) {
-                throw new RuntimeException(sprintf('Invalid value: string expected, %s given', gettype($value)));
+                throw new RuntimeException(sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
             }
 
             if (! $this->mustExist) {
