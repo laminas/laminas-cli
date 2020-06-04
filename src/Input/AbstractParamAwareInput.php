@@ -40,6 +40,9 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     /** @var array array<string, InputParamInterface> */
     protected $params;
 
+    /**
+     * @param array $params array<string, InputParamInterface>
+     */
     public function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $helper, array $params)
     {
         $this->input  = $input;
