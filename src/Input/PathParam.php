@@ -65,10 +65,8 @@ final class PathParam implements InputParamInterface
             // to keep only the last directory and generate suggestions for it
             $inputPath = preg_replace('%(/|^)[^/]*$%', '$1', $userInput);
             $inputPath = $inputPath === '' ? '.' : $inputPath;
+            $inputPath = rtrim($inputPath, '/\\') . '/';
 
-            // CAUTION - this example code allows unrestricted access to the
-            // entire filesystem. In real applications, restrict the directories
-            // where files and dirs can be found
             $foundFilesAndDirs = is_dir($inputPath) ? scandir($inputPath) : [];
 
             return array_map(static function (string $dirOrFile) use ($inputPath): string {
