@@ -14,12 +14,17 @@ use Laminas\Cli\Command\AbstractParamAwareCommand;
 use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
+use LaminasTest\Cli\TestAsset\ParamAwareCommandStubNonHinted;
+use PackageVersions\Versions;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function str_replace;
+use function strstr;
 
 class ParamAwareCommandTest extends TestCase
 {
@@ -36,7 +41,12 @@ class ParamAwareCommandTest extends TestCase
         $helperSet = $this->prophesize(HelperSet::class);
         $helperSet->get('question')->willReturn($this->questionHelper);
 
-        $this->command = new ParamAwareCommandStub($helperSet->reveal());
+        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true);
+        $commandClass   = str_replace('v', '', $consoleVersion) >= '5.0.0'
+            ? ParamAwareCommandStub::class
+            : ParamAwareCommandStubNonHinted::class;
+
+        $this->command = new $commandClass($helperSet->reveal());
     }
 
     public function testAddParamProxiesToAddOption(): void
