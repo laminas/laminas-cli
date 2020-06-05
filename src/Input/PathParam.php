@@ -12,7 +12,6 @@ namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
 use function array_map;
@@ -55,11 +54,6 @@ final class PathParam implements InputParamInterface
     {
         $this->name = $name;
         $this->setPathType($pathType);
-    }
-
-    public function getOptionMode(): int
-    {
-        return InputOption::VALUE_REQUIRED;
     }
 
     public function getQuestion(): Question

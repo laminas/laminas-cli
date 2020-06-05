@@ -10,6 +10,11 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Input;
 
+use InvalidArgumentException;
+use Symfony\Component\Console\Input\InputOption;
+
+use function sprintf;
+
 /**
  * Provide the majority of methods needed to implement InputParamInterface.
  *
@@ -38,6 +43,13 @@ trait InputParamTrait
      */
     private $name;
 
+    /**
+     * InputOption mode to use with this parameter.
+     *
+     * @var int
+     */
+    private $optionMode = InputOption::VALUE_REQUIRED;
+
     /** @var bool */
     private $required = false;
 
@@ -64,6 +76,11 @@ trait InputParamTrait
         return $this->name;
     }
 
+    public function getOptionMode(): int
+    {
+        return $this->optionMode;
+    }
+
     public function getShortcut(): ?string
     {
         return $this->shortcut;
@@ -86,6 +103,24 @@ trait InputParamTrait
     public function setDescription(string $description): InputParamInterface
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function setOptionMode(int $mode): InputParamInterface
+    {
+        $allowedBits = InputOption::VALUE_NONE
+            | InputOption::VALUE_REQUIRED
+            | InputOption::VALUE_OPTIONAL
+            | InputOption::VALUE_IS_ARRAY;
+        if (0 === $mode & $allowedBits) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid option mode; must be one of %s::VALUE_NONE,'
+                . ' VALUE_REQUIRED, VALUE_OPTIONAL, VALUE_IS_ARRAY, or a'
+                . ' union of two or more of those types',
+                InputOption::class
+            ));
+        }
+        $this->optionMode = $mode;
         return $this;
     }
 

@@ -48,6 +48,13 @@ interface InputParamInterface
     public function setDescription(string $description): InputParamInterface;
 
     /**
+     * @param int $mode MUST BE one of the InputOption::VALUE_* constants, or a
+     *     bitmask of them.
+     * @return $this
+     */
+    public function setOptionMode(int $mode): InputParamInterface;
+
+    /**
      * @return $this
      */
     public function setShortcut(string $shortcut): InputParamInterface;

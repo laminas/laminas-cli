@@ -33,6 +33,7 @@ Input parameters are classes that implement
 ```php
 namespace Laminas\Cli\Input;
 
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
 interface InputParamInterface
@@ -66,6 +67,13 @@ interface InputParamInterface
 
     public function setDescription(string $description): self;
 
+    /**
+     * @param int $mode MUST BE one of the InputOption::VALUE_* constants, or a
+     *     bitmask of them.
+     * @return $this
+     */
+    public function setOptionMode(int $mode): InputParamInterface;
+
     public function setShortcut(string $shortcut): self;
 
     public function setRequiredFlag(bool $required): self;
@@ -73,11 +81,8 @@ interface InputParamInterface
 ```
 
 We provide the trait `Laminas\Cli\Input\InputParamTrait` to implement the
-majority of the methods in the interface; the only omissions are:
+majority of the methods in the interface; the only omission is:
 
-- `getOptionMode()`: This method should return the appropriate
-  `Symfony\Component\Console\Input\InputOption::VALUE_*` type (usually one of
-  `VALUE_NONE` or `VALUE_REQUIRED`).
 - `getQuestion()`: Each parameter type will define its own `Question` to return.
 
 Another trait, `Laminas\Cli\Input\StandardQuestionTrait`, composes the
@@ -327,11 +332,6 @@ class CustomParam implements InputParamInterface
         $this->name = $name;
     }
 
-    public function getOptionMode(): int
-    {
-        return InputOption::VALUE_REQUIRED;
-    }
-
     public function getQuestion(): Question
     {
         $customQuestion = new Question('Please provide value for custom parameter:');
@@ -367,11 +367,6 @@ $this->addParam(
           public function __construct(string $name)
           {
               $this->name = $name;
-          }
-
-          public function getOptionMode(): int
-          {
-              return InputOption::VALUE_REQUIRED;
           }
 
           public function getQuestion(): Question

@@ -23,11 +23,7 @@ final class BoolParam implements InputParamInterface
     public function __construct(string $name)
     {
         $this->name = $name;
-    }
-
-    public function getOptionMode(): int
-    {
-        return InputOption::VALUE_NONE;
+        $this->setOptionMode(InputOption::VALUE_NONE);
     }
 
     public function getQuestion(): Question

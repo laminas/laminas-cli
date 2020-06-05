@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Input;
 
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
@@ -30,11 +29,6 @@ final class ChoiceParam implements InputParamInterface
     {
         $this->name     = $name;
         $this->haystack = $haystack;
-    }
-
-    public function getOptionMode(): int
-    {
-        return InputOption::VALUE_REQUIRED;
     }
 
     public function getQuestion(): Question

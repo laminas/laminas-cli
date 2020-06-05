@@ -12,7 +12,6 @@ namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
 use function get_debug_type;
@@ -35,11 +34,6 @@ final class StringParam implements InputParamInterface
     public function __construct(string $name)
     {
         $this->name = $name;
-    }
-
-    public function getOptionMode(): int
-    {
-        return InputOption::VALUE_REQUIRED;
     }
 
     public function getQuestion(): Question
