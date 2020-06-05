@@ -45,11 +45,16 @@ final class PathParam implements InputParamInterface
      *
      * @var string
      */
-    private $type = self::TYPE_FILE;
+    private $type;
 
-    public function __construct(string $name)
+    /**
+     * @param string $pathType One of the TYPE_* constants, indicating whether
+     *     the path expected should be a directory or a file.
+     */
+    public function __construct(string $name, string $pathType)
     {
         $this->name = $name;
+        $this->setPathType($pathType);
     }
 
     public function getOptionMode(): int
@@ -103,7 +108,13 @@ final class PathParam implements InputParamInterface
         return $question;
     }
 
-    public function setPathType(string $type): self
+    public function setPathMustExist(bool $flag): self
+    {
+        $this->mustExist = $flag;
+        return $this;
+    }
+
+    private function setPathType(string $type): void
     {
         if (! in_array($type, [self::TYPE_DIR, self::TYPE_FILE], true)) {
             throw new InvalidArgumentException(sprintf(
@@ -114,12 +125,5 @@ final class PathParam implements InputParamInterface
         }
 
         $this->type = $type;
-        return $this;
-    }
-
-    public function setPathMustExist(bool $flag): self
-    {
-        $this->mustExist = $flag;
-        return $this;
     }
 }

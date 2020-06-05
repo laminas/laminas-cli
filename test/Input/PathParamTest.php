@@ -31,7 +31,7 @@ class PathParamTest extends TestCase
 
     public function setUp(): void
     {
-        $this->param = new PathParam('test');
+        $this->param = new PathParam('test', PathParam::TYPE_FILE);
         $this->param->setDescription('Selected path');
     }
 
@@ -109,9 +109,9 @@ class PathParamTest extends TestCase
 
     public function testValidatorRaisesExceptionIfFileExistsButMustBeADirectory(): void
     {
-        $this->param->setPathMustExist(true);
-        $this->param->setPathType(PathParam::TYPE_DIR);
-        $validator = $this->param->getQuestion()->getValidator();
+        $param = new PathParam('test', PathParam::TYPE_DIR);
+        $param->setPathMustExist(true);
+        $validator = $param->getQuestion()->getValidator();
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Path is not a valid directory');
@@ -128,9 +128,9 @@ class PathParamTest extends TestCase
 
     public function testValidatorReturnsValueVerbatimIfDirExists(): void
     {
-        $this->param->setPathMustExist(true);
-        $this->param->setPathType(PathParam::TYPE_DIR);
-        $validator = $this->param->getQuestion()->getValidator();
+        $param = new PathParam('test', PathParam::TYPE_DIR);
+        $param->setPathMustExist(true);
+        $validator = $param->getQuestion()->getValidator();
 
         $this->assertSame(__DIR__, $validator(__DIR__));
     }
@@ -148,10 +148,10 @@ class PathParamTest extends TestCase
         $this->assertTrue($actual, 'One or more autocompletion paths were invalid');
     }
 
-    public function testSetPathTypeRaisesExceptionForInvalidTypeValue(): void
+    public function testConstructorRaisesExceptionForInvalidTypeValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid type provided');
-        $this->param->setPathType('not-a-valid-type');
+        new PathParam('test', 'not-a-valid-type');
     }
 }
