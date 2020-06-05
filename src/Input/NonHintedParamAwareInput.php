@@ -28,93 +28,48 @@ final class NonHintedParamAwareInput extends AbstractParamAwareInput
         // deliberate no-op
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string|array $values
-     * @param bool         $onlyParams
-     * @return bool
-     */
+    // Proxy methods implementing interface
+    // phpcs:disable WebimpressCodingStandard.Functions.Param.MissingSpecification, WebimpressCodingStandard.Functions.ReturnType.ReturnValue
+
     public function hasParameterOption($values, $onlyParams = false)
     {
         return $this->input->hasParameterOption($values, $onlyParams);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string|array $values
-     * @param mixed        $default
-     * @param bool         $onlyParams
-     * @return mixed
-     */
     public function getParameterOption($values, $default = false, $onlyParams = false)
     {
         return $this->input->getParameterOption($values, $default, $onlyParams);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $name
-     * @return mixed
-     */
     public function getArgument($name)
     {
         return $this->input->getArgument($name);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string               $name
-     * @param string|string[]|null $value The argument value
-     */
     public function setArgument($name, $value)
     {
         $this->input->setArgument($name, $value);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $name
-     * @return mixed
-     */
     public function getOption($name)
     {
         return $this->input->getOption($name);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string                    $name
-     * @param string|string[]|bool|null $value The option value
-     */
     public function setOption($name, $value)
     {
         $this->input->setOption($name, $value);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $name
-     * @return bool
-     */
     public function hasOption($name)
     {
         return $this->input->hasOption($name);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param bool $interactive
-     */
     public function setInteractive($interactive)
     {
         $this->input->setInteractive($interactive);
     }
+
+    // phpcs:enable
 }

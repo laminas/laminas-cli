@@ -111,78 +111,44 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         return $value;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return null|string
-     */
+    // Proxy methods implementing interface (common across symfony/console versions)
+    // phpcs:disable WebimpressCodingStandard.Functions.Param.MissingSpecification, WebimpressCodingStandard.Functions.ReturnType.ReturnValue
+
     public function getFirstArgument()
     {
         return $this->input->getFirstArgument();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function bind(InputDefinition $definition)
     {
         $this->input->bind($definition);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function validate()
     {
         $this->input->validate();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return array
-     */
     public function getArguments()
     {
         return $this->input->getArguments();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string|int $name
-     * @return bool
-     */
     public function hasArgument($name)
     {
         return $this->input->hasArgument($name);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return array
-     */
     public function getOptions()
     {
         return $this->input->getOptions();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return bool
-     */
     public function isInteractive()
     {
         return $this->input->isInteractive();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param null|resource $stream
-     */
     public function setStream($stream)
     {
         if (! $this->input instanceof StreamableInputInterface) {
@@ -191,11 +157,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         $this->input->setStream($stream);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return null|resource
-     */
     public function getStream()
     {
         if (! $this->input instanceof StreamableInputInterface) {
@@ -203,4 +164,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
         return $this->input->getStream();
     }
+
+    // phpcs:enable
 }

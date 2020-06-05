@@ -78,7 +78,7 @@ abstract class AbstractParamAwareCommand extends Command
      * `parent::run()` OR inline the code from this implementation if you are
      * using input parameters.
      *
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function run(InputInterface $input, OutputInterface $output): int
     {
