@@ -12,10 +12,11 @@ namespace Laminas\Cli\Command;
 
 use Laminas\Cli\Input\InputParamInterface;
 use Laminas\Cli\Input\NonHintedParamAwareInput;
+use Laminas\Cli\Input\ParamAwareInputInterface;
 use Laminas\Cli\Input\TypeHintedParamAwareInput;
 use PackageVersions\Versions;
 use RuntimeException;
-use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,14 +28,14 @@ use function strstr;
 /**
  * Provide promptable input options to your command.
  *
- * Compose this trait in your symfony/console command in order to provide the
+ * Extend this class to create a symfony/console command that provides the
  * ability to define options that will result in interactive prompts when not
  * provided. Such parameters can be added using the `addParam()` construct. When
  * present, you can then use `$input->getParam($name)` to retrieve the value. If
  * the value was provided as an option, that value will be returned; otherwise,
  * it will prompt the user for the value.
  */
-trait ParamAwareCommandTrait
+abstract class AbstractParamAwareCommand extends Command
 {
     /** @var array array<string, InputParamInterface> */
     private $inputParams = [];
@@ -69,39 +70,50 @@ trait ParamAwareCommandTrait
         return $this;
     }
 
-    final public function run(InputInterface $input, OutputInterface $output): int
+    /**
+     * Overrides the Symfony\Component\Console\Command\Command::run method to
+     * decorate incoming input via a ParamAwareInputInterface implementation.
+     *
+     * If you override the method in your own code, you MUST call
+     * `parent::run()` OR inline the code from this implementation if you are
+     * using input parameters.
+     *
+     * @inheritDoc
+     */
+    public function run(InputInterface $input, OutputInterface $output): int
     {
-        $consoleVersion      = strstr(Versions::getVersion('symfony/console'), '@', true);
-        $inputDecoratorClass = str_replace('v', '', $consoleVersion) >= '5.0.0'
-            ? TypeHintedParamAwareInput::class
-            : NonHintedParamAwareInput::class;
-
         return parent::run(
-            new $inputDecoratorClass(
-                $input,
-                $output,
-                $this->getHelperSet()->get('question'),
-                $this->inputParams
-            ),
+            $this->decorateInputToBeParamAware($input, $output),
             $output
         );
     }
 
     /**
-     * @param string|array|null $shortcut
-     * @param null|mixed        $default Defaults to null.
-     * @return $this
+     * Decorate an input to be parameter aware.
+     *
+     * This method decorates incoming input such that it can fulfill the
+     * ParamAwareInputInterface. If it already is, it will be returned verbatim;
+     * otherwise, it is decorated in an instance appropriate to the
+     * symfony/console version currently in use.
      */
-    abstract public function addOption(
-        string $name,
-        $shortcut = null,
-        ?int $mode = null,
-        string $description = '',
-        $default = null
-    );
+    final protected function decorateInputToBeParamAware(
+        InputInterface $input,
+        OutputInterface $output
+    ): ParamAwareInputInterface {
+        if ($input instanceof ParamAwareInputInterface) {
+            return $input;
+        }
 
-    /**
-     * @return HelperSet
-     */
-    abstract public function getHelperSet();
+        $consoleVersion      = strstr(Versions::getVersion('symfony/console'), '@', true);
+        $inputDecoratorClass = str_replace('v', '', $consoleVersion) >= '5.0.0'
+            ? TypeHintedParamAwareInput::class
+            : NonHintedParamAwareInput::class;
+
+        return new $inputDecoratorClass(
+            $input,
+            $output,
+            $this->getHelperSet()->get('question'),
+            $this->inputParams
+        );
+    }
 }

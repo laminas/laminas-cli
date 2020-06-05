@@ -10,13 +10,12 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\Command;
 
-use Laminas\Cli\Command\ParamAwareCommandTrait;
+use Laminas\Cli\Command\AbstractParamAwareCommand;
 use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ParamAwareCommandTest extends TestCase
 {
-    /** @var Command */
+    /** @var AbstractParamAwareCommand */
     private $command;
 
     /** @var QuestionHelper|ObjectProphecy */
@@ -37,49 +36,7 @@ class ParamAwareCommandTest extends TestCase
         $helperSet = $this->prophesize(HelperSet::class);
         $helperSet->get('question')->willReturn($this->questionHelper);
 
-        $this->command = new class ($helperSet->reveal()) extends ParamAwareCommandStub {
-            use ParamAwareCommandTrait;
-
-            /** @var array */
-            public $options = [];
-
-            /** HelperSet */
-            private $helperSet;
-
-            public function __construct(HelperSet $helperSet)
-            {
-                $this->helperSet = $helperSet;
-            }
-
-            /**
-             * @param string|array|null $shortcut
-             * @param null|mixed        $default Defaults to null.
-             * @return $this
-             */
-            public function addOption(
-                string $name,
-                $shortcut = null,
-                ?int $mode = null,
-                string $description = '',
-                $default = null
-            ) {
-                $this->options[$name] = [
-                    'shortcut'    => $shortcut,
-                    'mode'        => $mode,
-                    'description' => $description,
-                    'default'     => $default,
-                ];
-                return $this;
-            }
-
-            /**
-             * @return HelperSet
-             */
-            public function getHelperSet()
-            {
-                return $this->helperSet;
-            }
-        };
+        $this->command = new ParamAwareCommandStub($helperSet->reveal());
     }
 
     public function testAddParamProxiesToAddOption(): void

@@ -203,26 +203,24 @@ final class StringParam implements InputParamInterface
 
 ## Adding input parameters to a command
 
-In order to define input parameters in your command, you will need to compose
-`Laminas\Cli\Command\ParamAwareCommandTrait` in your command class definition. The
-class provides a method, `addParam()`, for adding an input parameter. The method
-accepts a single parameter, a `Laminas\Cli\Input\InputParamInterface` instance.
+In order to define input parameters in your command, your command will need to
+extend `Laminas\Cli\Command\AbstractParamAwareCommand`. That class class extends
+`Symfony\Component\Console\Command\Command` and provides one additional method,
+`addParam()`, for adding an input parameter. The method accepts a single
+parameter, a `Laminas\Cli\Input\InputParamInterface` instance.
 
-Please consider the following command, which adds a "name" parameter that
-expects a string:
+As an example, the following command adds a "name" parameter that expects a
+string:
 
 ```php
-use Laminas\Cli\Command\ParamAwareCommandTrait;
+use Laminas\Cli\Command\AbstractParamAwareCommand;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use Laminas\Cli\Input\StringParam;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class HelloCommand extends Command
+final class HelloCommand extends AbstractParamAwareCommand
 {
-    use ParamAwareCommandTrait;
-
     /** @var string */
     public static $defaultName = 'example:hello';
 
@@ -290,6 +288,22 @@ Hello Michal!
 ```
 
 As you can see, there is no prompt!
+
+> ### AbstractParamAwareCommand::run
+>
+> The `AbstractParamAwareCommand` class overrides the symfony/console
+> `Command::run()` method internally in order to decorate the input in a
+> `ParamAwareInputInterface` implementation. If you decide you need to override
+> the method yourself you MUST add one of the following lines within your
+> implementation:
+>
+> ```php
+> // If you will be calling the parent run() method:
+> parent::run($input, $output);
+>
+> // If you will not be calling the parent run() method:
+> $input = $this->decorateInputToBeParamAware($input, $output);
+> ```
 
 ## Creating custom parameter types
 

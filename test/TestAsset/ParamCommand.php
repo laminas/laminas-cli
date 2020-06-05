@@ -10,17 +10,14 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-use Laminas\Cli\Command\ParamAwareCommandTrait;
+use Laminas\Cli\Command\AbstractParamAwareCommand;
 use Laminas\Cli\Input\IntParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ParamCommand extends Command
+class ParamCommand extends AbstractParamAwareCommand
 {
-    use ParamAwareCommandTrait;
-
     protected function configure(): void
     {
         $this->addParam(
