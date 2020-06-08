@@ -13,6 +13,7 @@ namespace Laminas\Cli\Input;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 
+use function in_array;
 use function sprintf;
 
 /**
@@ -30,6 +31,13 @@ use function sprintf;
  */
 trait InputParamTrait
 {
+    /** @var int[] */
+    private $allowedModes = [
+        InputOption::VALUE_NONE,
+        InputOption::VALUE_REQUIRED,
+        InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+    ];
+
     /** @var mixed */
     private $default;
 
@@ -108,15 +116,10 @@ trait InputParamTrait
 
     public function setOptionMode(int $mode): InputParamInterface
     {
-        $allowedBits = InputOption::VALUE_NONE
-            | InputOption::VALUE_REQUIRED
-            | InputOption::VALUE_OPTIONAL
-            | InputOption::VALUE_IS_ARRAY;
-        if (0 === $mode & $allowedBits) {
+        if (! in_array($mode, $this->allowedModes, true)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid option mode; must be one of %s::VALUE_NONE,'
-                . ' VALUE_REQUIRED, VALUE_OPTIONAL, VALUE_IS_ARRAY, or a'
-                . ' union of two or more of those types',
+                . ' VALUE_REQUIRED, or VALUE_REQUIRED | VALUE_IS_ARRAY',
                 InputOption::class
             ));
         }

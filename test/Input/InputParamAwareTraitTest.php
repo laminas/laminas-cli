@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\Input;
 
+use InvalidArgumentException;
 use Laminas\Cli\Input\InputParamInterface;
 use Laminas\Cli\Input\InputParamTrait;
 use PHPUnit\Framework\TestCase;
@@ -29,11 +30,6 @@ class InputParamAwareTraitTest extends TestCase
             public function __construct()
             {
                 $this->name = 'test';
-            }
-
-            public function getOptionMode(): int
-            {
-                return InputOption::VALUE_NONE;
             }
 
             public function getQuestion(): Question
@@ -90,5 +86,42 @@ class InputParamAwareTraitTest extends TestCase
     {
         $this->inputParam->setRequiredFlag(true);
         $this->assertTrue($this->inputParam->isRequired());
+    }
+
+    public function invalidOptionModes(): iterable
+    {
+        yield 'negative'          => [-1];
+        yield 'zero'              => [0];
+        yield 'out of range'      => [16];
+        yield 'multiple none'     => [InputOption::VALUE_NONE | InputOption::VALUE_IS_ARRAY];
+        yield 'optional'          => [InputOption::VALUE_OPTIONAL];
+        yield 'multiple optional' => [InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY];
+        yield 'multiple only'     => [InputOption::VALUE_IS_ARRAY];
+    }
+
+    /**
+     * @dataProvider invalidOptionModes
+     */
+    public function testSetOptionModeRaisesExceptionForInvalidModes(int $mode): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid option mode');
+        $this->inputParam->setOptionMode($mode);
+    }
+
+    public function validOptionModes(): iterable
+    {
+        yield 'none'              => [InputOption::VALUE_NONE];
+        yield 'required'          => [InputOption::VALUE_REQUIRED];
+        yield 'multiple required' => [InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY];
+    }
+
+    /**
+     * @dataProvider validOptionModes
+     */
+    public function testAllowsSettingValidOptionModeCombinations(int $mode): void
+    {
+        $this->inputParam->setOptionMode($mode);
+        $this->assertSame($mode, $this->inputParam->getOptionMode());
     }
 }
