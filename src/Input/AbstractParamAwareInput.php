@@ -40,7 +40,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     protected $output;
 
     /** @var array<string, InputParamInterface> */
-    protected $params;
+    private $params;
 
     /**
      * @param array<string, InputParamInterface> $params
@@ -66,7 +66,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
      * @throws InvalidArgumentException When the parameter is required, input is
      *     non-interactive, and no value is provided.
      */
-    public function getParam(string $name)
+    final public function getParam(string $name)
     {
         if (! is_array($this->params) || ! isset($this->params[$name])) {
             throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
