@@ -21,6 +21,8 @@ use Symfony\Component\Console\Question\Question;
 use function is_array;
 use function sprintf;
 
+// phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
+// phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidParamName
 /**
  * Decorate an input instance to add a `getParam()` method.
  *
@@ -37,11 +39,11 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     /** @var OutputInterface */
     protected $output;
 
-    /** @var array array<string, InputParamInterface> */
+    /** @var array<string, InputParamInterface> */
     protected $params;
 
     /**
-     * @param array $params array<string, InputParamInterface>
+     * @param array<string, InputParamInterface> $params
      */
     public function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $helper, array $params)
     {

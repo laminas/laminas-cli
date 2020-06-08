@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
 
 /**
  * @see       https://github.com/laminas/laminas-cli for the canonical source repository
@@ -37,7 +37,7 @@ use function strstr;
  */
 abstract class AbstractParamAwareCommand extends Command
 {
-    /** @var array array<string, InputParamInterface> */
+    /** @var array<string, InputParamInterface> */
     private $inputParams = [];
 
     /**
