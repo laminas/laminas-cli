@@ -20,6 +20,7 @@ use Laminas\Cli\Input\TypeHintedParamAwareInput;
 use PackageVersions\Versions;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use stdClass;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -36,6 +37,8 @@ use const STDIN;
 
 class ParamAwareInputTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var string */
     private $class;
 

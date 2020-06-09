@@ -17,6 +17,7 @@ use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStubNonHinted;
 use PackageVersions\Versions;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -28,6 +29,8 @@ use function strstr;
 
 class ParamAwareCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     /** @var AbstractParamAwareCommand */
     private $command;
 
