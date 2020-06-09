@@ -18,7 +18,6 @@ use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-use function is_array;
 use function sprintf;
 
 // phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
@@ -68,7 +67,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
      */
     final public function getParam(string $name)
     {
-        if (! is_array($this->params) || ! isset($this->params[$name])) {
+        if (! isset($this->params[$name])) {
             throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
         }
 
