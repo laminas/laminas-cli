@@ -6,10 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Command-line interface for Laminas projects">  
-    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/commands-chain/">
+    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/command-chains/">
     <link rel="shortcut icon" href="https://docs.laminas.dev/img/trademark-laminas-foundation-rgb.svg">
 
-    <title>Commands Chain - laminas-cli - Laminas Docs</title>
+    <title>Command Chains - laminas-cli - Laminas Docs</title>
 
     <link rel="stylesheet" href="https://docs.laminas.dev/css/styles.css">
     
@@ -144,7 +144,21 @@
                     
                         
                             <li class="subnavigation__list-item subnavigation__list-item--active">
-                                <a href="./" class="subnavigation__link">Commands Chain</a>
+                                <a href="./" class="subnavigation__link">Command Chains</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../command-params/" class="subnavigation__link">Command Params</a>
                             </li>
                         
                     
@@ -215,6 +229,25 @@
 
     
     
+        <div class="toc">
+            <h6 class="toc__headline">On this page</h6>
+            <ul class="toc__list">
+                
+                    <li class="toc__entry">
+                        <a href="#chain-configuration" class="toc__link nav-link">Chain configuration</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#inputmapperinterface" class="toc__link nav-link">InputMapperInterface</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#example" class="toc__link nav-link">Example</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
 
                 
 
@@ -230,7 +263,7 @@
 
                 
 
-                <li class="breadcrumb-item active" aria-current="page">Commands Chain</li>
+                <li class="breadcrumb-item active" aria-current="page">Command Chains</li>
             
         
     </ol>
@@ -244,10 +277,10 @@
     
     
 
-    <h1 id="commands-chain">Commands chain</h1>
-<p>Sometimes we want to execute another command straight after successful run of a command.
-Please consider the following example:</p>
-<p><code>MyApp\Command\FirstCommand.php</code>:</p>
+    <h1 id="command-chains">Command chains</h1>
+<p>Sometimes you may want to execute another command straight after the successful
+completion of another command. As an example, consider the following two
+command classes:</p>
 <pre class="highlight"><code class="language-php">namespace MyApp\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -274,7 +307,6 @@ class FirstCommand extends Command
     }
 }</code></pre>
 
-<p><code>MyApp\Command\SecondCommand.php</code>:</p>
 <pre class="highlight"><code class="language-php">namespace MyApp\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -301,7 +333,8 @@ class SecondCommand extends Command
     }
 }</code></pre>
 
-<p>Then we need only configure the chain:</p>
+<p>We can expose each to laminas-cli, and also create a <em>chain</em>, whereby when the
+first command finishes execution, it will then invoke the second:</p>
 <pre class="highlight"><code class="language-php">namespace MyApp\Command;
 
 return [
@@ -319,32 +352,11 @@ return [
 ];</code></pre>
 
 <blockquote>
-<h4>Chain configuration</h4>
-<pre class="highlight"><code class="language-php">'chains' =&gt; [
-    TriggerCommand::class =&gt; [
-        ChainCommand1::class =&gt; [input mapper definition between TriggerCommand and ChainCommand1],
-        // ...
-        ChainCommandN::class =&gt; [input mapper definition between TriggerCommand and ChainCommandN],
-    ],
-],</code></pre>
-
-<p>Input mapper definition is the way how options and arguments of the trigger command should be mapped
-into input for the chained command. For options <code>--</code> prefix should be used with names, the same how
-we define arguments in symfony console application.</p>
-<p>It is also possible to add additional argument or option to the next command. Just provide an array
-as the value, for example:</p>
-<pre class="highlight"><code class="language-php">[
-   'name'   =&gt; 'module', // adds "module" argument to the next command call with the value of "name" argument from the previous command
-   '--mode' =&gt; '--type', // adds "--type" option to the next command call with the value of "--mode" option from the previous command
-   ['additional-arg'   =&gt; 'arg-value'], // adds "additional-arg" argument to the next command call with the value "arg-value"
-   ['--additional-opt' =&gt; 'opt-value'], // adds "--additional-opt" option to the next command call with the value "opt-value"
-],</code></pre>
-
-<p>It is also possible to provide class name (string) which implements <code>Laminas\Cli\Input\Mapper\InputMapperInterface</code>
-if you need more customised mapper between input of the previous and next command.</p>
+<h3>"chains" configuration options</h3>
+<p>We discuss <a href="#chain-configuration">chain configuration in more detail below</a>.</p>
 </blockquote>
-<p>Now running <code>vendor/bin/laminas first-command</code> will result with:</p>
-<pre class="highlight"><code class="language-console">$ vendor/bin/laminas first-command --name=Foo
+<p>Running <code>./vendor/bin/laminas first-command</code> will result with:</p>
+<pre class="highlight"><code class="language-console">$ ./vendor/bin/laminas first-command --name=Foo
 First command: Foo
 
 Executing second-command. Do you want to continue?
@@ -356,8 +368,127 @@ Executing second-command. Do you want to continue?
 
 Second command: Foo</code></pre>
 
-<p>Please note that only successful result of the first command will trigger the second command.
-The final result (exit code) of the chained commands will be the result of the last executed command.</p>
+<p>Please note that only successful result of the first command will trigger the
+second command.  The final result (exit code) of the chained commands will be
+the result of the last executed command. If a command in the middle of the chain
+results in a failure status, execution will halt with that command, and its
+status will be returned.</p>
+<h2 id="chain-configuration">Chain configuration</h2>
+<p>Chain configuration is under the "chains" section of the "laminas-cli"
+configuration:</p>
+<pre class="highlight"><code class="language-php">&lt;?php
+return [
+    'laminas-cli' =&gt; [
+        'chains' =&gt; [ /* . . . */ ],
+    ],
+];</code></pre>
+
+<p>The configuration is expected to be an associative array mapping command names
+you have previously defined in the "commands" section of the "laminas-cli"
+configuration, and the value is an associative array:</p>
+<pre class="highlight"><code class="language-php">'chains' =&gt; [
+    COMMAND_CLASS_NAME =&gt; CHAINED_COMMANDS
+],</code></pre>
+
+<p>The chained commands (<code>CHAINED_COMMANDS</code>) are themselves an associative array,
+where the key is the name of a command you have already defined in the
+"commands" section of the "laminas-cli" configuration, and the value is an
+associative array:</p>
+<pre class="highlight"><code class="language-php">'chains' =&gt; [
+    COMMAND_CLASS_NAME =&gt; [
+        CHAINED_COMMAND_CLASS_NAME =&gt; INPUT_MAPPER,
+    ],
+],</code></pre>
+
+<p>An input mapper (<code>INPUT_MAPPER</code>) can be one of two things:</p>
+<ul>
+<li>a string class name of an implemention of <code>Laminas\Cli\Input\Mapper\InputMapperInterface</code></li>
+<li>an array specification</li>
+</ul>
+<p>Most commonly, you will use an array specification. In this case, items can take
+two forms:</p>
+<ul>
+<li>a key/value pair, where the key is the option or argument from the previous
+  command, and the value is the option or argument by which to provide the value
+  to the chained command.</li>
+<li>an array, with a single key/value pair of the option or argument name on the
+  chained command, and the value to use with it.</li>
+</ul>
+<p>As a visualization:</p>
+<pre class="highlight"><code class="language-php">'chains' =&gt; [
+    COMMAND_CLASS_NAME =&gt; [
+        'argument-on-previous-command' =&gt; 'argument-on-this-command',
+        '--option-on-previous-command' =&gt; '--option-on-this-command',
+        ['an-argument-on-this-command' =&gt; 'argument value to supply'],
+        ['--an-option-on-this-command' =&gt; 'option value to supply'],
+    ],
+],</code></pre>
+
+<p>When specifying options, the <code>--</code> prefix should be used with the option names,
+just like you'd invoke them from the command line if you were to call the
+command by itself.</p>
+<h3>Chain command input mapper example</h3>
+<p>If we return to the original example from the first section of this page:</p>
+<pre class="highlight"><code class="language-php">namespace MyApp\Command;
+
+return [
+    'laminas-cli' =&gt; [
+        'commands' =&gt; [
+            'first-command'  =&gt; Command\FirstCommand::class,
+            'second-command' =&gt; Command\SecondCommand::class,
+        ],
+        'chains' =&gt; [
+            Command\FirstCommand::class =&gt; [
+                Command\SecondCommand::class =&gt; ['--name' =&gt; '--module'],
+            ],
+        ],
+    ],
+];</code></pre>
+
+<p>We have defined two commands, <code>FirstCommand</code> and <code>SecondCommand</code>. <code>FirstCommand</code>
+defines the option <code>--name</code>, while <code>SecondCommand</code> defines the option
+<code>--module</code>. In the above configuration, we indicate that when we call
+<code>FirstCommand</code>, we want to start a command chain that also invokes
+<code>SecondCommand</code>. When it does so, it should take the value provided via the
+<code>--name</code> option and pass that value to the <code>SecondCommand</code> <code>--module</code> option. In
+effect, that would be similar to calling the following commands in sequence:</p>
+<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas first-command --name Foo
+$ ./vendor/bin/laminas second-command --module Foo</code></pre>
+
+<p>Since <code>FirstCommand</code> now provides a chain, we can call:</p>
+<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas first-command --name Foo</code></pre>
+
+<p>and <code>Foo</code> will be passed for the <code>--module</code> option when <code>SecondCommand</code> is
+invoked as part of the chain.</p>
+<h2 id="inputmapperinterface">InputMapperInterface</h2>
+<p>As noted in the previous section, you can provide a string class name of a
+<code>Laminas\Cli\Input\Mapper\InputMapperInterface</code> implementation to use in order
+to map arguments and options from one command to another. That interface defines
+one method:</p>
+<pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input\Mapper;
+
+use Symfony\Component\Console\Input\InputInterface;
+
+interface InputMapperInterface
+{
+    public function __invoke(InputInterface $input): array;
+}</code></pre>
+
+<p>The return value should be an associative array mapping arguments and options to
+the values they contain, suitable for use with
+<code>Symfony\Component\Console\Input\ArrayInput</code> (<a href="https://symfony.com/doc/current/console/calling_commands.html">see symfony/console documentation
+for details</a>);</p>
+<h2 id="example">Example</h2>
+<p>The initial section of this page</p>
+<pre class="highlight"><code class="language-php">[
+   'name'   =&gt; 'module', // adds "module" argument to the next command call with the value of "name" argument from the previous command
+   '--mode' =&gt; '--type', // adds "--type" option to the next command call with the value of "--mode" option from the previous command
+   ['additional-arg'   =&gt; 'arg-value'], // adds "additional-arg" argument to the next command call with the value "arg-value"
+   ['--additional-opt' =&gt; 'opt-value'], // adds "--additional-opt" option to the next command call with the value "opt-value"
+],</code></pre>
+
+<p>It is also possible to provide class name (string) which implements <code>Laminas\Cli\Input\Mapper\InputMapperInterface</code>
+if you need more customised mapper between input of the previous and next command.</p>
 
 
 
@@ -377,6 +508,10 @@ The final result (exit code) of the chained commands will be the result of the l
         
         <li class="page-nav__item">
             
+                <a rel="next" class="page-nav__link page-nav__link--next" href="../command-params/">
+                    Next <i class="fa fa-chevron-right"></i>
+                </a>
+            
         </li>
     </ul>
 </nav>
@@ -387,7 +522,7 @@ The final result (exit code) of the chained commands will be the result of the l
     <div class="help-wanted">
         <p>
             Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/commands-chain.md" target="_blank" class="help-wanted__link">
+            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/command-chains.md" target="_blank" class="help-wanted__link">
                 Edit this page on GitHub!
             </a>
         </p>
@@ -445,7 +580,21 @@ The final result (exit code) of the chained commands will be the result of the l
                     
                         
                             <li class="subnavigation__list-item subnavigation__list-item--active">
-                                <a href="./" class="subnavigation__link">Commands Chain</a>
+                                <a href="./" class="subnavigation__link">Command Chains</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../command-params/" class="subnavigation__link">Command Params</a>
                             </li>
                         
                     

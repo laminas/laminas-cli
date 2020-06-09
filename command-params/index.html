@@ -6,10 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Command-line interface for Laminas projects">  
-    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/intro/">
+    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/command-params/">
     <link rel="shortcut icon" href="https://docs.laminas.dev/img/trademark-laminas-foundation-rgb.svg">
 
-    <title>Introduction - laminas-cli - Laminas Docs</title>
+    <title>Command Params - laminas-cli - Laminas Docs</title>
 
     <link rel="stylesheet" href="https://docs.laminas.dev/css/styles.css">
     
@@ -129,8 +129,8 @@
                     
                     
                         
-                            <li class="subnavigation__list-item subnavigation__list-item--active">
-                                <a href="./" class="subnavigation__link">Introduction</a>
+                            <li class="subnavigation__list-item ">
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
                             </li>
                         
                     
@@ -157,8 +157,8 @@
                     
                     
                         
-                            <li class="subnavigation__list-item ">
-                                <a href="../command-params/" class="subnavigation__link">Command Params</a>
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Command Params</a>
                             </li>
                         
                     
@@ -234,15 +234,23 @@
             <ul class="toc__list">
                 
                     <li class="toc__entry">
-                        <a href="#integrating-in-components" class="toc__link nav-link">Integrating in components</a>
+                        <a href="#using-input-parameters" class="toc__link nav-link">Using input parameters</a>
                     </li>
                 
                     <li class="toc__entry">
-                        <a href="#integration-in-other-applications" class="toc__link nav-link">Integration in Other Applications</a>
+                        <a href="#input-parameter-types" class="toc__link nav-link">Input parameter types</a>
                     </li>
                 
                     <li class="toc__entry">
-                        <a href="#usage" class="toc__link nav-link">Usage</a>
+                        <a href="#standard-input-parameter-types" class="toc__link nav-link">Standard input parameter types</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#adding-input-parameters-to-a-command" class="toc__link nav-link">Adding input parameters to a command</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#creating-custom-parameter-types" class="toc__link nav-link">Creating custom parameter types</a>
                     </li>
                 
             </ul>
@@ -263,7 +271,7 @@
 
                 
 
-                <li class="breadcrumb-item active" aria-current="page">Introduction</li>
+                <li class="breadcrumb-item active" aria-current="page">Command Params</li>
             
         
     </ol>
@@ -277,139 +285,319 @@
     
     
 
-    <h1 id="introduction">Introduction</h1>
-<p>laminas-cli is a command-line interface for Laminas projects.</p>
-<p>It provides seamless integration with Laminas MVC and Mezzio applications.</p>
-<p>Both third-party packages and your own application can extend it by writing
-commands and exposing them to the laminas-cli binary via configuration.</p>
-<h2 id="integrating-in-components">Integrating in components</h2>
-<p>If you'd like to add integration with laminas-cli into your components,
-you will need to do the following:</p>
-<ol>
-<li>Add <code>laminas/laminas-cli</code> as a dev dependency:</li>
-</ol>
-<pre class="highlight"><code class="language-bash">$ composer require --dev laminas/laminas-cli</code></pre>
+    <h1 id="command-params">Command Params</h1>
+<p>The Symfony Console component allows commands to define
+<a href="https://symfony.com/doc/current/console/input.html">input arguments and options</a>.</p>
+<p>The laminas-cli package adds a third possibility, <strong>input parameters</strong>, which
+allow you to define command options that will become interactive prompts when
+omitted during command invocation.</p>
+<h2 id="using-input-parameters">Using input parameters</h2>
+<p>Internally, input parameters behave like standard options with the following
+modifications:</p>
+<ul>
+<li>Input parameters are optional by default.</li>
+<li>In interactive mode, when retrieving a parameter value that was not provided
+  as an option, the user will be asked to provide the value.</li>
+<li>In non-interactive mode, if the user does not supply the option during
+  invocation, and the parameter is not marked as required, its
+  default value will be used; otherwise, an exception will be thrown,</li>
+<li><strong>If the parameter has validations or normalizations supplied, these will be
+  applied regardless of whether the option is provided during invocation or when
+  the user is prompted to provide it.</strong></li>
+<li>If the user provides a value via a prompt, that value will be stored as an
+  input option so it can be passed to the <a href="commands-chain.md">next command in the
+  chain</a> (if one is defined).</li>
+</ul>
+<h2 id="input-parameter-types">Input parameter types</h2>
+<p>Input parameters are classes that implement
+<code>Laminas\Cli\Input\InputParamInterface</code>:</p>
+<pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
 
-<ol>
-<li>Create a command class in your library:</li>
-</ol>
-<pre class="highlight"><code class="language-php">namespace MyNamespace\Command;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\Question;
 
-use Symfony\Component\Console\Command\Command;
-
-class MyCommand extends Command
+interface InputParamInterface
 {
-    // ...
+    /**
+     * Default value to use if none provided.
+     *
+     * @return null|mixed
+     */
+    public function getDefault();
+
+    public function getDescription(): string;
+
+    public function getName(): string;
+
+    /**
+     * Return the Symfony\Component\Console\Input\InputOption::VALUE_* type.
+     */
+    public function getOptionMode(): int;
+
+    public function getShortcut(): ?string;
+
+    public function getQuestion(): Question;
+
+    public function isRequired(): bool;
+
+    /**
+     * @param mixed $defaultValue
+     */
+    public function setDefault($defaultValue): self;
+
+    public function setDescription(string $description): self;
+
+    /**
+     * @param int $mode MUST BE one of the InputOption::VALUE_* constants, or a
+     *     bitmask of them.
+     * @return $this
+     */
+    public function setOptionMode(int $mode): InputParamInterface;
+
+    public function setShortcut(string $shortcut): self;
+
+    public function setRequiredFlag(bool $required): self;
 }</code></pre>
 
-<ol>
-<li>Register your command in the container:</li>
-</ol>
-<pre class="highlight"><code class="language-php">// config/autoload/dependencies.global.php:
-return [
-    'dependencies' =&gt; [
-        'invokables' =&gt; [
-            MyNamespace\Command\MyCommand::class =&gt; MyNamespace\Command\MyCommand::class,
-        ],
-    ],
-];</code></pre>
+<p>We provide the abstract class <code>Laminas\Cli\Input\AbstractInputParam</code> to
+implement the majority of the methods in the interface; the only omission is:</p>
+<ul>
+<li><code>getQuestion()</code>: Each parameter type will define its own <code>Question</code> to return.</li>
+</ul>
+<p>The constructor has one required parameter, a <code>string $name</code>; you will need to
+call <code>parent::__construct($name)</code> if you override the constructor (e.g., to
+supply other required arguments).</p>
+<p>Another trait, <code>Laminas\Cli\Input\StandardQuestionTrait</code>, provides
+the method <code>createQuestion()</code>, which returns a
+<code>Symfony\Component\Console\Question\Question</code> instance with a prompt in the form
+of:</p>
+<pre class="highlight"><code class="language-text">&lt;question&gt;{description}&lt;/question&gt; [&lt;comment&gt;{default}&lt;/comment&gt;]:
+&gt;</code></pre>
 
-<ol>
-<li>Register the command with the CLI tooling:</li>
-</ol>
-<pre class="highlight"><code class="language-php">// config/autoload/global.php:
-return [
-    'laminas-cli' =&gt; [
-        'commands' =&gt; [
-            'package:command-name' =&gt; MyNamespace\Command\MyCommand::class,
-        ],
-    ],
-];</code></pre>
+<p>This allows an implementation to use the standard format question, and then add
+things such as <a href="https://symfony.com/doc/current/components/console/helpers/questionhelper.html#normalizing-the-answer">normalizers</a>,
+<a href="https://symfony.com/doc/current/components/console/helpers/questionhelper.html#validating-the-answer">validators</a>,
+or <a href="https://symfony.com/doc/current/components/console/helpers/questionhelper.html#autocompletion">autocompletion</a>.</p>
+<p>You can compose this trait in your own input param implementations, and call it
+from your <code>getQuestion()</code> method if that question format will work for you.</p>
+<h2 id="standard-input-parameter-types">Standard input parameter types</h2>
+<p>We ship several standard input parameter types for use in your applications. All
+parameters require the parameter name as the initial argument, and additional
+arguments as specified below.</p>
+<h3>BoolParam</h3>
+<p><code>Laminas\Cli\Input\BoolParam</code> allows specifying a parameter with a boolean
+value. It emits a <code>Symfony\Component\Console\Question\ConfirmationQuestion</code>.</p>
+<pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
 
-<p>If your component is providing a <code>ConfigProvider</code> (such as in Mezzio
-applications), please provide the configuration in that class instead:</p>
-<pre class="highlight"><code class="language-php">namespace MyNamespace;
-
-class ConfigProvider
+final class BoolParam extends AbstractInputParam
 {
-    public function __invoke() : array
+    public function __construct(string $name);
+}</code></pre>
+
+<h3>ChoiceParam</h3>
+<p><code>Laminas\Cli\Input\ChoiceParam</code> allows specifying a set of choices from which
+the user may select a value, emitting a <code>Symfony\Component\Console\Question\ChoiceQuestion</code>.</p>
+<pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
+
+final class ChoiceParam extends AbstractInputParam
+{
+    use StandardQuestionTrait;
+
+    public function __construct(string $name, array $haystack);
+}</code></pre>
+
+<h3>IntParam</h3>
+<p><code>Laminas\Cli\Input\IntParam</code> allows specifying that a value must be an integer,
+and optionally be more than a minimum value and/or less than a maximum value.</p>
+<pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
+
+final class IntParam extends AbstractInputParam
+{
+    use StandardQuestionTrait;
+
+    public function __construct(string $name);
+
+    public function setMin(?int $min): self;
+
+    public function setMax(?int $max): self;
+}</code></pre>
+
+<h3>PathParam</h3>
+<p><code>Laminas\Cli\Input\PathParam</code> allows specifying that a value must be a path on
+the filesystem, requiring that you specifiy which, and optionally requiring that
+it exist.</p>
+<pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
+
+final class PathParam extends AbstractInputParam
+{
+    use StandardQuestionTrait;
+
+    public const TYPE_DIR  = 'dir';
+    public const TYPE_FILE = 'file';
+
+    /**
+     * @param string $pathType One of the TYPE_* constants, indicating whether
+     *     the path expected should be a directory or a file.
+     */
+    public function __construct(string $name, string $pathType);
+
+    public function setPathMustExist(bool $flag): self;
+}</code></pre>
+
+<h3>StringParam</h3>
+<p><code>Laminas\Cli\Input\StringParam</code> allows specifying that a value must be a string,
+and optionally match a PCRE regex.</p>
+<pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
+
+final class StringParam extends AbstractInputParam
+{
+    use StandardQuestionTrait;
+
+    public function __construct(string $name);
+
+    /**
+     * @param string $pattern A valid PCRE regex pattern.
+     */
+    public function setPattern(string $pattern): self;
+}</code></pre>
+
+<h2 id="adding-input-parameters-to-a-command">Adding input parameters to a command</h2>
+<p>In order to define input parameters in your command, your command will need to
+extend <code>Laminas\Cli\Command\AbstractParamAwareCommand</code>. That class class extends
+<code>Symfony\Component\Console\Command\Command</code> and provides one additional method,
+<code>addParam()</code>, for adding an input parameter. The method accepts a single
+parameter, a <code>Laminas\Cli\Input\InputParamInterface</code> instance.</p>
+<p>As an example, the following command adds a "name" parameter that expects a
+string:</p>
+<pre class="highlight"><code class="language-php">use Laminas\Cli\Command\AbstractParamAwareCommand;
+use Laminas\Cli\Input\ParamAwareInputInterface;
+use Laminas\Cli\Input\StringParam;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+final class HelloCommand extends AbstractParamAwareCommand
+{
+    /** @var string */
+    public static $defaultName = 'example:hello';
+
+    protected function configure() : void
     {
-        return [
-            'laminas-cli' =&gt; $this-&gt;getCliConfig(),
-            'dependencies' =&gt; $this-&gt;getDependencyConfig(),
-        ];
+        $this-&gt;setName(self::$defaultName);
+        $this-&gt;addParam(
+            (new StringParam('name'))
+            -&gt;setDescription('Your name')
+            -&gt;setShortcut('n')
+        );
     }
 
-    public function getCliConfig() : array
+    /**
+     * @param ParamAwareInputInterface $input
+     */
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        return [
-            'commands' =&gt; [
-                'package:command-name' =&gt; Command\MyCommand::class,
-            ],
-        ];
-    }
+        $name = $input-&gt;getParam('name');
+        $output-&gt;writeln('Hello ' . $name . '!');
 
-    public function getDependencyConfig() : array
-    {
-        return [
-            'invokables' =&gt; [
-                Command\MyCommand::class =&gt; Command\MyCommand::class,
-            ],
-        ];
+        return 0;
     }
 }</code></pre>
 
-<p>If you want to provide a <code>Module</code> class for Laminas MVC, provide a
-<code>ConfigProvider</code> as noted above, and then add the following <code>Module</code> class
-declaration:</p>
-<pre class="highlight"><code class="language-php">namespace MyNamespace;
+<blockquote>
+<h3>ParamAwareInputInterface</h3>
+<p>Internally, we decorate the input instance from the
+application with a class implementing our own <code>ParamAwareInputInterface</code>. This
+interface extends each of <code>Symfony\Component\Console\Input\InputInterface</code> and
+<code>StreamableInputInterface</code>, and adds the method <code>getParam(string $name)</code> for
+retrieving the input parameter. To ensure IDE completion and static analysis
+work as expected, you should typehint the <code>$input</code> argument as a
+<code>ParamAwareInputInterface</code> via a parameter annotation. (You cannot do so via
+type hint, as it would break compatibility with the <code>AbstractCommand</code>
+signature.)</p>
+</blockquote>
+<p>Adding parameters is similar to adding arguments or options, with one key
+difference: you provide an instance, instead of a series of values. The
+<code>InputParamInterface</code> and the various concrete implementations define builder
+methods that return <code>$this</code>, allowing you to create the instances in-line in a
+declarative manner.</p>
+<p>Accessing the parameter value is exactly like accessing an option or argument.
+However, unlike those items, parameters will prompt for values if they are
+missing.</p>
+<p>Let's see what happens when we call the command without the parameter:</p>
+<pre class="highlight"><code class="language-console">$ vendor/bin/laminas example:hello
+Your name:
+ &gt; Michal
 
-class Module
+Hello Michal!</code></pre>
+
+<p>If we provide the param value as an option during invocation:</p>
+<pre class="highlight"><code class="language-console">$ vendor/bin/laminas example:hello --name=Michal
+
+Hello Michal!</code></pre>
+
+<p>As you can see, there is no prompt!</p>
+<blockquote>
+<h3>AbstractParamAwareCommand::run</h3>
+<p>The <code>AbstractParamAwareCommand</code> class overrides the symfony/console
+<code>Command::run()</code> method internally in order to decorate the input in a
+<code>ParamAwareInputInterface</code> implementation. If you decide you need to override
+the method yourself you MUST add one of the following lines within your
+implementation:</p>
+<pre class="highlight"><code class="language-php">// If you will be calling the parent run() method:
+parent::run($input, $output);
+
+// If you will not be calling the parent run() method:
+$input = $this-&gt;decorateInputToBeParamAware($input, $output);</code></pre>
+
+</blockquote>
+<h2 id="creating-custom-parameter-types">Creating custom parameter types</h2>
+<p>If none of the <a href="#standard-input-parameter-types">standard input parameter types</a>
+satisfy your use case, you can define a custom parameter type.</p>
+<p>As an example:</p>
+<pre class="highlight"><code class="language-php">use Laminas\Cli\Input\AbstractInputParam;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\Question;
+
+class CustomParam extends AbstractInputParam
 {
-    public function getConfig() : array
+    public function getQuestion(): Question
     {
-        $configProvider = new ConfigProvider();
-
-        return [
-            'laminas-cli' =&gt; $configProvider-&gt;getCliConfig(),
-            'service_manager' =&gt; $configProvider-&gt;getDependencyConfig(),
-        ];
+        $customQuestion = new Question('Please provide value for custom parameter:');
+        // some question modifications, like:
+        $customQuestion-&gt;setValidator(static function (string $value) { /* ... */ });
+        $customQuestion-&gt;setAutocompleterCallback(static function (string $answer) { /* ... */ });
+        $customQuestion-&gt;setNormalizer(static function (string $answer) { /* ... */ });
+        // etc...
+        return $question;
     }
 }</code></pre>
 
-<h2 id="integration-in-other-applications">Integration in Other Applications</h2>
-<p>laminas-cli supports <a href="https://github.com/laminas/laminas-mvc-skeleton">Laminas MVC</a>
-and <a href="https://github.com/mezzio/mezzio-skeleton">Mezzio</a> applications out of the box.
-If you want to use the tool with a different application type, or you have modified
-the default configuration and your <a href="https://www.php-fig.org/psr/psr-11">PSR-11 container</a>
-cannot be detected automatically, you can still use the laminas-cli tool.</p>
-<p>To integrate such applications with laminas-cli, you will need to create a file
-that returns a PSR-11 container. Do so in the file <code>config/container.php</code>. Such
-a file might look like the following:</p>
-<pre class="highlight"><code class="language-php">&lt;?php
-// File config/container.php
+<p>In your command, you would then add it:</p>
+<pre class="highlight"><code class="language-php">$this-&gt;addParam(
+  (new CustomParam('custom'))
+      -&gt;setDescription('Custom parameter')
+      -&gt;setRequiredFlag(true)
+);</code></pre>
 
-declare(strict_types=1);
-
-use JSoumelidis\SymfonyDI\Config\Config;
-use JSoumelidis\SymfonyDI\Config\ContainerFactory;
-
-$config  = require realpath(__DIR__) . '/../var/config.php';
-$factory = new ContainerFactory();
-
-return $factory(new Config($config));</code></pre>
-
-<p>Once such a file is in place, the laminas-cli binary will be able to use your
-container to seed its application.</p>
-<h2 id="usage">Usage</h2>
-<p>To list all available commands, run:</p>
-<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas</code></pre>
-
-<p>To execute a specific command, run:</p>
-<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas &lt;command-name&gt;</code></pre>
-
-<p>To get help on a single command, run:</p>
-<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas help &lt;command-name&gt;</code></pre>
+<p>Alternately, you could define it as an anonymous class implementation, inline
+where you add the parameter:</p>
+<pre class="highlight"><code class="language-php">$this-&gt;addParam(
+  (new class('custom') extends \Laminas\Cli\Input\AbstractInputParam
+      {
+          public function getQuestion(): Question
+          {
+              $customQuestion = new Question('Please provide value for custom parameter:');
+              // some question modifications, like:
+              $customQuestion-&gt;setValidator(static function (string $value) { /* ... */ });
+              $customQuestion-&gt;setAutocompleterCallback(static function (string $answer) { /* ... */ });
+              $customQuestion-&gt;setNormalizer(static function (string $answer) { /* ... */ });
+              // etc...
+              return $question;
+          }
+      }
+  )
+      -&gt;setDescription('Custom parameter')
+      -&gt;setRequiredFlag(true)
+);</code></pre>
 
 
 
@@ -420,7 +608,7 @@ container to seed its application.</p>
         
         <li class="page-nav__item">
             
-                <a rel="prev" class="page-nav__link page-nav__link--prev" href="..">
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../command-chains/">
                     <i class="fa fa-chevron-left"></i> Previous
                 </a>
             
@@ -428,10 +616,6 @@ container to seed its application.</p>
 
         
         <li class="page-nav__item">
-            
-                <a rel="next" class="page-nav__link page-nav__link--next" href="../command-chains/">
-                    Next <i class="fa fa-chevron-right"></i>
-                </a>
             
         </li>
     </ul>
@@ -443,7 +627,7 @@ container to seed its application.</p>
     <div class="help-wanted">
         <p>
             Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/intro.md" target="_blank" class="help-wanted__link">
+            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/command-params.md" target="_blank" class="help-wanted__link">
                 Edit this page on GitHub!
             </a>
         </p>
@@ -486,8 +670,8 @@ container to seed its application.</p>
                     
                     
                         
-                            <li class="subnavigation__list-item subnavigation__list-item--active">
-                                <a href="./" class="subnavigation__link">Introduction</a>
+                            <li class="subnavigation__list-item ">
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
                             </li>
                         
                     
@@ -514,8 +698,8 @@ container to seed its application.</p>
                     
                     
                         
-                            <li class="subnavigation__list-item ">
-                                <a href="../command-params/" class="subnavigation__link">Command Params</a>
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Command Params</a>
                             </li>
                         
                     
