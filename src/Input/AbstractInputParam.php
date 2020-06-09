@@ -18,6 +18,7 @@ use function in_array;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function trim;
 
 /**
  * Provide the majority of methods needed to implement InputParamInterface.
@@ -97,7 +98,9 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this->optionMode;
     }
 
-    // phpcs:ignore WebimpressCodingStandard.Functions.ReturnType.ReturnValue
+    /**
+     * @return null|string|string[]
+     */
     public function getShortcut()
     {
         return $this->shortcut;
@@ -168,15 +171,19 @@ abstract class AbstractInputParam implements InputParamInterface
             ));
         }
 
-        if (empty($shortcut)) {
-            throw new InvalidArgumentException(sprintf(
-                'Shortcut must be a non-zero-length string or an array of strings; received "%s"',
-                is_string($shortcut) ? '' : '[]'
-            ));
+        if (is_string($shortcut)) {
+            if ('' === trim($shortcut, ' -')) {
+                throw new InvalidArgumentException(
+                    'Shortcut must be a non-zero-length string or an array of strings; received ""'
+                );
+            }
+            return;
         }
 
-        if (is_string($shortcut)) {
-            return;
+        if ([] === $shortcut) {
+            throw new InvalidArgumentException(
+                'Shortcut must be a non-zero-length string or an array of strings; received "[]"'
+            );
         }
 
         array_walk($shortcut, function ($shortcut) {
@@ -193,7 +200,7 @@ abstract class AbstractInputParam implements InputParamInterface
                 ));
             }
 
-            if (empty($shortcut)) {
+            if ('' === trim($shortcut, ' -')) {
                 throw new InvalidArgumentException(
                     'String values in arrays provided as shortcut names must not be empty'
                 );
