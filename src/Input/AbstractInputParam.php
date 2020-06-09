@@ -64,7 +64,7 @@ abstract class AbstractInputParam implements InputParamInterface
     /** @var bool */
     private $required = false;
 
-    /** @var null|string|array */
+    /** @var null|string|string[] */
     private $shortcut;
 
     public function __construct(string $name)
@@ -97,7 +97,7 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this->optionMode;
     }
 
-    // phpcs:disable WebimpressCodingStandard.Functions.ReturnType.ReturnValue
+    // phpcs:ignore WebimpressCodingStandard.Functions.ReturnType.ReturnValue
     public function getShortcut()
     {
         return $this->shortcut;
@@ -136,7 +136,7 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this;
     }
 
-    // phpcs:disable WebimpressCodingStandard.Functions.Param.MissingSpecification
+    // phpcs:ignore WebimpressCodingStandard.Functions.Param.MissingSpecification
     public function setShortcut($shortcut): InputParamInterface
     {
         $this->validateShortcut($shortcut);

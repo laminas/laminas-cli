@@ -31,7 +31,7 @@ interface InputParamInterface
     public function getOptionMode(): int;
 
     /**
-     * @return null|string|array
+     * @return null|string|string[]
      */
     public function getShortcut();
 
@@ -58,7 +58,7 @@ interface InputParamInterface
     public function setOptionMode(int $mode): InputParamInterface;
 
     /**
-     * @param null|string|array $shortcut One of (a) a string with a single
+     * @param null|string|string[] $shortcut One of (a) a string with a single
      *     shortcut, (b) a string with multiple shortcuts separated by a "|"
      *     character, or (c) an array of shortcuts.
      * @return $this
