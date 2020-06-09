@@ -13,7 +13,10 @@ namespace Laminas\Cli\Input;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 
+use function array_walk;
 use function in_array;
+use function is_array;
+use function is_string;
 use function sprintf;
 
 /**
@@ -61,7 +64,7 @@ abstract class AbstractInputParam implements InputParamInterface
     /** @var bool */
     private $required = false;
 
-    /** @var null|string */
+    /** @var null|string|array */
     private $shortcut;
 
     public function __construct(string $name)
@@ -94,7 +97,8 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this->optionMode;
     }
 
-    public function getShortcut(): ?string
+    // phpcs:disable WebimpressCodingStandard.Functions.ReturnType.ReturnValue
+    public function getShortcut()
     {
         return $this->shortcut;
     }
@@ -132,8 +136,10 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this;
     }
 
-    public function setShortcut(?string $shortcut): InputParamInterface
+    // phpcs:disable WebimpressCodingStandard.Functions.Param.MissingSpecification
+    public function setShortcut($shortcut): InputParamInterface
     {
+        $this->validateShortcut($shortcut);
         $this->shortcut = $shortcut;
         return $this;
     }
@@ -142,5 +148,56 @@ abstract class AbstractInputParam implements InputParamInterface
     {
         $this->required = $required;
         return $this;
+    }
+
+    /**
+     * @param mixed $shortcut
+     * @throws InvalidArgumentException When shortcut is an invalid type.
+     * @throws InvalidArgumentException When shortcut is empty.
+     */
+    private function validateShortcut($shortcut): void
+    {
+        if (null === $shortcut) {
+            return;
+        }
+
+        if (! is_array($shortcut) && ! is_string($shortcut)) {
+            throw new InvalidArgumentException(sprintf(
+                'Shortcut must be null, a string, or an array; received "%s"',
+                get_debug_type($shortcut)
+            ));
+        }
+
+        if (empty($shortcut)) {
+            throw new InvalidArgumentException(sprintf(
+                'Shortcut must be a non-zero-length string or an array of strings; received "%s"',
+                is_string($shortcut) ? '' : '[]'
+            ));
+        }
+
+        if (is_string($shortcut)) {
+            return;
+        }
+
+        array_walk($shortcut, function ($shortcut) {
+            if (null === $shortcut) {
+                throw new InvalidArgumentException(
+                    'No null values are allowed in arrays provided as shortcut names'
+                );
+            }
+
+            if (! is_string($shortcut)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Only string values are allowed in arrays provided as shortcut names; received "%s"',
+                    get_debug_type($shortcut)
+                ));
+            }
+
+            if (empty($shortcut)) {
+                throw new InvalidArgumentException(
+                    'String values in arrays provided as shortcut names must not be empty'
+                );
+            }
+        });
     }
 }

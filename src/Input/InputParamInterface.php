@@ -30,7 +30,10 @@ interface InputParamInterface
      */
     public function getOptionMode(): int;
 
-    public function getShortcut(): ?string;
+    /**
+     * @return null|string|array
+     */
+    public function getShortcut();
 
     public function getQuestion(): Question;
 
@@ -55,9 +58,12 @@ interface InputParamInterface
     public function setOptionMode(int $mode): InputParamInterface;
 
     /**
+     * @param null|string|array $shortcut One of (a) a string with a single
+     *     shortcut, (b) a string with multiple shortcuts separated by a "|"
+     *     character, or (c) an array of shortcuts.
      * @return $this
      */
-    public function setShortcut(string $shortcut): InputParamInterface;
+    public function setShortcut($shortcut): InputParamInterface;
 
     /**
      * @return $this
