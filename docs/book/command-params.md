@@ -80,13 +80,17 @@ interface InputParamInterface
 }
 ```
 
-We provide the trait `Laminas\Cli\Input\InputParamTrait` to implement the
-majority of the methods in the interface; the only omission is:
+We provide the abstract class `Laminas\Cli\Input\AbstractInputParam` to
+implement the majority of the methods in the interface; the only omission is:
 
 - `getQuestion()`: Each parameter type will define its own `Question` to return.
 
-Another trait, `Laminas\Cli\Input\StandardQuestionTrait`, composes the
-`InputParamTrait` and adds the method `createQuestion()`, which returns a
+The constructor has one required parameter, a `string $name`; you will need to
+call `parent::__construct($name)` if you override the constructor (e.g., to
+supply other required arguments).
+
+Another trait, `Laminas\Cli\Input\StandardQuestionTrait`, provides
+the method `createQuestion()`, which returns a
 `Symfony\Component\Console\Question\Question` instance with a prompt in the form
 of:
 
@@ -99,6 +103,9 @@ This allows an implementation to use the standard format question, and then add
 things such as [normalizers](https://symfony.com/doc/current/components/console/helpers/questionhelper.html#normalizing-the-answer),
 [validators](https://symfony.com/doc/current/components/console/helpers/questionhelper.html#validating-the-answer),
 or [autocompletion](https://symfony.com/doc/current/components/console/helpers/questionhelper.html#autocompletion).
+
+You can compose this trait in your own input param implementations, and call it
+from your `getQuestion()` method if that question format will work for you.
 
 ## Standard input parameter types
 
@@ -114,10 +121,8 @@ value. It emits a `Symfony\Component\Console\Question\ConfirmationQuestion`.
 ```php
 namespace Laminas\Cli\Input;
 
-final class BoolParam implements InputParamInterface
+final class BoolParam extends AbstractInputParam
 {
-    use InputParamTrait;
-
     public function __construct(string $name);
 }
 ```
@@ -130,7 +135,7 @@ the user may select a value, emitting a `Symfony\Component\Console\Question\Choi
 ```php
 namespace Laminas\Cli\Input;
 
-final class ChoiceParam implements InputParamInterface
+final class ChoiceParam extends AbstractInputParam
 {
     use StandardQuestionTrait;
 
@@ -146,7 +151,7 @@ and optionally be more than a minimum value and/or less than a maximum value.
 ```php
 namespace Laminas\Cli\Input;
 
-final class IntParam implements InputParamInterface
+final class IntParam extends AbstractInputParam
 {
     use StandardQuestionTrait;
 
@@ -161,25 +166,24 @@ final class IntParam implements InputParamInterface
 ### PathParam
 
 `Laminas\Cli\Input\PathParam` allows specifying that a value must be a path on
-the filesystem, optionally requiring that it exist or be one of either a
-directory or file.
+the filesystem, requiring that you specifiy which, and optionally requiring that
+it exist.
 
 ```php
 namespace Laminas\Cli\Input;
 
-final class PathParam implements InputParamInterface
+final class PathParam extends AbstractInputParam
 {
     use StandardQuestionTrait;
 
     public const TYPE_DIR  = 'dir';
     public const TYPE_FILE = 'file';
 
-    public function __construct(string $name);
-
     /**
-     * @param string $type One of the TYPE_* constants
+     * @param string $pathType One of the TYPE_* constants, indicating whether
+     *     the path expected should be a directory or a file.
      */
-    public function setPathType(string $type): self;
+    public function __construct(string $name, string $pathType);
 
     public function setPathMustExist(bool $flag): self;
 }
@@ -193,7 +197,7 @@ and optionally match a PCRE regex.
 ```php
 namespace Laminas\Cli\Input;
 
-final class StringParam implements InputParamInterface
+final class StringParam extends AbstractInputParam
 {
     use StandardQuestionTrait;
 
@@ -318,20 +322,12 @@ satisfy your use case, you can define a custom parameter type.
 As an example:
 
 ```php
-use Laminas\Cli\Input\InputParamInterface;
-use Laminas\Cli\Input\InputParamTrait;
+use Laminas\Cli\Input\AbstractInputParam;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
-class CustomParam implements InputParamInterface
+class CustomParam extends AbstractInputParam
 {
-    use InputParamTrait;
-
-    public function __construct(string $name)
-    {
-        $this->name = $name;
-    }
-
     public function getQuestion(): Question
     {
         $customQuestion = new Question('Please provide value for custom parameter:');
@@ -360,15 +356,8 @@ where you add the parameter:
 
 ```php
 $this->addParam(
-  (new class('custom') implements \Laminas\Cli\Input\InputParamInterface
+  (new class('custom') extends \Laminas\Cli\Input\AbstractInputParam
       {
-          use \Laminas\Cli\Input\InputParamTrait;
-
-          public function __construct(string $name)
-          {
-              $this->name = $name;
-          }
-
           public function getQuestion(): Question
           {
               $customQuestion = new Question('Please provide value for custom parameter:');

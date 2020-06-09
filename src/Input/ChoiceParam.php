@@ -15,10 +15,8 @@ use Symfony\Component\Console\Question\Question;
 
 use function sprintf;
 
-final class ChoiceParam implements InputParamInterface
+final class ChoiceParam extends AbstractInputParam
 {
-    use InputParamTrait;
-
     /** @var array */
     private $haystack;
 
@@ -27,23 +25,24 @@ final class ChoiceParam implements InputParamInterface
      */
     public function __construct(string $name, array $haystack)
     {
-        $this->name     = $name;
+        parent::__construct($name);
         $this->haystack = $haystack;
     }
 
     public function getQuestion(): Question
     {
-        $default = $this->default !== null
-            ? sprintf(' [<comment>%s</comment>]', $this->default)
+        $defaultValue  = $this->getDefault();
+        $defaultPrompt = $defaultValue !== null
+            ? sprintf(' [<comment>%s</comment>]', $defaultValue)
             : '';
         return new ChoiceQuestion(
             sprintf(
                 '<question>%s?</question>%s',
-                $this->description,
-                $default
+                $this->getDescription(),
+                $defaultPrompt
             ),
             $this->haystack,
-            $this->default
+            $defaultValue
         );
     }
 }

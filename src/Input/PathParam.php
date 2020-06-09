@@ -25,7 +25,7 @@ use function rtrim;
 use function scandir;
 use function sprintf;
 
-final class PathParam implements InputParamInterface
+final class PathParam extends AbstractInputParam
 {
     use StandardQuestionTrait;
 
@@ -52,7 +52,7 @@ final class PathParam implements InputParamInterface
      */
     public function __construct(string $name, string $pathType)
     {
-        $this->name = $name;
+        parent::__construct($name);
         $this->setPathType($pathType);
     }
 
@@ -75,7 +75,7 @@ final class PathParam implements InputParamInterface
         });
 
         $question->setValidator(function ($value) {
-            if ($value === null && ! $this->required) {
+            if ($value === null && ! $this->isRequired()) {
                 return null;
             }
 

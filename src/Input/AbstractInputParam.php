@@ -29,7 +29,7 @@ use function sprintf;
  * set it in their constructors without needing to define the property
  * themselves.
  */
-trait InputParamTrait
+abstract class AbstractInputParam implements InputParamInterface
 {
     /** @var int[] */
     private $allowedModes = [
@@ -63,6 +63,11 @@ trait InputParamTrait
 
     /** @var null|string */
     private $shortcut;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
 
     /**
      * Default value to use if none provided.

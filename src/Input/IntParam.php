@@ -18,7 +18,7 @@ use function is_int;
 use function is_numeric;
 use function sprintf;
 
-final class IntParam implements InputParamInterface
+final class IntParam extends AbstractInputParam
 {
     use StandardQuestionTrait;
 
@@ -27,11 +27,6 @@ final class IntParam implements InputParamInterface
 
     /** @var null|int */
     private $min;
-
-    public function __construct(string $name)
-    {
-        $this->name = $name;
-    }
 
     public function getQuestion(): Question
     {
@@ -46,7 +41,7 @@ final class IntParam implements InputParamInterface
         });
 
         $question->setValidator(function ($value) {
-            if ($value === null && ! $this->required) {
+            if ($value === null && ! $this->isRequired()) {
                 return null;
             }
 

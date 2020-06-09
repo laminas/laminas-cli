@@ -16,25 +16,24 @@ use Symfony\Component\Console\Question\Question;
 
 use function sprintf;
 
-final class BoolParam implements InputParamInterface
+final class BoolParam extends AbstractInputParam
 {
-    use InputParamTrait;
-
     public function __construct(string $name)
     {
-        $this->name = $name;
+        parent::__construct($name);
         $this->setOptionMode(InputOption::VALUE_NONE);
     }
 
     public function getQuestion(): Question
     {
+        $default = $this->getDefault();
         return new ConfirmationQuestion(
             sprintf(
                 '<question>%s?</question> [<comment>%s</comment>]',
-                $this->description,
-                $this->default ? 'Y/n' : 'y/N'
+                $this->getDescription(),
+                $default ? 'Y/n' : 'y/N'
             ),
-            $this->default
+            $default
         );
     }
 }

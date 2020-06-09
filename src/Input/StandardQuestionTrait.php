@@ -40,22 +40,26 @@ use const PHP_EOL;
  */
 trait StandardQuestionTrait
 {
-    use InputParamTrait;
-
     private function createQuestion(): Question
     {
-        $default = $this->default !== null
-            ? sprintf(' [<comment>%s</comment>]', $this->default)
+        $defaultValue  = $this->getDefault();
+        $defaultPrompt = $defaultValue !== null
+            ? sprintf(' [<comment>%s</comment>]', $defaultValue)
             : '';
 
         return new Question(
             sprintf(
                 '<question>%s:</question>%s%s > ',
-                $this->description,
-                $default,
+                $this->getDescription(),
+                $defaultPrompt,
                 PHP_EOL
             ),
-            $this->default
+            $defaultValue
         );
     }
+
+    /** @return mixed */
+    abstract public function getDefault();
+
+    abstract public function getDescription(): string;
 }

@@ -24,24 +24,19 @@ use function strstr;
 
 use const E_WARNING;
 
-final class StringParam implements InputParamInterface
+final class StringParam extends AbstractInputParam
 {
     use StandardQuestionTrait;
 
     /** @var null|string */
     private $pattern;
 
-    public function __construct(string $name)
-    {
-        $this->name = $name;
-    }
-
     public function getQuestion(): Question
     {
         $question = $this->createQuestion();
 
         $question->setValidator(function ($value) {
-            if ($value === null && ! $this->required) {
+            if ($value === null && ! $this->isRequired()) {
                 return null;
             }
 

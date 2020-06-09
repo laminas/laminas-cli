@@ -11,8 +11,7 @@ declare(strict_types=1);
 namespace LaminasTest\Cli\Input;
 
 use InvalidArgumentException;
-use Laminas\Cli\Input\InputParamInterface;
-use Laminas\Cli\Input\InputParamTrait;
+use Laminas\Cli\Input\AbstractInputParam;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
@@ -24,12 +23,10 @@ class InputParamAwareTraitTest extends TestCase
 
     public function setUp(): void
     {
-        $this->inputParam = new class implements InputParamInterface {
-            use InputParamTrait;
-
+        $this->inputParam = new class extends AbstractInputParam {
             public function __construct()
             {
-                $this->name = 'test';
+                parent::__construct('test');
             }
 
             public function getQuestion(): Question
