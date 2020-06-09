@@ -186,7 +186,7 @@ abstract class AbstractInputParam implements InputParamInterface
             );
         }
 
-        array_walk($shortcut, function ($shortcut) {
+        array_walk($shortcut, static function ($shortcut) {
             if (null === $shortcut) {
                 throw new InvalidArgumentException(
                     'No null values are allowed in arrays provided as shortcut names'
