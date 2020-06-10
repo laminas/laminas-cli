@@ -10,8 +10,11 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Input;
 
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
+use function implode;
+use function is_array;
 use function sprintf;
 
 use const PHP_EOL;
@@ -44,13 +47,21 @@ trait StandardQuestionTrait
     {
         $defaultValue  = $this->getDefault();
         $defaultPrompt = $defaultValue !== null
-            ? sprintf(' [<comment>%s</comment>]', $defaultValue)
+            ? sprintf(
+                ' [<comment>%s</comment>]',
+                is_array($defaultValue) ? implode(', ', $defaultValue) : $defaultValue
+            )
             : '';
+        $multiPrompt   = sprintf(
+            "\n(Multiple entries allowed; hit Return after each.%s Hit Return to stop prompting)\n",
+            $this->isRequired() ? ' At least one entry is required.' : ''
+        );
 
         return new Question(
             sprintf(
-                '<question>%s:</question>%s%s > ',
+                '<question>%s:</question>%s%s%s > ',
                 $this->getDescription(),
+                $this->getOptionMode() & InputOption::VALUE_IS_ARRAY ? $multiPrompt : '',
                 $defaultPrompt,
                 PHP_EOL
             ),
@@ -62,4 +73,8 @@ trait StandardQuestionTrait
     abstract public function getDefault();
 
     abstract public function getDescription(): string;
+
+    abstract public function getOptionMode(): int;
+
+    abstract public function isRequired(): bool;
 }

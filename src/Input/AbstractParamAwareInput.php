@@ -14,10 +14,15 @@ use InvalidArgumentException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+use function array_map;
+use function array_walk;
+use function in_array;
+use function is_array;
 use function sprintf;
 
 // phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
@@ -82,29 +87,26 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         $question = $inputParam->getQuestion();
-
         $this->modifyQuestion($question);
 
-        if ($value === null && ! $this->input->isInteractive()) {
+        if (
+            ! $this->isParamValueProvided($inputParam, $value)
+            && ! $this->input->isInteractive()
+        ) {
             $value = $inputParam->getDefault();
         }
 
-        if ($value !== null) {
-            $validator = $question->getValidator();
-            if ($validator) {
-                $validator($value);
-            }
-
-            $normalizer = $question->getNormalizer();
-
-            return $normalizer === null ? $value : $normalizer($value);
+        $valueIsArray = (bool) ($inputParam->getOptionMode() & InputOption::VALUE_IS_ARRAY);
+        if ($this->isParamValueProvided($inputParam, $value)) {
+            $this->validateValue($value, $valueIsArray, $question->getValidator(), $name);
+            return $this->normalizeValue($value, $valueIsArray, $question->getNormalizer());
         }
 
         if (! $this->input->isInteractive() && $inputParam->isRequired()) {
             throw new InvalidArgumentException(sprintf('Missing required value for --%s parameter', $name));
         }
 
-        $value = $this->helper->ask($this, $this->output, $question);
+        $value = $this->askQuestion($question, $valueIsArray, $inputParam->isRequired());
 
         // set the option value so it can be reused in chains
         $this->input->setOption($name, $value);
@@ -167,4 +169,110 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     }
 
     // phpcs:enable
+
+    /**
+     * @param mixed $value
+     */
+    private function isParamValueProvided(InputParamInterface $param, $value): bool
+    {
+        $mode = $param->getOptionMode();
+
+        if ($mode & InputOption::VALUE_IS_ARRAY) {
+            return ! in_array($value, [null, []], true);
+        }
+
+        return $value !== null;
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    private function normalizeValue($value, bool $valueIsArray, ?callable $normalizer)
+    {
+        // No normalizer: nothing to do
+        if ($normalizer === null) {
+            return $value;
+        }
+
+        // Non-array value: normalize it directly
+        if (! $valueIsArray && ! is_array($value)) {
+            return $normalizer($value);
+        }
+
+        // Array value: map each to the normalizer
+        return array_map($normalizer, $value);
+    }
+
+    /**
+     * @param mixed $value
+     * @throws InvalidArgumentException When an array value is expected, but not
+     *     provided.
+     */
+    private function validateValue(
+        $value,
+        bool $valueIsArray,
+        ?callable $validator,
+        string $paramName
+    ): void {
+        // No validator: nothing to do
+        if (! $validator) {
+            return;
+        }
+
+        // Non-array value; validate it directly
+        if (! $valueIsArray) {
+            $validator($value);
+            return;
+        }
+
+        // Array value expected, but not an array: raise an exception
+        if (! is_array($value)) {
+            throw new InvalidArgumentException(sprintf(
+                'Option --%s expects an array of values, but received "%s";'
+                . ' check to ensure the command has provided a valid default.',
+                $paramName,
+                get_debug_type($value)
+            ));
+        }
+
+        // Array value: validate each item in the array
+        array_walk($value, $validator);
+    }
+
+    /**
+     * @return mixed Returns result of asking question, or, if this is a
+     *     multi-select, it loops until no more answers are provided, and retuns
+     *     an array of results.
+     */
+    private function askQuestion(Question $question, bool $valueIsArray, bool $valueIsRequired)
+    {
+        if (! $valueIsArray) {
+            return $this->helper->ask($this, $this->output, $question);
+        }
+
+        $validator = $question->getValidator();
+        $value     = null;
+        $values    = [];
+        do {
+            if (null !== $value) {
+                $values[] = $value;
+            }
+            $value = $this->helper->ask($this, $this->output, $question);
+
+            if ($valueIsRequired && [] === $values) {
+                $question->setValidator(function ($value) use ($validator) {
+                    if (null === $value || '' === $value) {
+                        return $value;
+                    }
+
+                    return $validator($value);
+                });
+            }
+        } while (! in_array($value, [null, ''], true));
+
+        $question->setValidator($validator);
+
+        return $values;
+    }
 }

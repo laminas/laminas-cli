@@ -14,6 +14,7 @@ use InvalidArgumentException;
 use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ChoiceParam;
 use Laminas\Cli\Input\InputParamInterface;
+use Laminas\Cli\Input\IntParam;
 use Laminas\Cli\Input\NonHintedParamAwareInput;
 use Laminas\Cli\Input\StringParam;
 use Laminas\Cli\Input\TypeHintedParamAwareInput;
@@ -22,10 +23,12 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use RuntimeException;
 use stdClass;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -65,15 +68,19 @@ class ParamAwareInputTest extends TestCase
         $this->output         = $this->prophesize(OutputInterface::class);
         $this->helper         = $this->prophesize(QuestionHelper::class);
         $this->params         = [
-            'name'    => (new StringParam('name'))
+            'name'                   => (new StringParam('name'))
                 ->setDescription('Your name')
                 ->setRequiredFlag(true),
-            'bool'    => (new BoolParam('bool'))
+            'bool'                   => (new BoolParam('bool'))
                 ->setDescription('True or false')
                 ->setRequiredFlag(true),
-            'choices' => (new ChoiceParam('choices', ['a', 'b', 'c']))
+            'choices'                => (new ChoiceParam('choices', ['a', 'b', 'c']))
                 ->setDescription('Choose one')
                 ->setDefault('a'),
+            'multi-int-with-default' => (new IntParam('multi-int-with-default'))
+                ->setDescription('Allowed integers')
+                ->setDefault([1, 2])
+                ->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY),
         ];
     }
 
@@ -224,6 +231,70 @@ class ParamAwareInputTest extends TestCase
         $this->assertSame('a', $input->getParam('choices'));
     }
 
+    public function testGetParamReturnsDefaultValueWhenInputIsNonInteractiveAndNoOptionPassedForArrayParam(): void
+    {
+        $this->decoratedInput->getOption('multi-int-with-default')->willReturn(null)->shouldBeCalled();
+        $this->decoratedInput->isInteractive()->willReturn(false)->shouldBeCalled();
+
+        $input = new $this->class(
+            $this->decoratedInput->reveal(),
+            $this->output->reveal(),
+            $this->helper->reveal(),
+            ['multi-int-with-default' => $this->params['multi-int-with-default']]
+        );
+
+        $this->assertSame([1, 2], $input->getParam('multi-int-with-default'));
+    }
+
+    public function testGetParamReturnsOptionValueWhenInputOptionPassedForArrayParam(): void
+    {
+        $this->decoratedInput->getOption('multi-int-with-default')->willReturn([10])->shouldBeCalled();
+        $this->decoratedInput->isInteractive()->shouldNotBeCalled();
+
+        $input = new $this->class(
+            $this->decoratedInput->reveal(),
+            $this->output->reveal(),
+            $this->helper->reveal(),
+            ['multi-int-with-default' => $this->params['multi-int-with-default']]
+        );
+
+        $this->assertSame([10], $input->getParam('multi-int-with-default'));
+    }
+
+    public function testGetParamRaisesExceptionWhenScalarProvidedForArrayParam(): void
+    {
+        $this->decoratedInput->getOption('multi-int-with-default')->willReturn(1)->shouldBeCalled();
+        $this->decoratedInput->isInteractive()->shouldNotBeCalled();
+
+        $input = new $this->class(
+            $this->decoratedInput->reveal(),
+            $this->output->reveal(),
+            $this->helper->reveal(),
+            ['multi-int-with-default' => $this->params['multi-int-with-default']]
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('expects an array of values');
+        $input->getParam('multi-int-with-default');
+    }
+
+    public function testGetParamRaisesExceptionWhenOptionValuePassedForArrayParamIsInvalid(): void
+    {
+        $this->decoratedInput->getOption('multi-int-with-default')->willReturn(['string'])->shouldBeCalled();
+        $this->decoratedInput->isInteractive()->shouldNotBeCalled();
+
+        $input = new $this->class(
+            $this->decoratedInput->reveal(),
+            $this->output->reveal(),
+            $this->helper->reveal(),
+            ['multi-int-with-default' => $this->params['multi-int-with-default']]
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('integer expected');
+        $input->getParam('multi-int-with-default');
+    }
+
     public function testGetParamRaisesExceptionIfParameterIsRequiredButNotProvidedAndInputIsNoninteractive(): void
     {
         $this->decoratedInput->getOption('name')->willReturn(null)->shouldBeCalled();
@@ -266,5 +337,32 @@ class ParamAwareInputTest extends TestCase
             ->shouldBeCalled();
 
         $this->assertSame('Laminas', $input->getParam('name'));
+    }
+
+    public function testGetParamPromptsUntilEmptySubmissionWhenParamIsArrayAndInputIsInteractive(): void
+    {
+        $this->decoratedInput->getOption('multi-int-with-default')->willReturn([])->shouldBeCalled();
+        $this->decoratedInput->isInteractive()->willReturn(true)->shouldBeCalled();
+        $this->decoratedInput->setOption('multi-int-with-default', [10, 2, 7])->shouldBeCalled();
+
+        $input = new $this->class(
+            $this->decoratedInput->reveal(),
+            $this->output->reveal(),
+            $this->helper->reveal(),
+            ['multi-int-with-default' => $this->params['multi-int-with-default']]
+        );
+
+        // getQuestion returns a NEW instance each time, so we cannot test for
+        // an identical question instance, only the type.
+        $this->helper
+            ->ask(
+                $input,
+                Argument::that([$this->output, 'reveal']),
+                Argument::type(Question::class)
+            )
+            ->willReturn(10, 2, 7, null)
+            ->shouldBeCalledTimes(4);
+
+        $this->assertSame([10, 2, 7], $input->getParam('multi-int-with-default'));
     }
 }

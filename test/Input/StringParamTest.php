@@ -112,4 +112,43 @@ class StringParamTest extends TestCase
 
         $this->param->setPattern('This is#^ NOT** a! pattern,');
     }
+
+    public function testQuestionCreatedDoesNotIndicateMultiPromptByDefault(): void
+    {
+        $question = $this->param->getQuestion();
+        self::assertStringNotContainsString(
+            'Multiple entries allowed',
+            $question->getQuestion()
+        );
+    }
+
+    public function testQuestionCreatedIncludesMultiPromptButNotRequiredPromptWhenValueIsArrayButNotRequired(): void
+    {
+        $this->param->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->param->setRequiredFlag(false);
+        $question = $this->param->getQuestion();
+        self::assertStringContainsString(
+            'Multiple entries allowed',
+            $question->getQuestion()
+        );
+        self::assertStringNotContainsString(
+            'At least one entry is required. ',
+            $question->getQuestion()
+        );
+    }
+
+    public function testQuestionCreatedIncludesMultiPromptAndRequiredPromptWhenValueIsArrayAndIsRequired(): void
+    {
+        $this->param->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->param->setRequiredFlag(true);
+        $question = $this->param->getQuestion();
+        self::assertStringContainsString(
+            'Multiple entries allowed',
+            $question->getQuestion()
+        );
+        self::assertStringContainsString(
+            'At least one entry is required. ',
+            $question->getQuestion()
+        );
+    }
 }

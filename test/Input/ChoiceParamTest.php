@@ -67,4 +67,43 @@ class ChoiceParamTest extends TestCase
         $this->assertEquals($expectedQuestionText, $question->getQuestion());
         $this->assertSame($this->choices, $question->getChoices());
     }
+
+    public function testQuestionCreatedDoesNotIndicateMultiPromptByDefault(): void
+    {
+        $question = $this->param->getQuestion();
+        self::assertStringNotContainsString(
+            'Multiple selections allowed',
+            $question->getQuestion()
+        );
+    }
+
+    public function testQuestionCreatedIncludesMultiPromptButNotRequiredPromptWhenValueIsArrayButNotRequired(): void
+    {
+        $this->param->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->param->setRequiredFlag(false);
+        $question = $this->param->getQuestion();
+        self::assertStringContainsString(
+            'Multiple selections allowed',
+            $question->getQuestion()
+        );
+        self::assertStringNotContainsString(
+            'At least one selection is required. ',
+            $question->getQuestion()
+        );
+    }
+
+    public function testQuestionCreatedIncludesMultiPromptAndRequiredPromptWhenValueIsArrayAndIsRequired(): void
+    {
+        $this->param->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->param->setRequiredFlag(true);
+        $question = $this->param->getQuestion();
+        self::assertStringContainsString(
+            'Multiple selections allowed',
+            $question->getQuestion()
+        );
+        self::assertStringContainsString(
+            'At least one selection is required. ',
+            $question->getQuestion()
+        );
+    }
 }
