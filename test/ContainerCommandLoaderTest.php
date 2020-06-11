@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
-use Laminas\Cli\Command\LazyLoadingCommand;
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
 use PHPUnit\Framework\TestCase;
@@ -46,7 +45,7 @@ class ContainerCommandLoaderTest extends TestCase
         self::assertSame('foo-bar-command', $command->getName());
     }
 
-    public function testGetCommandReturnsLazyCommand()
+    public function testGetCommandReturnsCommand()
     {
         $cwd = getcwd();
         chdir(__DIR__ . '/TestAsset');
@@ -60,6 +59,5 @@ class ContainerCommandLoaderTest extends TestCase
         $command = $loader->get('example:command-with-deps');
 
         self::assertInstanceOf(Command::class, $command);
-        self::assertInstanceOf(LazyLoadingCommand::class, $command);
     }
 }

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Listener;
 
-use Laminas\Cli\Command\LazyLoadingCommand;
 use Laminas\Cli\Input\Mapper\ArrayInputMapper;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -44,9 +43,7 @@ final class TerminateListener
         }
 
         $command = $event->getCommand();
-        $class   = $command instanceof LazyLoadingCommand
-            ? $command->getCommandClass()
-            : get_class($command);
+        $class   = get_class($command);
 
         if (
             ! isset($this->config['chains'][$class])

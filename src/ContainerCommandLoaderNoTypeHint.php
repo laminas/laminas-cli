@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Laminas\Cli;
 
-use Laminas\Cli\Command\LazyLoadingCommand;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 
 use function array_keys;
@@ -36,9 +36,11 @@ final class ContainerCommandLoaderNoTypeHint implements CommandLoaderInterface
     /**
      * @param string $name
      */
-    public function get($name): LazyLoadingCommand
+    public function get($name): Command
     {
-        return new LazyLoadingCommand($name, $this->commandMap[$name], $this->container);
+        $command = $this->container->get($this->commandMap[$name]);
+        $command->setName($name);
+        return $command;
     }
 
     /**
