@@ -17,7 +17,6 @@ class ExampleCommandWithDependenciesFactory
     public function __invoke(ContainerInterface $container): ExampleCommandWithDependencies
     {
         $dependency = $container->get(ExampleDependency::class);
-
         return new ExampleCommandWithDependencies($dependency);
     }
 }

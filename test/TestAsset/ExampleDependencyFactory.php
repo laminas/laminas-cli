@@ -10,18 +10,12 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-class ExampleDependency
+use Psr\Container\ContainerInterface;
+
+class ExampleDependencyFactory
 {
-    /** @var string */
-    public $default;
-
-    public function __construct(string $defaultValue)
+    public function __invoke(ContainerInterface $container): ExampleDependency
     {
-        $this->default = $defaultValue;
-    }
-
-    public function getDefault(): string
-    {
-        return $this->default;
+        return new ExampleDependency('default value');
     }
 }

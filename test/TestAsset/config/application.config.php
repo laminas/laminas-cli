@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-use Laminas\ServiceManager\Factory\InvokableFactory;
-
 return [
     'modules'                 => [],
     'module_listener_options' => [],
@@ -23,7 +21,7 @@ return [
     'service_manager'         => [
         'factories' => [
             ExampleCommandWithDependencies::class => ExampleCommandWithDependenciesFactory::class,
-            ExampleDependency::class              => InvokableFactory::class,
+            ExampleDependency::class              => ExampleDependencyFactory::class,
         ],
     ],
 ];

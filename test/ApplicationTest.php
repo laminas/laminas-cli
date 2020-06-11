@@ -16,19 +16,26 @@ use LaminasTest\Cli\TestAsset\Chained1Command;
 use LaminasTest\Cli\TestAsset\Chained2Command;
 use LaminasTest\Cli\TestAsset\Chained3Command;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
+use LaminasTest\Cli\TestAsset\ExampleCommandWithDependencies;
+use LaminasTest\Cli\TestAsset\ExampleCommandWithDependenciesFactory;
+use LaminasTest\Cli\TestAsset\ExampleDependency;
+use LaminasTest\Cli\TestAsset\ExampleDependencyFactory;
 use LaminasTest\Cli\TestAsset\InputMapper\CustomInputMapper;
 use LaminasTest\Cli\TestAsset\ParamCommand;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\ApplicationTester;
 
 use function array_filter;
 use function current;
-use function strpos;
 
 class ApplicationTest extends TestCase
 {
+    use ProphecyTrait;
+
     public static function getValidConfiguration(): array
     {
         return [
@@ -260,10 +267,10 @@ class ApplicationTest extends TestCase
         self::assertSame(current(array_filter($exitCodes)) ?: 0, $statusCode);
         $display = $applicationTester->getDisplay();
         foreach ($contains as $str) {
-            self::assertNotFalse(strpos($display, $str), 'Output does not contain ' . $str . "\n" . $display);
+            self::assertStringContainsString($str, $display, 'Output does not contain ' . $str . "\n" . $display);
         }
         foreach ($doesNotContain as $str) {
-            self::assertFalse(strpos($display, $str), 'Output contains ' . $str . "\n" . $display);
+            self::assertStringNotContainsString($str, $display, 'Output contains ' . $str . "\n" . $display);
         }
     }
 
@@ -323,7 +330,7 @@ class ApplicationTest extends TestCase
 
         $display = $applicationTester->getDisplay();
         foreach ($contains as $str) {
-            self::assertNotFalse(strpos($display, $str), 'Output does not contain ' . $str . "\n" . $display);
+            self::assertStringContainsString($str, $display, 'Output does not contain ' . $str . "\n" . $display);
         }
     }
 
@@ -380,7 +387,7 @@ class ApplicationTest extends TestCase
 
         $display = $applicationTester->getDisplay();
         foreach ($contains as $str) {
-            self::assertNotFalse(strpos($display, $str), 'Output does not contain ' . $str . "\n" . $display);
+            self::assertStringContainsString($str, $display, 'Output does not contain ' . $str . "\n" . $display);
         }
     }
 
@@ -401,8 +408,9 @@ class ApplicationTest extends TestCase
             . '  example:command-name  Description of example:command-name' . "\n";
 
         self::assertSame(0, $statusCode);
-        self::assertNotFalse(
-            strpos($display, $contains),
+        self::assertStringContainsString(
+            $contains,
+            $display,
             'Output does not contain: ' . "\n" . $contains . "\n" . '---' . "\n" . $display
         );
     }
@@ -457,7 +465,7 @@ class ApplicationTest extends TestCase
 
         $display = $applicationTester->getDisplay();
         foreach ($contains as $str) {
-            self::assertNotFalse(strpos($display, $str), 'Output does not contain ' . $str . "\n" . $display);
+            self::assertStringContainsString($str, $display, 'Output does not contain ' . $str . "\n" . $display);
         }
     }
 
@@ -496,7 +504,115 @@ class ApplicationTest extends TestCase
 
         $display = $applicationTester->getDisplay();
         foreach ($contains as $str) {
-            self::assertNotFalse(strpos($display, $str), 'Output does not contain ' . $str . "\n" . $display);
+            self::assertStringContainsString($str, $display, 'Output does not contain ' . $str . "\n" . $display);
+        }
+    }
+
+    /**
+     * @see https://github.com/laminas/laminas-cli/pull/28
+     * @see https://github.com/laminas/laminas-cli/pull/29
+     */
+    public function testListIncludesCommandWithDependencies()
+    {
+        $config = [
+            'laminas-cli' => [
+                'commands' => [
+                    'example:dep' => ExampleCommandWithDependencies::class,
+                ],
+            ],
+        ];
+
+        /** @var ContainerInterface|ObjectProphecy $container */
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
+        $container->get('config')->willReturn($config)->shouldBeCalled();
+        $container
+            ->get(ExampleCommandWithDependencies::class)
+            ->will(function () use ($container) {
+                $factory = new ExampleCommandWithDependenciesFactory();
+                return $factory($container->reveal());
+            })
+            ->shouldBeCalled();
+        $container
+            ->get(ExampleDependency::class)
+            ->will(function () use ($container) {
+                $factory = new ExampleDependencyFactory();
+                return $factory($container->reveal());
+            })
+            ->shouldBeCalled();
+
+        $applicationFactory = new ApplicationFactory();
+        $application        = $applicationFactory($container->reveal());
+
+        $applicationTester = new ApplicationTester($application);
+        $statusCode        = $applicationTester->run(['command' => 'list']);
+
+        $display = $applicationTester->getDisplay();
+
+        $contains = " example\n"
+            . "  example:dep  Test command with dependencies\n";
+
+        self::assertSame(0, $statusCode);
+        self::assertStringContainsString(
+            $contains,
+            $display,
+            'Output does not contain: ' . "\n" . $contains . "\n" . '---' . "\n" . $display
+        );
+    }
+
+    /**
+     * @see https://github.com/laminas/laminas-cli/pull/28
+     * @see https://github.com/laminas/laminas-cli/pull/29
+     */
+    public function testHelpDisplaysInformationForCommandWithDependencies()
+    {
+        $config = [
+            'laminas-cli' => [
+                'commands' => [
+                    'example:dep' => ExampleCommandWithDependencies::class,
+                ],
+            ],
+        ];
+
+        /** @var ContainerInterface|ObjectProphecy $container */
+        $container = $this->prophesize(ContainerInterface::class);
+        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
+        $container->get('config')->willReturn($config)->shouldBeCalled();
+        $container
+            ->get(ExampleCommandWithDependencies::class)
+            ->will(function () use ($container) {
+                $factory = new ExampleCommandWithDependenciesFactory();
+                return $factory($container->reveal());
+            })
+            ->shouldBeCalled();
+        $container
+            ->get(ExampleDependency::class)
+            ->will(function () use ($container) {
+                $factory = new ExampleDependencyFactory();
+                return $factory($container->reveal());
+            })
+            ->shouldBeCalled();
+
+        $applicationFactory = new ApplicationFactory();
+        $application        = $applicationFactory($container->reveal());
+
+        $applicationTester = new ApplicationTester($application);
+        $statusCode        = $applicationTester->run([
+            'command'      => 'help',
+            'command_name' => 'example:dep',
+        ]);
+
+        $display = $applicationTester->getDisplay();
+
+        $contains = [
+            "Usage:\n  example:dep [options]\n",
+            "  -s, --string=STRING   A string option [default: \"default value\"]\n",
+            "Help:\n  Execute a test command that includes dependencies",
+        ];
+
+        self::assertSame(0, $statusCode);
+        foreach ($contains as $str) {
+            self::assertStringContainsString($str, $display);
         }
     }
 }
