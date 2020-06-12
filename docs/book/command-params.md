@@ -89,10 +89,9 @@ The constructor has one required parameter, a `string $name`; you will need to
 call `parent::__construct($name)` if you override the constructor (e.g., to
 supply other required arguments).
 
-Another trait, `Laminas\Cli\Input\StandardQuestionTrait`, provides
-the method `createQuestion()`, which returns a
-`Symfony\Component\Console\Question\Question` instance with a prompt in the form
-of:
+A trait, `Laminas\Cli\Input\StandardQuestionTrait`, provides the method
+`createQuestion()`, which returns a `Symfony\Component\Console\Question\Question`
+instance with a prompt in the form of:
 
 ```text
 <question>{description}</question> [<comment>{default}</comment>]:
@@ -104,6 +103,11 @@ things such as [normalizers](https://symfony.com/doc/current/components/console/
 [validators](https://symfony.com/doc/current/components/console/helpers/questionhelper.html#validating-the-answer),
 or [autocompletion](https://symfony.com/doc/current/components/console/helpers/questionhelper.html#autocompletion).
 
+Additionally, when the option mode includes `InputOption::VALUE_IS_ARRAY`, the
+application will prompt for multiple values using the same question and default
+value (if a default is available) until the user presses `Return` without
+entering anything.
+
 You can compose this trait in your own input param implementations, and call it
 from your `getQuestion()` method if that question format will work for you.
 
@@ -112,6 +116,9 @@ from your `getQuestion()` method if that question format will work for you.
 We ship several standard input parameter types for use in your applications. All
 parameters require the parameter name as the initial argument, and additional
 arguments as specified below.
+
+All parameter types EXCEPT the `BoolParam` allow you to specify
+`InputOption::VALUE_IS_ARRAY` as part of the option mode.
 
 ### BoolParam
 
