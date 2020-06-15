@@ -106,7 +106,19 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             throw new InvalidArgumentException(sprintf('Missing required value for --%s parameter', $name));
         }
 
+        // Prepend a validator that will skip validation of empty/null values
+        // when the parameter is not required.
+        $originalValidator = null;
+        if (! $inputParam->isRequired()) {
+            $originalValidator = $this->prependSkipValidator($question);
+        }
+
         $value = $this->askQuestion($question, $valueIsArray, $inputParam->isRequired());
+
+        // Reset the validator if we prepended it earlier.
+        if ($originalValidator) {
+            $question->setValidator($originalValidator);
+        }
 
         // set the option value so it can be reused in chains
         $this->input->setOption($name, $value);
@@ -274,5 +286,23 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         $question->setValidator($validator);
 
         return $values;
+    }
+
+    private function prependSkipValidator(Question $question): ?callable
+    {
+        $originalValidator = $question->getValidator();
+        if (null === $originalValidator) {
+            return null;
+        }
+
+        $question->setValidator(static function ($value) use ($originalValidator) {
+            if ($value === null) {
+                return null;
+            }
+
+            return $originalValidator($value);
+        });
+
+        return $originalValidator;
     }
 }

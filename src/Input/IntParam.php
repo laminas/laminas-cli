@@ -42,10 +42,6 @@ final class IntParam extends AbstractInputParam
         });
 
         $question->setValidator(function ($value) {
-            if ($value === null && ! $this->isRequired()) {
-                return null;
-            }
-
             if (! is_int($value)) {
                 throw new RuntimeException(sprintf(
                     'Invalid value: integer expected, %s given',

@@ -16,6 +16,7 @@ use Laminas\Cli\Input\ChoiceParam;
 use Laminas\Cli\Input\InputParamInterface;
 use Laminas\Cli\Input\IntParam;
 use Laminas\Cli\Input\NonHintedParamAwareInput;
+use Laminas\Cli\Input\PathParam;
 use Laminas\Cli\Input\StringParam;
 use Laminas\Cli\Input\TypeHintedParamAwareInput;
 use PackageVersions\Versions;
@@ -426,5 +427,38 @@ class ParamAwareInputTest extends TestCase
         );
 
         $this->assertSame([10, 1], $input->getParam('multi-int-required'));
+    }
+
+    public function paramTypesToTestAgainstFalseRequiredFlag(): iterable
+    {
+        yield 'IntParam'    => [IntParam::class];
+        yield 'PathParam'   => [PathParam::class, [PathParam::TYPE_DIR]];
+        yield 'StringParam' => [StringParam::class];
+    }
+
+    /**
+     * @dataProvider paramTypesToTestAgainstFalseRequiredFlag
+     */
+    public function testGetParamAllowsEmptyValuesForParamsWithValidationIfParamIsNotRequired(
+        string $class,
+        array $additionalArgs = []
+    ): void {
+        $decoratedInput = $this->prophesize(StreamableInputInterface::class);
+        $decoratedInput->getStream()->willReturn($this->mockStream(['']));
+        $decoratedInput->getOption('non-required')->willReturn(null)->shouldBeCalled();
+        $decoratedInput->isInteractive()->willReturn(true)->shouldBeCalled();
+        $decoratedInput->setOption('non-required', null)->shouldBeCalled();
+
+        $this->output->write(Argument::containingString('<question>'))->shouldBeCalled();
+
+        $helper = new QuestionHelper();
+        $input  = new $this->class(
+            $decoratedInput->reveal(),
+            $this->output->reveal(),
+            $helper,
+            ['non-required' => new $class('non-required', ...$additionalArgs)]
+        );
+
+        $this->assertNull($input->getParam('non-required'));
     }
 }

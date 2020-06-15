@@ -75,12 +75,6 @@ class PathParamTest extends TestCase
         $this->assertIsCallable($question->getValidator());
     }
 
-    public function testValidatorReturnsNullIfValueIsNullAndParamIsNotRequired(): void
-    {
-        $validator = $this->param->getQuestion()->getValidator();
-        $this->assertNull($validator(null));
-    }
-
     public function testValidatorRaisesExceptionIfValueIsNullAndRequired(): void
     {
         $this->param->setRequiredFlag(true);

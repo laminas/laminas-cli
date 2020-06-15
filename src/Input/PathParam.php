@@ -76,10 +76,6 @@ final class PathParam extends AbstractInputParam
         });
 
         $question->setValidator(function ($value) {
-            if ($value === null && ! $this->isRequired()) {
-                return null;
-            }
-
             if (! is_string($value)) {
                 throw new RuntimeException(sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
             }

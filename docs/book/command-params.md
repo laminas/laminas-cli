@@ -131,6 +131,10 @@ arguments as specified below.
 All parameter types EXCEPT the `BoolParam` compose the `AllowMultipleTrait`,
 exposing the `setAllowMultipleFlag()` flag.
 
+Additionally, when writing validators, you do not need to check if the value is
+not required and an empty value submitted;
+`ParamAwareInputInterface::getParam()` does this for you.
+
 ### BoolParam
 
 `Laminas\Cli\Input\BoolParam` allows specifying a parameter with a boolean
