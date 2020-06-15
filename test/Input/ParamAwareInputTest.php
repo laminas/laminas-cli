@@ -393,10 +393,12 @@ class ParamAwareInputTest extends TestCase
     public function testGetParamPromptsForValuesUntilAtLeastOneIsProvidedWhenRequired(): void
     {
         $decoratedInput = $this->prophesize(StreamableInputInterface::class);
-        // This sets us up to enter four separate lines:
+        // This sets us up to enter the following lines:
         // - An empty line (rejected by the IntParam validator)
         // - A line with the string "10" on it (accepted by the IntParam
         //   validator, and cast to integer by its normalizer)
+        // - A line with the string 'hey' on it (marked invalid by the IntParam
+        //   validator)
         // - A line with the string "1" on it (accepted by the IntParam
         //   validator, and cast to integer by its normalizer)
         // - An empty line (accepted by the modified validator, since we now
@@ -404,12 +406,16 @@ class ParamAwareInputTest extends TestCase
         $decoratedInput->getStream()->willReturn($this->mockStream([
             '',
             '10',
+            'hey',
             '1',
             '',
         ]));
         $decoratedInput->getOption('multi-int-required')->willReturn([])->shouldBeCalled();
         $decoratedInput->isInteractive()->willReturn(true)->shouldBeCalled();
         $decoratedInput->setOption('multi-int-required', [10, 1])->shouldBeCalled();
+
+        $this->output->write(Argument::containingString('<question>'))->shouldBeCalled();
+        $this->output->writeln(Argument::containingString('<error>'))->shouldBeCalledTimes(2);
 
         $helper = new QuestionHelper();
         $input  = new $this->class(
