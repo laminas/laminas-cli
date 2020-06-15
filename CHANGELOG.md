@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Provides the ability to chain multiple commands; see the [command chains documentation](https://docs.laminas.dev/laminas-cli/command-chains/) for more information.
 
-- Provides the ability to define input "parameters"; these act like input options with the additional behavior that, in interactive mode, if the value is not supplied, the application prompts the user interactively for the value. See the [command params documentation](https://docs.laminas.dev/laminas-cli/command-params/) for more information.
+- Provides the ability to define input "parameters"; these act like input options with the additional behavior that, in interactive mode, if the value is not supplied, the application prompts the user interactively for the value.  Parameters may accept multiple values, either via repeated option invocations, or by prompting. See the [command params documentation](https://docs.laminas.dev/laminas-cli/command-params/) for more information.
 
 ### Changed
 
