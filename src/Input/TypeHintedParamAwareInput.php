@@ -23,11 +23,7 @@ final class TypeHintedParamAwareInput extends AbstractParamAwareInput
 {
     protected function modifyQuestion(Question $question): void
     {
-        // @todo Remove once https://github.com/symfony/symfony/issues/37046 is
-        //     addressed
-        if ($question->getMaxAttempts() === null) {
-            $question->setMaxAttempts(1000);
-        }
+        // deliberate no-op
     }
 
     // Proxy methods implementing interface
