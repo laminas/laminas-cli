@@ -347,30 +347,36 @@ interface InputParamInterface
 
     public function setDescription(string $description): self;
 
-    /**
-     * @param int $mode MUST BE one of the InputOption::VALUE_* constants, or a
-     *     bitmask of them.
-     * @return $this
-     */
-    public function setOptionMode(int $mode): InputParamInterface;
-
     public function setShortcut(string $shortcut): self;
 
     public function setRequiredFlag(bool $required): self;
 }</code></pre>
 
 <p>We provide the abstract class <code>Laminas\Cli\Input\AbstractInputParam</code> to
-implement the majority of the methods in the interface; the only omission is:</p>
+implement the majority of the methods in the interface; the only items you need
+to fill in are:</p>
 <ul>
 <li><code>getQuestion()</code>: Each parameter type will define its own <code>Question</code> to return.</li>
+<li><code>protected $optionMode</code>, which is set to <code>Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED</code>
+  by default.</li>
 </ul>
 <p>The constructor has one required parameter, a <code>string $name</code>; you will need to
 call <code>parent::__construct($name)</code> if you override the constructor (e.g., to
 supply other required arguments).</p>
-<p>Another trait, <code>Laminas\Cli\Input\StandardQuestionTrait</code>, provides
-the method <code>createQuestion()</code>, which returns a
-<code>Symfony\Component\Console\Question\Question</code> instance with a prompt in the form
-of:</p>
+<p>Many input types can likely allow multiple values. For example, if you have a
+<code>--path</code> option where you want to allow the user to supply a set of paths on
+which to perform an operation, or a <code>--class</code> operation to allow the user to
+specify multiple clases to generate. In those scenarios, we provide a trait,
+<code>Laminas\Cli\Input\AllowMultipleTrait</code>, which defines a single method:</p>
+<pre class="highlight"><code class="language-php">public function setAllowMultipleFlag(bool $flag): self</code></pre>
+
+<p>This method will update the <code>$optionMode</code> mask to either include or remove the
+<code>InputOption::VALUE_IS_ARRAY</code> bit. Compose it in your custom param
+implementations if you want to allow users the ability to specify more than one
+value for a parameter.</p>
+<p>Another trait, <code>Laminas\Cli\Input\StandardQuestionTrait</code>, provides the method
+<code>createQuestion()</code>, which returns a <code>Symfony\Component\Console\Question\Question</code>
+instance with a prompt in the form of:</p>
 <pre class="highlight"><code class="language-text">&lt;question&gt;{description}&lt;/question&gt; [&lt;comment&gt;{default}&lt;/comment&gt;]:
 &gt;</code></pre>
 
@@ -378,12 +384,18 @@ of:</p>
 things such as <a href="https://symfony.com/doc/current/components/console/helpers/questionhelper.html#normalizing-the-answer">normalizers</a>,
 <a href="https://symfony.com/doc/current/components/console/helpers/questionhelper.html#validating-the-answer">validators</a>,
 or <a href="https://symfony.com/doc/current/components/console/helpers/questionhelper.html#autocompletion">autocompletion</a>.</p>
+<p>Additionally, when the option mode includes <code>InputOption::VALUE_IS_ARRAY</code> (per
+the <code>setAllowMultipleFlag()</code> method as described previously), the application
+will prompt for multiple values using the same question and default value (if a
+default is available) until the user presses <code>Return</code> without entering anything.</p>
 <p>You can compose this trait in your own input param implementations, and call it
 from your <code>getQuestion()</code> method if that question format will work for you.</p>
 <h2 id="standard-input-parameter-types">Standard input parameter types</h2>
 <p>We ship several standard input parameter types for use in your applications. All
 parameters require the parameter name as the initial argument, and additional
 arguments as specified below.</p>
+<p>All parameter types EXCEPT the <code>BoolParam</code> compose the <code>AllowMultipleTrait</code>,
+exposing the <code>setAllowMultipleFlag()</code> flag.</p>
 <h3>BoolParam</h3>
 <p><code>Laminas\Cli\Input\BoolParam</code> allows specifying a parameter with a boolean
 value. It emits a <code>Symfony\Component\Console\Question\ConfirmationQuestion</code>.</p>
