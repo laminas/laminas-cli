@@ -27,6 +27,7 @@ use function sprintf;
 
 final class PathParam extends AbstractInputParam
 {
+    use AllowMultipleTrait;
     use StandardQuestionTrait;
 
     public const TYPE_DIR  = 'dir';

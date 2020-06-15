@@ -21,7 +21,7 @@ final class BoolParam extends AbstractInputParam
     public function __construct(string $name)
     {
         parent::__construct($name);
-        $this->setOptionMode(InputOption::VALUE_NONE);
+        $this->optionMode = InputOption::VALUE_NONE;
     }
 
     public function getQuestion(): Question

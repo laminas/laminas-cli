@@ -14,7 +14,6 @@ use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 
 use function array_walk;
-use function in_array;
 use function is_array;
 use function is_string;
 use function sprintf;
@@ -23,24 +22,30 @@ use function trim;
 /**
  * Provide the majority of methods needed to implement InputParamInterface.
  *
- * This trait provides definitions for all but the following methods of the
+ * This class provides definitions for all but the following methods of the
  * InputParamInterface:
  *
- * - getOptionMode()
  * - getQuestion()
  *
- * Additionally, it defines the `$name` property, allowing implementations to
- * set it in their constructors without needing to define the property
- * themselves.
+ * Implementations MUST call `parent::__construct()` with the name if overriding
+ * the constructor.
+ *
+ * If an option mode other than InputOption::VALUE_REQUIRED is desired,
+ * implementations should set the value themselves. NOTE: compose the
+ * AllowMultipleTrait and use its `setAllowMultipleFlag()` if multiple values
+ * can be accepted, but are not required.
  */
 abstract class AbstractInputParam implements InputParamInterface
 {
-    /** @var int[] */
-    private $allowedModes = [
-        InputOption::VALUE_NONE,
-        InputOption::VALUE_REQUIRED,
-        InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-    ];
+    /**
+     * InputOption mode to use with this parameter.
+     *
+     * Protected, so that extending classes can change the value (e.g., via the
+     * AllowMultipleTrait).
+     *
+     * @var int
+     */
+    protected $optionMode = InputOption::VALUE_REQUIRED;
 
     /** @var mixed */
     private $default;
@@ -54,13 +59,6 @@ abstract class AbstractInputParam implements InputParamInterface
      * @var string
      */
     private $name;
-
-    /**
-     * InputOption mode to use with this parameter.
-     *
-     * @var int
-     */
-    private $optionMode = InputOption::VALUE_REQUIRED;
 
     /** @var bool */
     private $required = false;
@@ -123,19 +121,6 @@ abstract class AbstractInputParam implements InputParamInterface
     public function setDescription(string $description): InputParamInterface
     {
         $this->description = $description;
-        return $this;
-    }
-
-    public function setOptionMode(int $mode): InputParamInterface
-    {
-        if (! in_array($mode, $this->allowedModes, true)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid option mode; must be one of %s::VALUE_NONE,'
-                . ' VALUE_REQUIRED, or VALUE_REQUIRED | VALUE_IS_ARRAY',
-                InputOption::class
-            ));
-        }
-        $this->optionMode = $mode;
         return $this;
     }
 

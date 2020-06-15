@@ -20,6 +20,7 @@ use function sprintf;
 
 final class IntParam extends AbstractInputParam
 {
+    use AllowMultipleTrait;
     use StandardQuestionTrait;
 
     /** @var null|int */

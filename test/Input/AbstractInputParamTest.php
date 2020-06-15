@@ -14,7 +14,6 @@ use InvalidArgumentException;
 use Laminas\Cli\Input\AbstractInputParam;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
 class AbstractInputParamTest extends TestCase
@@ -60,43 +59,6 @@ class AbstractInputParamTest extends TestCase
     public function testCanRetrieveName(): void
     {
         $this->assertSame('test', $this->param->getName());
-    }
-
-    public function invalidOptionModes(): iterable
-    {
-        yield 'negative'          => [-1];
-        yield 'zero'              => [0];
-        yield 'out of range'      => [16];
-        yield 'multiple none'     => [InputOption::VALUE_NONE | InputOption::VALUE_IS_ARRAY];
-        yield 'optional'          => [InputOption::VALUE_OPTIONAL];
-        yield 'multiple optional' => [InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY];
-        yield 'multiple only'     => [InputOption::VALUE_IS_ARRAY];
-    }
-
-    /**
-     * @dataProvider invalidOptionModes
-     */
-    public function testSetOptionModeRaisesExceptionForInvalidModes(int $mode): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid option mode');
-        $this->param->setOptionMode($mode);
-    }
-
-    public function validOptionModes(): iterable
-    {
-        yield 'none'              => [InputOption::VALUE_NONE];
-        yield 'required'          => [InputOption::VALUE_REQUIRED];
-        yield 'multiple required' => [InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY];
-    }
-
-    /**
-     * @dataProvider validOptionModes
-     */
-    public function testAllowsSettingValidOptionModeCombinations(int $mode): void
-    {
-        $this->param->setOptionMode($mode);
-        $this->assertSame($mode, $this->param->getOptionMode());
     }
 
     public function testNotRequiredByDefault(): void

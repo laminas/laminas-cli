@@ -20,6 +20,8 @@ use function sprintf;
 
 final class ChoiceParam extends AbstractInputParam
 {
+    use AllowMultipleTrait;
+
     /** @var array */
     private $haystack;
 

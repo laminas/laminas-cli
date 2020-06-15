@@ -28,7 +28,6 @@ use stdClass;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -80,7 +79,7 @@ class ParamAwareInputTest extends TestCase
             'multi-int-with-default' => (new IntParam('multi-int-with-default'))
                 ->setDescription('Allowed integers')
                 ->setDefault([1, 2])
-                ->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY),
+                ->setAllowMultipleFlag(true),
         ];
     }
 

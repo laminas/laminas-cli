@@ -67,13 +67,6 @@ interface InputParamInterface
 
     public function setDescription(string $description): self;
 
-    /**
-     * @param int $mode MUST BE one of the InputOption::VALUE_* constants, or a
-     *     bitmask of them.
-     * @return $this
-     */
-    public function setOptionMode(int $mode): InputParamInterface;
-
     public function setShortcut(string $shortcut): self;
 
     public function setRequiredFlag(bool $required): self;
@@ -81,15 +74,33 @@ interface InputParamInterface
 ```
 
 We provide the abstract class `Laminas\Cli\Input\AbstractInputParam` to
-implement the majority of the methods in the interface; the only omission is:
+implement the majority of the methods in the interface; the only items you need
+to fill in are:
 
 - `getQuestion()`: Each parameter type will define its own `Question` to return.
+- `protected $optionMode`, which is set to `Symfony\Component\Console\Input\InputOption::VALUE_REQUIRED`
+  by default.
 
 The constructor has one required parameter, a `string $name`; you will need to
 call `parent::__construct($name)` if you override the constructor (e.g., to
 supply other required arguments).
 
-A trait, `Laminas\Cli\Input\StandardQuestionTrait`, provides the method
+Many input types can likely allow multiple values. For example, if you have a
+`--path` option where you want to allow the user to supply a set of paths on
+which to perform an operation, or a `--class` operation to allow the user to
+specify multiple clases to generate. In those scenarios, we provide a trait,
+`Laminas\Cli\Input\AllowMultipleTrait`, which defines a single method:
+
+```php
+public function setAllowMultipleFlag(bool $flag): self
+```
+
+This method will update the `$optionMode` mask to either include or remove the
+`InputOption::VALUE_IS_ARRAY` bit. Compose it in your custom param
+implementations if you want to allow users the ability to specify more than one
+value for a parameter.
+
+Another trait, `Laminas\Cli\Input\StandardQuestionTrait`, provides the method
 `createQuestion()`, which returns a `Symfony\Component\Console\Question\Question`
 instance with a prompt in the form of:
 
@@ -103,10 +114,10 @@ things such as [normalizers](https://symfony.com/doc/current/components/console/
 [validators](https://symfony.com/doc/current/components/console/helpers/questionhelper.html#validating-the-answer),
 or [autocompletion](https://symfony.com/doc/current/components/console/helpers/questionhelper.html#autocompletion).
 
-Additionally, when the option mode includes `InputOption::VALUE_IS_ARRAY`, the
-application will prompt for multiple values using the same question and default
-value (if a default is available) until the user presses `Return` without
-entering anything.
+Additionally, when the option mode includes `InputOption::VALUE_IS_ARRAY` (per
+the `setAllowMultipleFlag()` method as described previously), the application
+will prompt for multiple values using the same question and default value (if a
+default is available) until the user presses `Return` without entering anything.
 
 You can compose this trait in your own input param implementations, and call it
 from your `getQuestion()` method if that question format will work for you.
@@ -117,8 +128,8 @@ We ship several standard input parameter types for use in your applications. All
 parameters require the parameter name as the initial argument, and additional
 arguments as specified below.
 
-All parameter types EXCEPT the `BoolParam` allow you to specify
-`InputOption::VALUE_IS_ARRAY` as part of the option mode.
+All parameter types EXCEPT the `BoolParam` compose the `AllowMultipleTrait`,
+exposing the `setAllowMultipleFlag()` flag.
 
 ### BoolParam
 

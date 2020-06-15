@@ -164,9 +164,10 @@ class PathParamTest extends TestCase
         );
     }
 
-    public function testQuestionCreatedIncludesMultiPromptButNotRequiredPromptWhenValueIsArrayButNotRequired(): void
+    // phpcs:ignore Generic.Files.LineLength.TooLong
+    public function testQuestionCreatedIncludesMultiPromptButNotRequiredPromptWhenValueAllowsMultipleButNotRequired(): void
     {
-        $this->param->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->param->setAllowMultipleFlag(true);
         $this->param->setRequiredFlag(false);
         $question = $this->param->getQuestion();
         self::assertStringContainsString(
@@ -179,9 +180,9 @@ class PathParamTest extends TestCase
         );
     }
 
-    public function testQuestionCreatedIncludesMultiPromptAndRequiredPromptWhenValueIsArrayAndIsRequired(): void
+    public function testQuestionCreatedIncludesMultiPromptAndRequiredPromptWhenValueAllowsMultipleAndIsRequired(): void
     {
-        $this->param->setOptionMode(InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->param->setAllowMultipleFlag(true);
         $this->param->setRequiredFlag(true);
         $question = $this->param->getQuestion();
         self::assertStringContainsString(
@@ -192,5 +193,13 @@ class PathParamTest extends TestCase
             'At least one entry is required. ',
             $question->getQuestion()
         );
+    }
+
+    public function testCallingSetAllowMultipleWithBooleanFalseAfterPreviouslyCallingItWithTrueRemovesOptionFlag(): void
+    {
+        $this->param->setAllowMultipleFlag(true);
+        self::assertSame(InputOption::VALUE_IS_ARRAY, $this->param->getOptionMode() & InputOption::VALUE_IS_ARRAY);
+        $this->param->setAllowMultipleFlag(false);
+        self::assertSame(0, $this->param->getOptionMode() & InputOption::VALUE_IS_ARRAY);
     }
 }

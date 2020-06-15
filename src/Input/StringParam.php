@@ -26,6 +26,7 @@ use const E_WARNING;
 
 final class StringParam extends AbstractInputParam
 {
+    use AllowMultipleTrait;
     use StandardQuestionTrait;
 
     /** @var null|string */
