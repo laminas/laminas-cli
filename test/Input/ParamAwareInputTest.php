@@ -32,9 +32,13 @@ use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+use function fopen;
+use function fwrite;
+use function rewind;
 use function str_replace;
 use function strstr;
 
+use const PHP_EOL;
 use const STDIN;
 
 class ParamAwareInputTest extends TestCase
@@ -80,7 +84,28 @@ class ParamAwareInputTest extends TestCase
                 ->setDescription('Allowed integers')
                 ->setDefault([1, 2])
                 ->setAllowMultipleFlag(true),
+            'multi-int-required'     => (new IntParam('multi-int-required'))
+                ->setDescription('Required integers')
+                ->setRequiredFlag(true)
+                ->setAllowMultipleFlag(true),
         ];
+    }
+
+    /**
+     * @param string[] $inputs
+     * @return resource
+     */
+    public function mockStream(array $inputs)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+
+        foreach ($inputs as $input) {
+            fwrite($stream, $input . PHP_EOL);
+        }
+
+        rewind($stream);
+
+        return $stream;
     }
 
     public function proxyMethodsAndArguments(): iterable
@@ -363,5 +388,37 @@ class ParamAwareInputTest extends TestCase
             ->shouldBeCalledTimes(4);
 
         $this->assertSame([10, 2, 7], $input->getParam('multi-int-with-default'));
+    }
+
+    public function testGetParamPromptsForValuesUntilAtLeastOneIsProvidedWhenRequired(): void
+    {
+        $decoratedInput = $this->prophesize(StreamableInputInterface::class);
+        // This sets us up to enter four separate lines:
+        // - An empty line (rejected by the IntParam validator)
+        // - A line with the string "10" on it (accepted by the IntParam
+        //   validator, and cast to integer by its normalizer)
+        // - A line with the string "1" on it (accepted by the IntParam
+        //   validator, and cast to integer by its normalizer)
+        // - An empty line (accepted by the modified validator, since we now
+        //   have a value from the previous line)
+        $decoratedInput->getStream()->willReturn($this->mockStream([
+            '',
+            '10',
+            '1',
+            '',
+        ]));
+        $decoratedInput->getOption('multi-int-required')->willReturn([])->shouldBeCalled();
+        $decoratedInput->isInteractive()->willReturn(true)->shouldBeCalled();
+        $decoratedInput->setOption('multi-int-required', [10, 1])->shouldBeCalled();
+
+        $helper = new QuestionHelper();
+        $input  = new $this->class(
+            $decoratedInput->reveal(),
+            $this->output->reveal(),
+            $helper,
+            ['multi-int-required' => $this->params['multi-int-required']]
+        );
+
+        $this->assertSame([10, 1], $input->getParam('multi-int-required'));
     }
 }
