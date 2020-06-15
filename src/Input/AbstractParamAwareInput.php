@@ -261,7 +261,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             $value = $this->helper->ask($this, $this->output, $question);
 
             if ($valueIsRequired && [] === $values) {
-                $question->setValidator(function ($value) use ($validator) {
+                $question->setValidator(static function ($value) use ($validator) {
                     if (null === $value || '' === $value) {
                         return $value;
                     }
