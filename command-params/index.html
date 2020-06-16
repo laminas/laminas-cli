@@ -396,6 +396,9 @@ parameters require the parameter name as the initial argument, and additional
 arguments as specified below.</p>
 <p>All parameter types EXCEPT the <code>BoolParam</code> compose the <code>AllowMultipleTrait</code>,
 exposing the <code>setAllowMultipleFlag()</code> flag.</p>
+<p>Additionally, when writing validators, you do not need to check if the value is
+not required and an empty value submitted;
+<code>ParamAwareInputInterface::getParam()</code> does this for you.</p>
 <h3>BoolParam</h3>
 <p><code>Laminas\Cli\Input\BoolParam</code> allows specifying a parameter with a boolean
 value. It emits a <code>Symfony\Component\Console\Question\ConfirmationQuestion</code>.</p>
