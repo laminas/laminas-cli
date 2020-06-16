@@ -6,6 +6,8 @@ possible to add autocompletion via a third-party package,
 This package provides completion for any symfony/console-based application,
 which means it will work with laminas-cli as well.
 
+## Installation
+
 First, install the autocompletion package as a global tool:
 
 ```bash
