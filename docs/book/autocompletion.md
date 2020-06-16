@@ -14,6 +14,8 @@ First, install the autocompletion package as a global tool:
 composer global require bamarni/symfony-console-autocomplete
 ```
 
+## Configuration
+
 Second, you will need to add configuration for your shell. We will add three
 things:
 
