@@ -6,9 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Command-line interface for Laminas projects">  
+    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/autocompletion/">
     <link rel="shortcut icon" href="https://docs.laminas.dev/img/trademark-laminas-foundation-rgb.svg">
 
-    <title>laminas-cli - Laminas Docs</title>
+    <title>Autocompletion - laminas-cli - Laminas Docs</title>
 
     <link rel="stylesheet" href="https://docs.laminas.dev/css/styles.css">
     
@@ -114,7 +115,7 @@
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href="../.">laminas-cli</a>
+            <a href="..">laminas-cli</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -170,8 +171,8 @@
                     
                     
                         
-                            <li class="subnavigation__list-item ">
-                                <a href="../autocompletion/" class="subnavigation__link">Autocompletion</a>
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Autocompletion</a>
                             </li>
                         
                     
@@ -238,21 +239,142 @@
                 
                 
                     
+    
+
+    
+    
+        <div class="toc">
+            <h6 class="toc__headline">On this page</h6>
+            <ul class="toc__list">
+                
+                    <li class="toc__entry">
+                        <a href="#installation" class="toc__link nav-link">Installation</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#configuration" class="toc__link nav-link">Configuration</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#usage" class="toc__link nav-link">Usage</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
                 
 
                 
+                    <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        
+            <li class="breadcrumb-item"><a href="https://docs.laminas.dev/">Overview</a></li>
+            <li class="breadcrumb-item"><a href="https://docs.laminas.dev/components/">Components</a></li>
 
-<h1 class="content__title">404</h1>
-<blockquote>
-    <h3>Something went wrong!</h3>
-    <p>
-        We're sorry, but the page you are looking for does not exist.
-    </p>
-</blockquote>
+            
+                <li class="breadcrumb-item"><a href="..">laminas-cli</a></li>
 
-<a href="../." class="btn btn-default" role="button">Go to homepage</a>
+                
+
+                <li class="breadcrumb-item active" aria-current="page">Autocompletion</li>
+            
+        
+    </ol>
+</nav>
 
 
+
+
+
+
+    
+    
+
+    <h1 id="autocompletion">Autocompletion</h1>
+<p>laminas-cli does not provide autocompletion out of the box. However, it is
+possible to add autocompletion via a third-party package,
+<a href="https://github.com/bamarni/symfony-console-autocomplete">bamarni/symfony-console-autocomplete</a>.
+This package provides completion for any symfony/console-based application,
+which means it will work with laminas-cli as well.</p>
+<h2 id="installation">Installation</h2>
+<p>First, install the autocompletion package as a global tool:</p>
+<pre class="highlight"><code class="language-bash">composer global require bamarni/symfony-console-autocomplete</code></pre>
+
+<h2 id="configuration">Configuration</h2>
+<p>Second, you will need to add configuration for your shell. We will add three
+things:</p>
+<ul>
+<li>Configuration to ensure your Composer script path is in your <code>$PATH</code>.</li>
+<li>An alias for the laminas-cli script. This is done so that autocompletion is
+  given for the project in which you have it installed.</li>
+<li>The autocompletion script.</li>
+</ul>
+<p>For most shells, you can use the following:</p>
+<pre class="highlight"><code class="language-bash"># Skip this step if you already have the Composer script path in your $PATH
+export PATH=$(composer global config home)/vendor/bin:$PATH
+
+# Alias laminas-cli to current path
+alias laminas=./vendor/bin/laminas
+
+# Add the autocompletion script, informing it to also complete laminas
+eval "$(symfony-autocomplete --aliases laminas)"</code></pre>
+
+<p>The above should be placed in your shell configuration file:</p>
+<ul>
+<li>For BASH users, <code>$HOME/.bashrc</code></li>
+<li>For ZSH users, <code>$HOME/.zshrc</code></li>
+<li>For FISH users, <code>$HOME/.config/fish/config.fish</code></li>
+</ul>
+<p>Once the changes have been made, either open a new terminal, or source your
+shell configuration:</p>
+<ul>
+<li>For BASH users, <code>source $HOME/.bashrc</code></li>
+<li>For ZSH users, <code>source $HOME/.zshrc</code></li>
+<li>For FISH users, <code>source $HOME/.config/fish/config.fish</code></li>
+</ul>
+<h2 id="usage">Usage</h2>
+<p>Once installation and configuration of the tooling is complete and you are
+either in a new terminal or have sourced the changes to your shell
+configuration, you can invoke autocompletion by pressing <code>&lt;Tab&gt;</code> after typing
+the <code>laminas</code> command at the prompt:</p>
+<pre class="highlight"><code class="language-bash">$ laminas &lt;TAB&gt;</code></pre>
+
+
+
+
+    <nav>
+    <ul class="page-nav hidden-print">
+
+        
+        <li class="page-nav__item">
+            
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../command-params/">
+                    <i class="fa fa-chevron-left"></i> Previous
+                </a>
+            
+        </li>
+
+        
+        <li class="page-nav__item">
+            
+        </li>
+    </ul>
+</nav>
+
+
+
+
+    <div class="help-wanted">
+        <p>
+            Found a mistake or want to contribute to the documentation?
+            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/autocompletion.md" target="_blank" class="help-wanted__link">
+                Edit this page on GitHub!
+            </a>
+        </p>
+    </div>
+
+                
             </div>
             <div class="col-md-3 col-sm-12 sidebar">
                 <div class="donation-banner">
@@ -275,7 +397,7 @@
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href="../.">laminas-cli</a>
+            <a href="..">laminas-cli</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -331,8 +453,8 @@
                     
                     
                         
-                            <li class="subnavigation__list-item ">
-                                <a href="../autocompletion/" class="subnavigation__link">Autocompletion</a>
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Autocompletion</a>
                             </li>
                         
                     
