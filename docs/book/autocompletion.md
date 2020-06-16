@@ -43,16 +43,20 @@ The above should be placed in your shell configuration file:
 - For ZSH users, `$HOME/.zshrc`
 - For FISH users, `$HOME/.config/fish/config.fish`
 
-Once the changes have been made, source your shell configuration:
+Once the changes have been made, either open a new terminal, or source your
+shell configuration:
 
 - For BASH users, `source $HOME/.bashrc`
 - For ZSH users, `source $HOME/.zshrc`
 - For FISH users, `source $HOME/.config/fish/config.fish`
 
-At this point, when you are in a project that uses laminas-cli, you can type:
+## Usage
+
+Once installation and configuration of the tooling is complete and you are
+either in a new terminal or have sourced the changes to your shell
+configuration, you can invoke autocompletion by pressing `<Tab>` after typing
+the `laminas` command at the prompt:
 
 ```bash
 $ laminas <TAB>
 ```
-
-and you will see completion for the available commands.
