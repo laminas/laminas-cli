@@ -38,7 +38,9 @@ final class ContainerCommandLoaderNoTypeHint implements CommandLoaderInterface
      */
     public function get($name): Command
     {
-        $command = $this->container->get($this->commandMap[$name]);
+        $command = $this->container->has($this->commandMap[$name])
+            ? $this->container->get($this->commandMap[$name])
+            : new $this->commandMap[$name]();
         $command->setName($name);
         return $command;
     }
@@ -48,7 +50,7 @@ final class ContainerCommandLoaderNoTypeHint implements CommandLoaderInterface
      */
     public function has($name): bool
     {
-        return isset($this->commandMap[$name]) && $this->container->has($this->commandMap[$name]);
+        return isset($this->commandMap[$name]);
     }
 
     /**

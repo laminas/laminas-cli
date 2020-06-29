@@ -35,14 +35,16 @@ final class ContainerCommandLoaderTypeHint implements CommandLoaderInterface
 
     public function get(string $name): Command
     {
-        $command = $this->container->get($this->commandMap[$name]);
+        $command = $this->container->has($this->commandMap[$name])
+            ? $this->container->get($this->commandMap[$name])
+            : new $this->commandMap[$name]();
         $command->setName($name);
         return $command;
     }
 
     public function has(string $name): bool
     {
-        return isset($this->commandMap[$name]) && $this->container->has($this->commandMap[$name]);
+        return isset($this->commandMap[$name]);
     }
 
     /**

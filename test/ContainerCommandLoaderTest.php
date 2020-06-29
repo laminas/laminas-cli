@@ -12,6 +12,7 @@ namespace LaminasTest\Cli;
 
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
+use LaminasTest\Cli\TestAsset\ExampleCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -59,5 +60,36 @@ class ContainerCommandLoaderTest extends TestCase
         $command = $loader->get('example:command-with-deps');
 
         self::assertInstanceOf(Command::class, $command);
+    }
+
+    public function testHasWillReturnTrueWhenTheCommandIsMappedButNotPresentInTheContainer(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->expects(self::never())->method('has');
+        $loader = new ContainerCommandLoader($container, [
+            'my:command' => 'CommandClassName',
+        ]);
+        self::assertTrue($loader->has('my:command'));
+    }
+
+    public function testCommandWillBeConstructedWhenNotPresentInTheContainer(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->expects(self::once())
+            ->method('has')
+            ->with(ExampleCommand::class)
+            ->willReturn(false);
+
+        $container->expects(self::never())
+            ->method('get')
+            ->with(ExampleCommand::class);
+
+        $loader = new ContainerCommandLoader($container, [
+            'my:command' => ExampleCommand::class,
+        ]);
+
+        $command = $loader->get('my:command');
+
+        self::assertInstanceOf(ExampleCommand::class, $command);
     }
 }
