@@ -12,6 +12,7 @@ namespace LaminasTest\Cli;
 
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
+use Laminas\Cli\Exception\ConfigurationException;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -96,5 +97,31 @@ class ContainerCommandLoaderTest extends TestCase
         $command = $loader->get('my:command');
 
         self::assertInstanceOf(ExampleCommand::class, $command);
+    }
+
+    public function testAnExceptionIsThrownWhenACommandAbsentFromTheContainerCannotBeConstructed(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->expects(self::once())
+            ->method('has')
+            ->with('UnknownCommandClass')
+            ->willReturn(false);
+
+        $loader = new ContainerCommandLoader($container, [
+            'my:command' => 'UnknownCommandClass',
+        ]);
+
+        try {
+            $loader->get('my:command');
+        } catch (ConfigurationException $exception) {
+            $message = $exception->getMessage();
+
+            $this->assertStringContainsString('my:command', $message);
+            $this->assertStringContainsString('UnknownCommandClass', $message);
+
+            return;
+        }
+
+        $this->fail('An exception was not thrown');
     }
 }
