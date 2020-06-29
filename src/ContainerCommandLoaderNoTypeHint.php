@@ -50,6 +50,10 @@ final class ContainerCommandLoaderNoTypeHint implements CommandLoaderInterface
      */
     public function has($name): bool
     {
+        if ($this->container->has($this->commandMap[$name])) {
+            return true;
+        }
+
         return isset($this->commandMap[$name]);
     }
 

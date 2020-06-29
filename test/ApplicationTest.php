@@ -524,7 +524,7 @@ class ApplicationTest extends TestCase
 
         /** @var ContainerInterface|ObjectProphecy $container */
         $container = $this->prophesize(ContainerInterface::class);
-        $container->has(ExampleCommandWithDependencies::class)->willReturn(true);
+        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
         $container->get('config')->willReturn($config)->shouldBeCalled();
         $container
             ->get(ExampleCommandWithDependencies::class)
@@ -576,7 +576,7 @@ class ApplicationTest extends TestCase
 
         /** @var ContainerInterface|ObjectProphecy $container */
         $container = $this->prophesize(ContainerInterface::class);
-        $container->has(ExampleCommandWithDependencies::class)->willReturn(true);
+        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
         $container->get('config')->willReturn($config)->shouldBeCalled();
         $container
             ->get(ExampleCommandWithDependencies::class)

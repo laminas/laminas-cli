@@ -65,10 +65,15 @@ class ContainerCommandLoaderTest extends TestCase
     public function testHasWillReturnTrueWhenTheCommandIsMappedButNotPresentInTheContainer(): void
     {
         $container = $this->createMock(ContainerInterface::class);
-        $container->expects(self::never())->method('has');
+        $container->expects(self::once())
+            ->method('has')
+            ->with('CommandClassName')
+            ->willReturn(false);
+
         $loader = new ContainerCommandLoader($container, [
             'my:command' => 'CommandClassName',
         ]);
+
         self::assertTrue($loader->has('my:command'));
     }
 
