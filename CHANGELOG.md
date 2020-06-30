@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.1.1 - TBD
+## 0.1.1 - 2020-06-30
 
 ### Added
 
@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#34](https://github.com/laminas/laminas-cli/pull/34) makes it possible to omit adding dependency configuration for commands that can be instantiated without arguments.
 
 ### Deprecated
 
