@@ -317,13 +317,15 @@ class MyCommand extends Command
 }</code></pre>
 
 <ol>
-<li>Register your command in the container:</li>
+<li>If your command has dependencies, register the command and its factory in the
+   container. Commands that can be instantiated with no constructor arguments
+   can omit container configuration:</li>
 </ol>
 <pre class="highlight"><code class="language-php">// config/autoload/dependencies.global.php:
 return [
     'dependencies' =&gt; [
-        'invokables' =&gt; [
-            MyNamespace\Command\MyCommand::class =&gt; MyNamespace\Command\MyCommand::class,
+        'factories' =&gt; [
+            MyNamespace\Command\MyCommand::class =&gt; MyNamespace\Command\MyCommandFactory::class,
         ],
     ],
 ];</code></pre>
@@ -366,8 +368,8 @@ class ConfigProvider
     public function getDependencyConfig() : array
     {
         return [
-            'invokables' =&gt; [
-                Command\MyCommand::class =&gt; Command\MyCommand::class,
+            'factories' =&gt; [
+                Command\MyCommand::class =&gt; Command\MyCommandFactory::class,
             ],
         ];
     }
