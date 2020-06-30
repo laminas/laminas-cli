@@ -18,7 +18,7 @@ final class ConfigurationException extends RuntimeException implements Exception
 {
     public static function withInvalidMappedCommandClass(string $commandName, string $targetClassName): self
     {
-        return new static(sprintf(
+        return new self(sprintf(
             'The target command class "%1$s" for the command named "%2$s" is not a known class and has not been '
             . 'configured with a factory. Either create a factory for "%1$s" or or alter the command to target an '
             . 'existing class',

@@ -29,7 +29,7 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
     /** @var string[] */
     private $commandMap;
 
-    public function __construct(ContainerInterface $container, array $commandMap)
+    final public function __construct(ContainerInterface $container, array $commandMap)
     {
         $this->container  = $container;
         $this->commandMap = $commandMap;
