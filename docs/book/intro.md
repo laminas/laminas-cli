@@ -31,14 +31,15 @@ class MyCommand extends Command
 }
 ```
 
-3. Register your command in the container:
+3. If your command has dependencies, register the command and its factory in the container. Commands that are _newable_
+without arguments can omit container configuration:
 
 ```php
 // config/autoload/dependencies.global.php:
 return [
     'dependencies' => [
-        'invokables' => [
-            MyNamespace\Command\MyCommand::class => MyNamespace\Command\MyCommand::class,
+        'factories' => [
+            MyNamespace\Command\MyCommand::class => MyNamespace\Command\MyCommandFactory::class,
         ],
     ],
 ];
@@ -85,8 +86,8 @@ class ConfigProvider
     public function getDependencyConfig() : array
     {
         return [
-            'invokables' => [
-                Command\MyCommand::class => Command\MyCommand::class,
+            'factories' => [
+                Command\MyCommand::class => Command\MyCommandFactory::class,
             ],
         ];
     }
