@@ -31,8 +31,9 @@ class MyCommand extends Command
 }
 ```
 
-3. If your command has dependencies, register the command and its factory in the container. Commands that are _newable_
-without arguments can omit container configuration:
+3. If your command has dependencies, register the command and its factory in the
+   container. Commands that can be instantiated with no constructor arguments
+   can omit container configuration:
 
 ```php
 // config/autoload/dependencies.global.php:
