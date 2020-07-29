@@ -19,6 +19,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use function array_search;
 use function get_class;
 use function is_array;
+use function preg_match;
 use function strtolower;
 
 use const PHP_EOL;
@@ -63,8 +64,13 @@ final class TerminateListener
             $nextCommandName = array_search($nextCommandClass, $this->config['commands'], true);
             $nextCommand     = $application->find($nextCommandName);
 
+            $thirdPartyMessage = (bool) preg_match('/^(Mezzio|Laminas)\b/', $nextCommandClass)
+                ? ''
+                : PHP_EOL . '<error>WARNING: This is a third-party command</error>';
+
             $question = new ChoiceQuestion(
                 PHP_EOL . "<info>Executing {$nextCommandName}</info> ({$nextCommand->getDescription()})."
+                . $thirdPartyMessage
                 . PHP_EOL . '<question>Do you want to continue?</question>',
                 ['Y' => 'yes, continue', 's' => 'skip command', 'n' => 'no, break'],
                 'Y'
