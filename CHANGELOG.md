@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.1.2 - TBD
+## 0.1.2 - 2020-07-29
 
 ### Added
 
@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#36](https://github.com/laminas/laminas-cli/pull/36) changes the dependency from `ocramius/package-versions` to `composer/package-versions-deprecated` to ensure compatibility with Composer v2 on PHP 7.3.
 
 ### Deprecated
 
