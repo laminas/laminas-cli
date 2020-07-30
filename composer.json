@@ -49,6 +49,9 @@
         }
     },
     "autoload-dev": {
+        "files": [
+            "test/TestAsset/ThirdPartyCommand.php"
+        ],
         "psr-4": {
             "LaminasTest\\Cli\\": "test/"
         }
