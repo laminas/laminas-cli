@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 0.1.3 - 2020-07-30
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#37](https://github.com/laminas/laminas-cli/pull/37) modifies how chained commands work. When a command within a chain is executed, if it is not one provided by the Laminas Project (or its subprojects), a warning is emitted when prompting to execute it.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.1.2 - 2020-07-29
 
 ### Added
