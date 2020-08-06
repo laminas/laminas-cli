@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use RuntimeException;
 use stdClass;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -224,21 +223,17 @@ class ParamAwareInputTest extends TestCase
         $input->getParam('does-not-exist');
     }
 
-    public function testGetParamRaisesExceptionIfIdentifiedParameterIsOfInvalidType(): void
+    public function testConstructorRaisesErrorIfAnyParamIsOfInvalidType(): void
     {
-        $this->decoratedInput->getOption('name')->willReturn(null)->shouldBeCalled();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(InputParamInterface::class);
 
-        $input = new $this->class(
+        new $this->class(
             $this->decoratedInput->reveal(),
             $this->output->reveal(),
             $this->helper->reveal(),
             ['name' => new stdClass()]
         );
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid parameter type');
-
-        $input->getParam('name');
     }
 
     public function testGetParamReturnsDefaultValueWhenInputIsNonInteractiveAndNoOptionPassed(): void
@@ -315,7 +310,7 @@ class ParamAwareInputTest extends TestCase
             ['multi-int-with-default' => $this->params['multi-int-with-default']]
         );
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('integer expected');
         $input->getParam('multi-int-with-default');
     }

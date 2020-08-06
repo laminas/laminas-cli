@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\Input;
 
+use InvalidArgumentException;
 use Laminas\Cli\Input\IntParam;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 
 use const PHP_EOL;
@@ -106,7 +106,7 @@ class IntParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: integer expected');
         $validator(null);
     }
@@ -120,7 +120,7 @@ class IntParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: integer expected');
         $validator($value);
     }
@@ -131,7 +131,7 @@ class IntParamTest extends TestCase
         $this->param->setMin(10);
         $validator = $this->param->getQuestion()->getValidator();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value 1; minimum value is 10');
         $validator(1);
     }
@@ -142,7 +142,7 @@ class IntParamTest extends TestCase
         $this->param->setMax(10);
         $validator = $this->param->getQuestion()->getValidator();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value 100; maximum value is 10');
         $validator(100);
     }

@@ -51,6 +51,10 @@ final class ContainerResolver
      */
     private static function resolveDefaultContainer(): ContainerInterface
     {
+        /**
+         * @psalm-suppress MissingFile
+         * @psalm-var mixed|ContainerInterface $container
+         */
         $container = include 'config/container.php';
         if (! $container instanceof ContainerInterface) {
             throw new RuntimeException('Failed to load PSR-11 container');
@@ -61,10 +65,16 @@ final class ContainerResolver
 
     private static function resolveMvcContainer(): ContainerInterface
     {
+        /**
+         * @psalm-suppress MissingFile
+         * @psalm-var array<string, mixed> $appConfig
+         */
         $appConfig = include 'config/application.config.php';
         if (file_exists('config/development.config.php')) {
+            /** @psalm-var array<string, mixed> $appConfig */
             $appConfig = ArrayUtils::merge(
                 $appConfig,
+                /** @psalm-suppress MissingFile */
                 include 'config/development.config.php'
             );
         }

@@ -11,15 +11,13 @@ declare(strict_types=1);
 namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Console\Question\Question;
+use Webmozart\Assert\Assert;
 
 use function array_map;
-use function file_exists;
 use function get_debug_type;
 use function in_array;
 use function is_dir;
-use function is_string;
 use function preg_replace;
 use function rtrim;
 use function scandir;
@@ -75,26 +73,25 @@ final class PathParam extends AbstractInputParam
             }, $foundFilesAndDirs);
         });
 
-        $question->setValidator(function ($value) {
-            if (! is_string($value)) {
-                throw new RuntimeException(sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
-            }
+        $question->setValidator(
+            /** @param mixed $value */
+            function ($value): string {
+                Assert::string($value, sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
 
-            if (! $this->mustExist) {
-                // No further checks needed
+                if (! $this->mustExist) {
+                    // No further checks needed
+                    return $value;
+                }
+
+                Assert::fileExists($value, 'Path does not exist');
+
+                if ($this->type === self::TYPE_DIR) {
+                    Assert::directory($value, 'Path is not a valid directory');
+                }
+
                 return $value;
             }
-
-            if (! file_exists($value)) {
-                throw new RuntimeException('Path does not exist');
-            }
-
-            if ($this->type === self::TYPE_DIR && ! is_dir($value)) {
-                throw new RuntimeException('Path is not a valid directory');
-            }
-
-            return $value;
-        });
+        );
 
         return $question;
     }

@@ -36,17 +36,28 @@ final class StringParam extends AbstractInputParam
     {
         $question = $this->createQuestion();
 
-        $question->setValidator(function ($value) {
-            if (! is_string($value)) {
-                throw new RuntimeException(sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
-            }
+        $question->setValidator(
+            /**
+             * @param mixed $value
+             */
+            function ($value): string {
+                if (! is_string($value)) {
+                    throw new RuntimeException(sprintf(
+                        'Invalid value: string expected, %s given',
+                        get_debug_type($value)
+                    ));
+                }
 
-            if ($this->pattern !== null && ! preg_match($this->pattern, $value)) {
-                throw new RuntimeException('Invalid value: does not match pattern: ' . $this->pattern);
-            }
+                if ($this->pattern !== null && ! preg_match($this->pattern, $value)) {
+                    throw new RuntimeException(sprintf(
+                        'Invalid value: does not match pattern: %s',
+                        $this->pattern
+                    ));
+                }
 
-            return $value;
-        });
+                return $value;
+            }
+        );
 
         return $question;
     }
@@ -65,7 +76,7 @@ final class StringParam extends AbstractInputParam
 
     private function validatePattern(string $pattern): bool
     {
-        set_error_handler(static function ($errno, $errstr) {
+        set_error_handler(static function (int $errno, string $errstr) {
             if (! strstr($errstr, 'preg_match')) {
                 return false;
             }

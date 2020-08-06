@@ -12,6 +12,7 @@ namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
+use Webmozart\Assert\Assert;
 
 use function array_walk;
 use function is_array;
@@ -171,25 +172,22 @@ abstract class AbstractInputParam implements InputParamInterface
             );
         }
 
-        array_walk($shortcut, static function ($shortcut) {
-            if (null === $shortcut) {
-                throw new InvalidArgumentException(
-                    'No null values are allowed in arrays provided as shortcut names'
-                );
-            }
-
-            if (! is_string($shortcut)) {
-                throw new InvalidArgumentException(sprintf(
+        array_walk(
+            $shortcut,
+            /** @param mixed $shortcut */
+            static function ($shortcut) {
+                Assert::notNull($shortcut, 'No null values are allowed in arrays provided as shortcut names');
+                Assert::string($shortcut, sprintf(
                     'Only string values are allowed in arrays provided as shortcut names; received "%s"',
                     get_debug_type($shortcut)
                 ));
-            }
 
-            if ('' === trim($shortcut, ' -')) {
-                throw new InvalidArgumentException(
-                    'String values in arrays provided as shortcut names must not be empty'
-                );
+                if ('' === trim($shortcut, ' -')) {
+                    throw new InvalidArgumentException(
+                        'String values in arrays provided as shortcut names must not be empty'
+                    );
+                }
             }
-        });
+        );
     }
 }

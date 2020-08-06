@@ -18,9 +18,12 @@ use function strpos;
 
 final class ArrayInputMapper implements InputMapperInterface
 {
-    /** @var string[] */
+    /** @psalm-var array<string, string|string[]> */
     private $map;
 
+    /**
+     * @psalm-param array<string, string|string[]> $map
+     */
     public function __construct(array $map)
     {
         $this->map = $map;

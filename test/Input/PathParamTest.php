@@ -13,7 +13,6 @@ namespace LaminasTest\Cli\Input;
 use InvalidArgumentException;
 use Laminas\Cli\Input\PathParam;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 
 use function array_reduce;
@@ -80,7 +79,7 @@ class PathParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: string expected');
         $validator(null);
     }
@@ -96,7 +95,7 @@ class PathParamTest extends TestCase
         $this->param->setPathMustExist(true);
         $validator = $this->param->getQuestion()->getValidator();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path does not exist');
         $validator('path-that-does-not-exist');
     }
@@ -107,7 +106,7 @@ class PathParamTest extends TestCase
         $param->setPathMustExist(true);
         $validator = $param->getQuestion()->getValidator();
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path is not a valid directory');
         $validator(__FILE__);
     }

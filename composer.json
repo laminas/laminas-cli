@@ -31,14 +31,16 @@
         "psr/container": "^1.0",
         "symfony/console": "^4.3 || ^5.1.2",
         "symfony/event-dispatcher": "^4.0 || ^5.0",
-        "symfony/polyfill-php80": "^1.17"
+        "symfony/polyfill-php80": "^1.17",
+        "webmozart/assert": "^1.9"
     },
     "require-dev": {
         "laminas/laminas-coding-standard": "~2.0.0",
         "laminas/laminas-mvc": "^3.1.1",
         "laminas/laminas-servicemanager": "^3.4",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpunit/phpunit": "^9.0.1"
+        "phpunit/phpunit": "^9.0.1",
+        "vimeo/psalm": "^3.13"
     },
     "autoload": {
         "files": [
@@ -62,10 +64,12 @@
     "scripts": {
         "check": [
             "@cs-check",
-            "@test"
+            "@test",
+            "@static-analysis"
         ],
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
+        "static-analysis": "psalm --shepherd --stats",
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }

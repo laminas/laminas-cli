@@ -14,6 +14,7 @@ use Laminas\Cli\Exception\ConfigurationException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
+use Webmozart\Assert\Assert;
 
 use function array_keys;
 use function class_exists;
@@ -26,12 +27,15 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
     /** @var ContainerInterface */
     private $container;
 
-    /** @var string[] */
+    /** @psalm-var array<string, string> */
     private $commandMap;
 
     final public function __construct(ContainerInterface $container, array $commandMap)
     {
-        $this->container  = $container;
+        $this->container = $container;
+
+        Assert::isMap($commandMap);
+        Assert::allString($commandMap);
         $this->commandMap = $commandMap;
     }
 
@@ -40,6 +44,9 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
         $command = $this->container->has($this->commandMap[$name])
             ? $this->container->get($this->commandMap[$name])
             : $this->createCommand($name);
+
+        Assert::isInstanceOf($command, Command::class);
+
         $command->setName($name);
 
         return $command;
@@ -69,6 +76,10 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
             throw ConfigurationException::withInvalidMappedCommandClass($name, $class);
         }
 
-        return new $class();
+        /** @psalm-suppress MixedMethodCall */
+        $command = new $class();
+        Assert::isInstanceOf($command, Command::class);
+
+        return $command;
     }
 }

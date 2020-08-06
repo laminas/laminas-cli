@@ -16,7 +16,8 @@ use function class_alias;
 use function str_replace;
 use function strstr;
 
-$version = strstr(Versions::getVersion('symfony/console'), '@', true);
+/** @psalm-suppress DeprecatedClass */
+$version = strstr(Versions::getVersion('symfony/console'), '@', true) ?: '';
 
 if (str_replace('v', '', $version) >= '5.0.0') {
     // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase

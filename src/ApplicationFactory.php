@@ -16,6 +16,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Webmozart\Assert\Assert;
 
 use function strstr;
 
@@ -29,15 +30,22 @@ final class ApplicationFactory
     public function __invoke(ContainerInterface $container): Application
     {
         $config = $container->get('config')['laminas-cli'] ?? [];
+        Assert::isArray($config);
+        Assert::notEmpty($config);
 
+        /** @psalm-suppress DeprecatedClass */
         $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
+        Assert::string($version);
+
+        /** @psalm-var mixed[] $commands */
+        $commands = $config['commands'] ?? [];
 
         $dispatcher = new EventDispatcher();
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
 
         $application = new Application('laminas', $version);
         // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase
-        $application->setCommandLoader(new ContainerCommandLoader($container, $config['commands'] ?? []));
+        $application->setCommandLoader(new ContainerCommandLoader($container, $commands));
         $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);
 

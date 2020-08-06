@@ -10,11 +10,10 @@ declare(strict_types=1);
 
 namespace Laminas\Cli\Input;
 
-use RuntimeException;
 use Symfony\Component\Console\Question\Question;
+use Webmozart\Assert\Assert;
 
 use function get_debug_type;
-use function is_int;
 use function is_numeric;
 use function sprintf;
 
@@ -33,32 +32,44 @@ final class IntParam extends AbstractInputParam
     {
         $question = $this->createQuestion();
 
-        $question->setNormalizer(static function ($value) {
-            if (is_numeric($value) && (string) (int) $value === $value) {
-                return (int) $value;
+        $question->setNormalizer(
+            /**
+             * @param mixed $value
+             * @return mixed
+             */
+            static function ($value) {
+                if (is_numeric($value) && (string) (int) $value === $value) {
+                    return (int) $value;
+                }
+
+                return $value;
             }
+        );
 
-            return $value;
-        });
+        $question->setValidator(
+            /** @param mixed $value */
+            function ($value): int {
+                Assert::integer($value, sprintf('Invalid value: integer expected, %s given', get_debug_type($value)));
 
-        $question->setValidator(function ($value) {
-            if (! is_int($value)) {
-                throw new RuntimeException(sprintf(
-                    'Invalid value: integer expected, %s given',
-                    get_debug_type($value)
-                ));
+                if ($this->min !== null) {
+                    Assert::greaterThanEq($value, $this->min, sprintf(
+                        'Invalid value %d; minimum value is %d',
+                        $value,
+                        $this->min
+                    ));
+                }
+
+                if ($this->max !== null) {
+                    Assert::lessThanEq($value, $this->max, sprintf(
+                        'Invalid value %d; maximum value is %d',
+                        $value,
+                        $this->max
+                    ));
+                }
+
+                return $value;
             }
-
-            if ($this->min !== null && $value < $this->min) {
-                throw new RuntimeException(sprintf('Invalid value %d; minimum value is %d', $value, $this->min));
-            }
-
-            if ($this->max !== null && $value > $this->max) {
-                throw new RuntimeException(sprintf('Invalid value %d; maximum value is %d', $value, $this->max));
-            }
-
-            return $value;
-        });
+        );
 
         return $question;
     }
