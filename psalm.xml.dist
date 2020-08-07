@@ -6,7 +6,7 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name="bin"/>
+        <file name="bin/laminas"/>
         <directory name="src"/>
         <directory name="test"/>
         <ignoreFiles>
@@ -27,6 +27,7 @@
 
         <InternalMethod>
             <errorLevel type="suppress">
+                <file name="bin/laminas"/>
                 <file name="test/ContainerCommandLoaderTest.php"/>
             </errorLevel>
         </InternalMethod>
