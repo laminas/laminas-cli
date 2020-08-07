@@ -30,8 +30,7 @@ final class ApplicationFactory
     public function __invoke(ContainerInterface $container): Application
     {
         $config = $container->get('config')['laminas-cli'] ?? [];
-        Assert::isArray($config);
-        Assert::notEmpty($config);
+        Assert::isMap($config);
 
         /** @psalm-suppress DeprecatedClass */
         $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
