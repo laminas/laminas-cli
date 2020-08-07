@@ -54,7 +54,7 @@ final class ContainerResolver
     {
         /**
          * @psalm-suppress MissingFile
-         * @psalm-var mixed|ContainerInterface $container
+         * @psalm-var ContainerInterface $container
          */
         $container = include 'config/container.php';
 
