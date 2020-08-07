@@ -29,6 +29,7 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
     /** @psalm-var array<string, string> */
     private $commandMap;
 
+    /** @psalm-param array<string, string> $commandMap */
     final public function __construct(ContainerInterface $container, array $commandMap)
     {
         $this->container = $container;
