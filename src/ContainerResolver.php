@@ -57,10 +57,8 @@ final class ContainerResolver
          * @psalm-var mixed|ContainerInterface $container
          */
         $container = include 'config/container.php';
-        if (! $container instanceof ContainerInterface) {
-            throw new RuntimeException('Failed to load PSR-11 container');
-        }
 
+        Assert::implementsInterface($container, ContainerInterface::class, 'Failed to load PSR-11 container');
         return $container;
     }
 
