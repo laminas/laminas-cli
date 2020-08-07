@@ -79,7 +79,6 @@ final class TerminateListener
 
         /** @psalm-var array<string, string|array> $chain */
         foreach ($chain as $nextCommandClass => $inputMapperSpec) {
-            /** @psalm-var array<string, string> $commands */
             $nextCommandName = array_search($nextCommandClass, $commands, true);
             Assert::string($nextCommandName, sprintf(
                 'No command name found for chained command class "%s"; make sure it is defined'
