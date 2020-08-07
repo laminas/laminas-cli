@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\Command;
 
-use Laminas\Cli\Command\AbstractParamAwareCommand;
 use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
@@ -43,7 +42,7 @@ class ParamAwareCommandTest extends TestCase
     public function setUp(): void
     {
         /** @psalm-var QuestionHelper&ObjectProphecy $questionHelper */
-        $questionHelper = $this->prophesize(QuestionHelper::class)->reveal();
+        $questionHelper       = $this->prophesize(QuestionHelper::class)->reveal();
         $this->questionHelper = $questionHelper;
 
         /** @psalm-var HelperSet&ObjectProphecy $helperSet */
@@ -83,7 +82,7 @@ class ParamAwareCommandTest extends TestCase
     public function testRunDecoratesInputInParameterAwareInputInstance(): void
     {
         /** @psalm-var InputInterface&ObjectProphecy $input */
-        $input  = $this->prophesize(InputInterface::class)->reveal();
+        $input = $this->prophesize(InputInterface::class)->reveal();
         /** @psalm-var OutputInterface&ObjectProphecy $output */
         $output = $this->prophesize(OutputInterface::class)->reveal();
         $param  = (new BoolParam('test'))
