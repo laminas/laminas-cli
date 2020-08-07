@@ -85,12 +85,12 @@ class AbstractInputParamTest extends TestCase
         yield 'dashes only'            => ['--', 'non-zero-length'];
         yield 'spaces only'            => ['  ', 'non-zero-length'];
         yield 'object'                 => [(object) ['foo' => 'bar']];
-        yield 'array with boolean'     => [[true], 'Only string values'];
-        yield 'array with int'         => [[1], 'Only string values'];
-        yield 'array with float'       => [[1.1], 'Only string values'];
+        yield 'array with boolean'     => [[true], 'Only non-empty strings'];
+        yield 'array with int'         => [[1], 'Only non-empty strings'];
+        yield 'array with float'       => [[1.1], 'Only non-empty strings'];
         yield 'array with dashes only' => [['--'], 'must not be empty'];
         yield 'array with spaces only' => [['  '], 'must not be empty'];
-        yield 'array with object'      => [[(object) ['foo' => 'bar']], 'Only string values'];
+        yield 'array with object'      => [[(object) ['foo' => 'bar']], 'Only non-empty strings'];
     }
 
     /**

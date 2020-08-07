@@ -176,9 +176,8 @@ abstract class AbstractInputParam implements InputParamInterface
             $shortcut,
             /** @param mixed $shortcut */
             static function ($shortcut) {
-                Assert::notNull($shortcut, 'No null values are allowed in arrays provided as shortcut names');
-                Assert::string($shortcut, sprintf(
-                    'Only string values are allowed in arrays provided as shortcut names; received "%s"',
+                Assert::stringNotEmpty($shortcut, sprintf(
+                    'Only non-empty strings are allowed as shortcut names; received "%s"',
                     get_debug_type($shortcut)
                 ));
 
