@@ -12,7 +12,6 @@ namespace Laminas\Cli\Input;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
-use Webmozart\Assert\Assert;
 
 use function array_map;
 use function implode;
@@ -68,7 +67,8 @@ trait StandardQuestionTrait
     }
 
     /**
-     * @param null|string|string[] $defaultValue
+     * @param null|string|array $defaultValue
+     * @psalm-param null|string|scalar[] $defaultValue
      */
     private function getDefaultPrompt($defaultValue): string
     {
@@ -77,9 +77,7 @@ trait StandardQuestionTrait
         }
 
         if (is_array($defaultValue)) {
-            Assert::allScalar($defaultValue, 'One or more default values were not presented as scalars');
             $defaultValue = implode(', ', array_map(
-                /** @param bool|int|float|string $value */
                 function ($value): string {
                     return (string) $value;
                 },
