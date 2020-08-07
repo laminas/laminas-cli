@@ -15,6 +15,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\ArrayUtils;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 use function class_exists;
 use function file_exists;
@@ -67,16 +68,22 @@ final class ContainerResolver
     {
         /**
          * @psalm-suppress MissingFile
-         * @psalm-var array<string, mixed> $appConfig
+         * @psalm-var array<int|string, mixed> $appConfig
          */
         $appConfig = include 'config/application.config.php';
+        Assert::isMap($appConfig);
+
         if (file_exists('config/development.config.php')) {
-            /** @psalm-var array<string, mixed> $appConfig */
-            $appConfig = ArrayUtils::merge(
-                $appConfig,
-                /** @psalm-suppress MissingFile */
-                include 'config/development.config.php'
-            );
+            /**
+             * @psalm-suppress MissingFile
+             * @psalm-var array<int|string, mixed> $devConfig
+             */
+            $devConfig = include 'config/development.config.php';
+            Assert::isMap($devConfig);
+
+            /** @psalm-var array<int|string, mixed> $appConfig */
+            $appConfig = ArrayUtils::merge($appConfig, $devConfig);
+            Assert::isMap($appConfig);
         }
 
         $smConfig = new ServiceManagerConfig($appConfig['service_manager'] ?? []);
