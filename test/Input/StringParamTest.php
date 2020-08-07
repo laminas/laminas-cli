@@ -64,6 +64,7 @@ class StringParamTest extends TestCase
     {
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: string expected');
@@ -75,6 +76,7 @@ class StringParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
 
+        $this->assertIsCallable($validator);
         $this->assertSame('a string', $validator('a string'));
     }
 
@@ -83,6 +85,7 @@ class StringParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $this->param->setPattern('/^[A-Z][a-zA-Z0-9_]+$/');
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: does not match pattern');
@@ -95,6 +98,7 @@ class StringParamTest extends TestCase
         $this->param->setPattern('/^[A-Z][a-zA-Z0-9_]+$/');
         $validator = $this->param->getQuestion()->getValidator();
 
+        $this->assertIsCallable($validator);
         $this->assertSame('AClassName', $validator('AClassName'));
     }
 
