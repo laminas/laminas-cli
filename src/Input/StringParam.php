@@ -11,11 +11,10 @@ declare(strict_types=1);
 namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Console\Question\Question;
+use Webmozart\Assert\Assert;
 
 use function get_debug_type;
-use function is_string;
 use function preg_match;
 use function restore_error_handler;
 use function set_error_handler;
@@ -41,15 +40,13 @@ final class StringParam extends AbstractInputParam
              * @param mixed $value
              */
             function ($value): string {
-                if (! is_string($value)) {
-                    throw new RuntimeException(sprintf(
-                        'Invalid value: string expected, %s given',
-                        get_debug_type($value)
-                    ));
-                }
+                Assert::string($value, sprintf(
+                    'Invalid value: string expected, %s given',
+                    get_debug_type($value)
+                ));
 
-                if ($this->pattern !== null && ! preg_match($this->pattern, $value)) {
-                    throw new RuntimeException(sprintf(
+                if ($this->pattern !== null) {
+                    Assert::regex($value, $this->pattern, sprintf(
                         'Invalid value: does not match pattern: %s',
                         $this->pattern
                     ));
