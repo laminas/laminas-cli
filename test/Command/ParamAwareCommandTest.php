@@ -31,20 +31,28 @@ class ParamAwareCommandTest extends TestCase
 {
     use ProphecyTrait;
 
-    /** @var AbstractParamAwareCommand */
+    /** @var ParamAwareCommandStub|ParamAwareCommandStubNonHinted */
     private $command;
 
-    /** @var QuestionHelper|ObjectProphecy */
+    /**
+     * @var QuestionHelper|ObjectProphecy
+     * @psalm-var QuestionHelper&ObjectProphecy
+     */
     private $questionHelper;
 
     public function setUp(): void
     {
-        $this->questionHelper = $this->prophesize(QuestionHelper::class)->reveal();
+        /** @psalm-var QuestionHelper&ObjectProphecy $questionHelper */
+        $questionHelper = $this->prophesize(QuestionHelper::class)->reveal();
+        $this->questionHelper = $questionHelper;
 
+        /** @psalm-var HelperSet&ObjectProphecy $helperSet */
         $helperSet = $this->prophesize(HelperSet::class);
+        /** @psalm-suppress TooManyArguments */
         $helperSet->get('question')->willReturn($this->questionHelper);
 
-        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true);
+        /** @psalm-suppress DeprecatedClass */
+        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true) ?: '';
         $commandClass   = str_replace('v', '', $consoleVersion) >= '5.0.0'
             ? ParamAwareCommandStub::class
             : ParamAwareCommandStubNonHinted::class;
@@ -65,6 +73,7 @@ class ParamAwareCommandTest extends TestCase
         $this->assertArrayHasKey('test', $this->command->options);
 
         $option = $this->command->options['test'];
+        $this->assertIsArray($option);
         $this->assertSame($param->getShortcut(), $option['shortcut']);
         $this->assertSame($param->getOptionMode(), $option['mode']);
         $this->assertSame($param->getDescription(), $option['description']);
@@ -73,7 +82,9 @@ class ParamAwareCommandTest extends TestCase
 
     public function testRunDecoratesInputInParameterAwareInputInstance(): void
     {
+        /** @psalm-var InputInterface&ObjectProphecy $input */
         $input  = $this->prophesize(InputInterface::class)->reveal();
+        /** @psalm-var OutputInterface&ObjectProphecy $output */
         $output = $this->prophesize(OutputInterface::class)->reveal();
         $param  = (new BoolParam('test'))
             ->setDescription('Yes or no')
