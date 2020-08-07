@@ -257,14 +257,12 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         // Array value expected, but not an array: raise an exception
-        if (! is_array($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Option --%s expects an array of values, but received "%s";'
-                . ' check to ensure the command has provided a valid default.',
-                $paramName,
-                get_debug_type($value)
-            ));
-        }
+        Assert::isArray($value, sprintf(
+            'Option --%s expects an array of values, but received "%s";'
+            . ' check to ensure the command has provided a valid default.',
+            $paramName,
+            get_debug_type($value)
+        ));
 
         // Array value: validate each item in the array
         array_walk($value, $validator);
