@@ -12,6 +12,7 @@
         <ignoreFiles>
             <directory name="vendor"/>
             <file name="src/Input/NonHintedParamAwareInput.php"/>
+            <file name="test/TestAsset/ParamAwareCommandStubNonHinted.php"/>
         </ignoreFiles>
     </projectFiles>
 </psalm>
