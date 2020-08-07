@@ -52,19 +52,19 @@ class ParamAwareInputTest extends TestCase
     private $class;
 
     /**
-     * @var InputInterface|ObjectProphecy 
+     * @var InputInterface|ObjectProphecy
      * @psalm-var InputInterface&ObjectProphecy
      */
     private $decoratedInput;
 
     /**
-     * @var QuestionHelper|ObjectProphecy 
+     * @var QuestionHelper|ObjectProphecy
      * @psalm-var QuestionHelper&ObjectProphecy
      */
     private $helper;
 
     /**
-     * @var OutputInterface|ObjectProphecy 
+     * @var OutputInterface|ObjectProphecy
      * @psalm-var OutputInterface&ObjectProphecy
      */
     private $output;
@@ -81,18 +81,18 @@ class ParamAwareInputTest extends TestCase
             : NonHintedParamAwareInput::class;
 
         /** @psalm-var InputInterface&ObjectProphecy $decoratedInput */
-        $decoratedInput = $this->prophesize(InputInterface::class);
+        $decoratedInput       = $this->prophesize(InputInterface::class);
         $this->decoratedInput = $decoratedInput;
 
         /** @psalm-var OutputInterface&ObjectProphecy $output */
-        $output = $this->prophesize(OutputInterface::class);
+        $output       = $this->prophesize(OutputInterface::class);
         $this->output = $output;
         
         /** @psalm-var QuestionHelper&ObjectProphecy $helper */
-        $helper = $this->prophesize(QuestionHelper::class);
+        $helper       = $this->prophesize(QuestionHelper::class);
         $this->helper = $helper;
 
-        $this->params         = [
+        $this->params = [
             'name'                   => (new StringParam('name'))
                 ->setDescription('Your name')
                 ->setRequiredFlag(true),
