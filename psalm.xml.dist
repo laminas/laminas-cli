@@ -15,4 +15,12 @@
             <file name="test/TestAsset/ParamAwareCommandStubNonHinted.php"/>
         </ignoreFiles>
     </projectFiles>
+
+    <issueHandlers>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <file name="test/**/*Test.php"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+    </issueHandlers>
 </psalm>
