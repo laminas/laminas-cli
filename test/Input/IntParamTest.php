@@ -74,6 +74,7 @@ class IntParamTest extends TestCase
     public function testNormalizerCastsNumericValuesToIntegers($value, int $expected): void
     {
         $normalizer = $this->param->getQuestion()->getNormalizer();
+        $this->assertIsCallable($normalizer);
         $this->assertSame($expected, $normalizer($value));
     }
 
@@ -92,6 +93,7 @@ class IntParamTest extends TestCase
     public function testNormalizerDoesNotCastNonNumericValues($value): void
     {
         $normalizer = $this->param->getQuestion()->getNormalizer();
+        $this->assertIsCallable($normalizer);
         $this->assertSame($value, $normalizer($value));
     }
 
@@ -105,6 +107,7 @@ class IntParamTest extends TestCase
     {
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: integer expected');
@@ -119,6 +122,7 @@ class IntParamTest extends TestCase
     {
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: integer expected');
@@ -130,6 +134,7 @@ class IntParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $this->param->setMin(10);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value 1; minimum value is 10');
@@ -141,6 +146,7 @@ class IntParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $this->param->setMax(10);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value 100; maximum value is 10');
@@ -154,6 +160,7 @@ class IntParamTest extends TestCase
         $this->param->setMax(10);
         $validator = $this->param->getQuestion()->getValidator();
 
+        $this->assertIsCallable($validator);
         $this->assertSame(5, $validator(5));
     }
 
