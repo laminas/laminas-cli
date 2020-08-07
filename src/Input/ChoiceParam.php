@@ -13,7 +13,6 @@ namespace Laminas\Cli\Input;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
-use Webmozart\Assert\Assert;
 
 use function array_map;
 use function implode;
@@ -59,7 +58,8 @@ final class ChoiceParam extends AbstractInputParam
     }
 
     /**
-     * @param null|string|string[] $defaultValue
+     * @param null|string|array $defaultValue
+     * @psalm-param null|string|scalar[] $defaultValue
      */
     private function createDefaultPrompt($defaultValue): string
     {
@@ -68,10 +68,7 @@ final class ChoiceParam extends AbstractInputParam
         }
 
         if (is_array($defaultValue)) {
-            Assert::isList($defaultValue);
-            Assert::allScalar($defaultValue);
             $defaultValue = implode(', ', array_map(
-                /** @param bool|int|float|string $value */
                 static function ($value): string {
                     return (string) $value;
                 },
