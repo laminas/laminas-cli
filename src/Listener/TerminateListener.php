@@ -128,7 +128,7 @@ final class TerminateListener
     {
         if (is_array($inputMapperSpec)) {
             $this->validateInputMap($inputMapperSpec, $commandClass);
-            /** @psalm-var array<string, string|string[]> $inputMapperSpec */
+            /** @psalm-var array<string|int, string|array<string, string>> $inputMapperSpec */
             return new ArrayInputMapper($inputMapperSpec);
         }
 
