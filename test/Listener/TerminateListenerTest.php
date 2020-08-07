@@ -61,7 +61,6 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->never())->method('isInteractive');
         $this->command->expects($this->never())->method('getApplication');
 
-        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener(ApplicationTest::getValidConfiguration());
         $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 1);
 
@@ -73,7 +72,6 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
 
-        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener(ApplicationTest::getValidConfiguration());
         $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
 
@@ -85,7 +83,6 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
 
-        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener([]);
         $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
 
@@ -97,7 +94,6 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $command = new ExampleCommand();
 
-        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener([
             'chains' => [
                 ExampleCommand::class => true,
@@ -110,7 +106,6 @@ class TerminateListenerTest extends TestCase
 
     public function testNotifiesOfThirdPartyCommandInChain(): void
     {
-        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener([
             'commands' => [
                 'example:command-name' => ExampleCommand::class,

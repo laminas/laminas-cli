@@ -17,6 +17,19 @@
     </projectFiles>
 
     <issueHandlers>
+        <InternalClass>
+            <errorLevel type="suppress">
+                <file name="test/ContainerCommandLoaderTest.php"/>
+                <file name="test/Listener/TerminateListenerTest.php"/>
+            </errorLevel>
+        </InternalClass>
+
+        <InternalMethod>
+            <errorLevel type="suppress">
+                <file name="test/ContainerCommandLoaderTest.php"/>
+            </errorLevel>
+        </InternalMethod>
+
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
                 <file name="test/**/*Test.php"/>
