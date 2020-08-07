@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
+use InvalidArgumentException;
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
-use Laminas\Cli\Exception\ConfigurationException;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -113,7 +113,7 @@ class ContainerCommandLoaderTest extends TestCase
 
         try {
             $loader->get('my:command');
-        } catch (ConfigurationException $exception) {
+        } catch (InvalidArgumentException $exception) {
             $message = $exception->getMessage();
 
             $this->assertStringContainsString('my:command', $message);
