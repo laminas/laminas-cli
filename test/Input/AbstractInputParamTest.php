@@ -99,7 +99,7 @@ class AbstractInputParamTest extends TestCase
      */
     public function testSettingShortcutShouldRaiseExceptionForInvalidValues(
         $shortcut,
-        string $expectedMesage = 'must be null, a string, or an array'
+        string $expectedMesage = 'must be null, a non-zero-length string, or an array'
     ): void {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMesage);

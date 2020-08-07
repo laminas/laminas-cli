@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Webmozart\Assert\Assert;
 
 use function array_walk;
-use function is_array;
 use function is_string;
 use function sprintf;
 use function trim;
@@ -150,27 +149,22 @@ abstract class AbstractInputParam implements InputParamInterface
             return;
         }
 
-        if (! is_array($shortcut) && ! is_string($shortcut)) {
-            throw new InvalidArgumentException(sprintf(
-                'Shortcut must be null, a string, or an array; received "%s"',
+        if (is_string($shortcut)) {
+            $trimmedShortcut = trim($shortcut, ' -');
+            Assert::stringNotEmpty($trimmedShortcut, sprintf(
+                'Shortcut must be null, a non-zero-length string, or an array of strings; received "%s"',
                 get_debug_type($shortcut)
             ));
-        }
-
-        if (is_string($shortcut)) {
-            if ('' === trim($shortcut, ' -')) {
-                throw new InvalidArgumentException(
-                    'Shortcut must be a non-zero-length string or an array of strings; received ""'
-                );
-            }
             return;
         }
 
-        if ([] === $shortcut) {
-            throw new InvalidArgumentException(
-                'Shortcut must be a non-zero-length string or an array of strings; received "[]"'
-            );
-        }
+        Assert::isNonEmptyList(
+            $shortcut,
+            sprintf(
+                'Shortcut must be null, a non-zero-length string, or an array of strings; received "%s"',
+                get_debug_type($shortcut)
+            )
+        );
 
         array_walk(
             $shortcut,
