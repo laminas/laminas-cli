@@ -103,6 +103,7 @@ class AbstractInputParamTest extends TestCase
     ): void {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMesage);
+        /** @psalm-suppress MixedArgument */
         $this->param->setShortcut($shortcut);
     }
 
@@ -120,6 +121,7 @@ class AbstractInputParamTest extends TestCase
     /**
      * @dataProvider validShortcutValues
      * @param mixed $shortcut
+     * @psalm-param null|string|string[] $shortcut
      */
     public function testAllowsSettingShortcutWithValidValues($shortcut): void
     {
