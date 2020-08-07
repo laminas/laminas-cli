@@ -47,7 +47,7 @@ class TerminateListenerTest extends TestCase
         $this->output  = $this->createMock(OutputInterface::class);
     }
 
-    public function testSkipIfExitStatusIsNotZero()
+    public function testSkipIfExitStatusIsNotZero(): void
     {
         $this->input->expects($this->never())->method('isInteractive');
         $this->command->expects($this->never())->method('getApplication');
@@ -58,7 +58,7 @@ class TerminateListenerTest extends TestCase
         $listener($event);
     }
 
-    public function testSkipIfNotInteractiveMode()
+    public function testSkipIfNotInteractiveMode(): void
     {
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
@@ -69,7 +69,7 @@ class TerminateListenerTest extends TestCase
         $listener($event);
     }
 
-    public function testSkipIfThereIsNoChain()
+    public function testSkipIfThereIsNoChain(): void
     {
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
@@ -80,7 +80,7 @@ class TerminateListenerTest extends TestCase
         $listener($event);
     }
 
-    public function testSkipIfChainConfigurationIsNotAnArray()
+    public function testSkipIfChainConfigurationIsNotAnArray(): void
     {
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $command = new ExampleCommand();

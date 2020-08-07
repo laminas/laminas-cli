@@ -23,7 +23,7 @@ use function getcwd;
 
 class ContainerCommandLoaderTest extends TestCase
 {
-    public function testGetCommandHasName()
+    public function testGetCommandHasName(): void
     {
         $commands = [
             'foo-bar-command' => TestAsset\ExampleCommand::class,
@@ -47,7 +47,7 @@ class ContainerCommandLoaderTest extends TestCase
         self::assertSame('foo-bar-command', $command->getName());
     }
 
-    public function testGetCommandReturnsCommand()
+    public function testGetCommandReturnsCommand(): void
     {
         $cwd = getcwd();
         chdir(__DIR__ . '/TestAsset');

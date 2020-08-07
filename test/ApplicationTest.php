@@ -247,8 +247,12 @@ class ApplicationTest extends TestCase
      * @param string[] $doesNotContain
      * @param int[]    $exitCodes
      */
-    public function testChainCommand(array $answers, array $contains, array $doesNotContain, array $exitCodes = [])
-    {
+    public function testChainCommand(
+        array $answers,
+        array $contains,
+        array $doesNotContain,
+        array $exitCodes = []
+    ): void {
         $application = $this->getApplication($exitCodes);
 
         $applicationTester = new ApplicationTester($application);
@@ -274,7 +278,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testPassCustomParams()
+    public function testPassCustomParams(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
@@ -334,7 +338,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testCustomInputMapper()
+    public function testCustomInputMapper(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
@@ -391,7 +395,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testList()
+    public function testList(): void
     {
         $application = $this->getApplication();
 
@@ -415,7 +419,7 @@ class ApplicationTest extends TestCase
         );
     }
 
-    public function testParamInput()
+    public function testParamInput(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
@@ -469,7 +473,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testParamInputNonInteractiveMissingParameter()
+    public function testParamInputNonInteractiveMissingParameter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->with(ParamCommand::class)->willReturn(true);
@@ -512,7 +516,7 @@ class ApplicationTest extends TestCase
      * @see https://github.com/laminas/laminas-cli/pull/28
      * @see https://github.com/laminas/laminas-cli/pull/29
      */
-    public function testListIncludesCommandWithDependencies()
+    public function testListIncludesCommandWithDependencies(): void
     {
         $config = [
             'laminas-cli' => [
@@ -564,7 +568,7 @@ class ApplicationTest extends TestCase
      * @see https://github.com/laminas/laminas-cli/pull/28
      * @see https://github.com/laminas/laminas-cli/pull/29
      */
-    public function testHelpDisplaysInformationForCommandWithDependencies()
+    public function testHelpDisplaysInformationForCommandWithDependencies(): void
     {
         $config = [
             'laminas-cli' => [
