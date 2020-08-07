@@ -78,6 +78,7 @@ class PathParamTest extends TestCase
     {
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: string expected');
@@ -87,6 +88,7 @@ class PathParamTest extends TestCase
     public function testValidatorReturnsValueVerbatimIfDoesNotExistAndAllowedNotToExist(): void
     {
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
         $this->assertSame('path-that-does-not-exist', $validator('path-that-does-not-exist'));
     }
 
@@ -94,6 +96,7 @@ class PathParamTest extends TestCase
     {
         $this->param->setPathMustExist(true);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path does not exist');
@@ -105,6 +108,7 @@ class PathParamTest extends TestCase
         $param = new PathParam('test', PathParam::TYPE_DIR);
         $param->setPathMustExist(true);
         $validator = $param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Path is not a valid directory');
@@ -116,6 +120,7 @@ class PathParamTest extends TestCase
         $this->param->setPathMustExist(true);
         $validator = $this->param->getQuestion()->getValidator();
 
+        $this->assertIsCallable($validator);
         $this->assertSame(__FILE__, $validator(__FILE__));
     }
 
@@ -125,16 +130,20 @@ class PathParamTest extends TestCase
         $param->setPathMustExist(true);
         $validator = $param->getQuestion()->getValidator();
 
+        $this->assertIsCallable($validator);
         $this->assertSame(__DIR__, $validator(__DIR__));
     }
 
     public function testAutocompleterReturnsFilesAndDirectoriesBasedOnProvidedInput(): void
     {
         $autocompleter = $this->param->getQuestion()->getAutocompleterCallback();
-        $paths         = $autocompleter(__DIR__);
+        $this->assertIsCallable($autocompleter);
 
+        $paths = $autocompleter(__DIR__);
+        $this->assertIsArray($paths);
         $this->assertGreaterThan(0, count($paths));
-        $actual = array_reduce($paths, function (bool $isValid, $path) {
+
+        $actual = array_reduce($paths, function (bool $isValid, string $path) {
             return $isValid && 0 === strpos($path, realpath(dirname(__DIR__)));
         }, true);
 
