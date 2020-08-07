@@ -19,6 +19,7 @@
     <issueHandlers>
         <InternalClass>
             <errorLevel type="suppress">
+                <file name="test/ApplicationTest.php"/>
                 <file name="test/ContainerCommandLoaderTest.php"/>
                 <file name="test/Listener/TerminateListenerTest.php"/>
             </errorLevel>

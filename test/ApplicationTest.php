@@ -24,7 +24,6 @@ use LaminasTest\Cli\TestAsset\InputMapper\CustomInputMapper;
 use LaminasTest\Cli\TestAsset\ParamCommand;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\ApplicationTester;
@@ -32,6 +31,7 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 use function array_filter;
 use function current;
 
+/** @psalm-suppress PropertyNotSetInConstructor */
 class ApplicationTest extends TestCase
 {
     use ProphecyTrait;
@@ -57,8 +57,10 @@ class ApplicationTest extends TestCase
         ];
     }
 
+    /** @psalm-param int[] $exitCodes */
     private function getApplication(array $exitCodes = []): Application
     {
+        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject */
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
             [ExampleCommand::class, true],
@@ -526,27 +528,38 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @var ContainerInterface|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
-        $container->get('config')->willReturn($config)->shouldBeCalled();
-        $container
+        /** @psalm-var ContainerInterface&\Prophecy\Prophecy\ObjectProphecy $containerMock */
+        $containerMock = $this->prophesize(ContainerInterface::class);
+        /** @psalm-suppress all */
+        $containerMock->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
+        /** @psalm-suppress all */
+        $containerMock->get('config')->willReturn($config)->shouldBeCalled();
+        /** @psalm-suppress all */
+        $containerMock
             ->get(ExampleCommandWithDependencies::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleCommandWithDependenciesFactory();
-                return $factory($container->reveal());
+            ->will(function () use ($containerMock) {
+                /** @psalm-var ContainerInterface $container */
+                $container = $containerMock->reveal();
+                $factory   = new ExampleCommandWithDependenciesFactory();
+                return $factory($container);
             })
             ->shouldBeCalled();
-        $container
+        /** @psalm-suppress all */
+        $containerMock
             ->get(ExampleDependency::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleDependencyFactory();
-                return $factory($container->reveal());
+            ->will(function () use ($containerMock) {
+                /** @psalm-var ContainerInterface $container */
+                $container = $containerMock->reveal();
+                $factory   = new ExampleDependencyFactory();
+                return $factory($container);
             })
             ->shouldBeCalled();
 
+        /** @psalm-var ContainerInterface $container */
+        $container = $containerMock->reveal();
+
         $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container->reveal());
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
         $statusCode        = $applicationTester->run(['command' => 'list']);
@@ -578,27 +591,38 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @var ContainerInterface|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
-        $container->get('config')->willReturn($config)->shouldBeCalled();
-        $container
+        /** @psalm-var ContainerInterface&\Prophecy\Prophecy\ObjectProphecy $containerMock */
+        $containerMock = $this->prophesize(ContainerInterface::class);
+        /** @psalm-suppress all */
+        $containerMock->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
+        /** @psalm-suppress all */
+        $containerMock->get('config')->willReturn($config)->shouldBeCalled();
+        /** @psalm-suppress all */
+        $containerMock
             ->get(ExampleCommandWithDependencies::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleCommandWithDependenciesFactory();
-                return $factory($container->reveal());
+            ->will(function () use ($containerMock) {
+                /** @psalm-var ContainerInterface $container */
+                $container = $containerMock->reveal();
+                $factory   = new ExampleCommandWithDependenciesFactory();
+                return $factory($container);
             })
             ->shouldBeCalled();
-        $container
+        /** @psalm-suppress all */
+        $containerMock
             ->get(ExampleDependency::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleDependencyFactory();
-                return $factory($container->reveal());
+            ->will(function () use ($containerMock) {
+                /** @psalm-var ContainerInterface $container */
+                $container = $containerMock->reveal();
+                $factory   = new ExampleDependencyFactory();
+                return $factory($container);
             })
             ->shouldBeCalled();
 
+        /** @psalm-var ContainerInterface $container */
+        $container = $containerMock->reveal();
+
         $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container->reveal());
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
         $statusCode        = $applicationTester->run([
