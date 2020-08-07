@@ -36,8 +36,8 @@ final class ApplicationFactory
         $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
         Assert::string($version);
 
-        /** @psalm-var mixed[] $commands */
         $commands = $config['commands'] ?? [];
+        Assert::isMap($commands);
 
         $dispatcher = new EventDispatcher();
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
