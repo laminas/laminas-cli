@@ -29,13 +29,22 @@ use function preg_match;
 
 class TerminateListenerTest extends TestCase
 {
-    /** @var MockObject|Command */
+    /**
+     * @var Command|MockObject
+     * @psalm-var Command&MockObject
+     */
     private $command;
 
-    /** @var MockObject|InputInterface */
+    /**
+     * @var InputInterface|MockObject
+     * @psalm-var InputInterface&MockObject
+     */
     private $input;
 
-    /** @var MockObject|OutputInterface */
+    /**
+     * @var OutputInterface|MockObject
+     * @psalm-var OutputInterface&MockObject
+     */
     private $output;
 
     protected function setUp(): void
@@ -52,6 +61,7 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->never())->method('isInteractive');
         $this->command->expects($this->never())->method('getApplication');
 
+        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener(ApplicationTest::getValidConfiguration());
         $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 1);
 
@@ -63,6 +73,7 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
 
+        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener(ApplicationTest::getValidConfiguration());
         $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
 
@@ -74,6 +85,7 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
 
+        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener([]);
         $event    = new ConsoleTerminateEvent($this->command, $this->input, $this->output, 0);
 
@@ -85,6 +97,7 @@ class TerminateListenerTest extends TestCase
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $command = new ExampleCommand();
 
+        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener([
             'chains' => [
                 ExampleCommand::class => true,
@@ -97,6 +110,7 @@ class TerminateListenerTest extends TestCase
 
     public function testNotifiesOfThirdPartyCommandInChain(): void
     {
+        /** @psalm-suppress InternalClass */
         $listener = new TerminateListener([
             'commands' => [
                 'example:command-name' => ExampleCommand::class,
