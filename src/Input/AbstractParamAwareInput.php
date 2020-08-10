@@ -55,11 +55,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         $this->input  = $input;
         $this->output = $output;
         $this->helper = $helper;
-
-        Assert::allIsInstanceOf($params, InputParamInterface::class, sprintf(
-            'One or more input params provided is not a %s instance',
-            InputParamInterface::class
-        ));
         $this->params = $params;
     }
 

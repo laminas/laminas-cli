@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use stdClass;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -246,19 +245,6 @@ class ParamAwareInputTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid parameter name');
         $input->getParam('does-not-exist');
-    }
-
-    public function testConstructorRaisesErrorIfAnyParamIsOfInvalidType(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(InputParamInterface::class);
-
-        new $this->class(
-            $this->decoratedInput->reveal(),
-            $this->output->reveal(),
-            $this->helper->reveal(),
-            ['name' => new stdClass()]
-        );
     }
 
     public function testGetParamReturnsDefaultValueWhenInputIsNonInteractiveAndNoOptionPassed(): void
