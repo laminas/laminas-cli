@@ -37,7 +37,9 @@ final class StringParam extends AbstractInputParam
 
         $question->setValidator(
             /**
-             * @param mixed $value
+             * @psalm-template ValueType of mixed
+             * @psalm-param callable(ValueType): bool $validator
+             * @psalm-param ValueType $value
              */
             function ($value): string {
                 Assert::string($value, sprintf(

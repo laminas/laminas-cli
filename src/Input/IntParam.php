@@ -34,8 +34,10 @@ final class IntParam extends AbstractInputParam
 
         $question->setNormalizer(
             /**
-             * @param mixed $value
-             * @return mixed
+             * @psalm-template ValueType of mixed
+             * @psalm-param callable(ValueType): bool $normalizer
+             * @psalm-param ValueType $value
+             * @psalm-return mixed
              */
             static function ($value) {
                 if (is_numeric($value) && (string) (int) $value === $value) {
@@ -47,7 +49,11 @@ final class IntParam extends AbstractInputParam
         );
 
         $question->setValidator(
-            /** @param mixed $value */
+            /**
+             * @psalm-template ValueType of mixed
+             * @psalm-param callable(ValueType): bool $validator
+             * @psalm-param ValueType $value
+             */
             function ($value): int {
                 Assert::integer($value, sprintf('Invalid value: integer expected, %s given', get_debug_type($value)));
 
