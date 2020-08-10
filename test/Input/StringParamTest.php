@@ -13,7 +13,6 @@ namespace LaminasTest\Cli\Input;
 use InvalidArgumentException;
 use Laminas\Cli\Input\StringParam;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 
 use const PHP_EOL;
@@ -65,8 +64,9 @@ class StringParamTest extends TestCase
     {
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: string expected');
         $validator(null);
     }
@@ -76,6 +76,7 @@ class StringParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();
 
+        $this->assertIsCallable($validator);
         $this->assertSame('a string', $validator('a string'));
     }
 
@@ -84,8 +85,9 @@ class StringParamTest extends TestCase
         $this->param->setRequiredFlag(true);
         $this->param->setPattern('/^[A-Z][a-zA-Z0-9_]+$/');
         $validator = $this->param->getQuestion()->getValidator();
+        $this->assertIsCallable($validator);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value: does not match pattern');
         $validator('this does not match the pattern');
     }
@@ -96,6 +98,7 @@ class StringParamTest extends TestCase
         $this->param->setPattern('/^[A-Z][a-zA-Z0-9_]+$/');
         $validator = $this->param->getQuestion()->getValidator();
 
+        $this->assertIsCallable($validator);
         $this->assertSame('AClassName', $validator('AClassName'));
     }
 

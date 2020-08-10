@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
+use function array_map;
 use function implode;
 use function is_array;
 use function sprintf;
@@ -36,13 +37,9 @@ final class ChoiceParam extends AbstractInputParam
 
     public function getQuestion(): Question
     {
+        /** @var null|string|string[] $defaultValue */
         $defaultValue  = $this->getDefault();
-        $defaultPrompt = $defaultValue !== null
-            ? sprintf(
-                ' [<comment>%s</comment>]',
-                is_array($defaultValue) ? implode(', ', $defaultValue) : $defaultValue
-            )
-            : '';
+        $defaultPrompt = $this->createDefaultPrompt($defaultValue);
         $multiPrompt   = sprintf(
             "\n(Multiple selections allowed; hit Return after each.%s Hit Return to stop prompting)\n",
             $this->isRequired() ? ' At least one selection is required.' : ''
@@ -58,5 +55,27 @@ final class ChoiceParam extends AbstractInputParam
             $this->haystack,
             $defaultValue
         );
+    }
+
+    /**
+     * @param null|string|array $defaultValue
+     * @psalm-param null|string|scalar[] $defaultValue
+     */
+    private function createDefaultPrompt($defaultValue): string
+    {
+        if (null === $defaultValue) {
+            return '';
+        }
+
+        if (is_array($defaultValue)) {
+            $defaultValue = implode(', ', array_map(
+                static function ($value): string {
+                    return (string) $value;
+                },
+                $defaultValue
+            ));
+        }
+
+        return sprintf(' [<comment>%s</comment>]', $defaultValue);
     }
 }

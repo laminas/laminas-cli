@@ -61,7 +61,6 @@ class ChoiceParamTest extends TestCase
         string $expectedQuestionText
     ): void {
         $this->param->setDefault($default);
-        /** @var ChoiceQuestion $question */
         $question = $this->param->getQuestion();
         $this->assertInstanceOf(ChoiceQuestion::class, $question);
         $this->assertEquals($expectedQuestionText, $question->getQuestion());

@@ -17,11 +17,11 @@ use Laminas\Cli\Input\TypeHintedParamAwareInput;
 use PackageVersions\Versions;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Assert\Assert;
 
-use function is_array;
-use function sprintf;
 use function str_replace;
 use function strstr;
 
@@ -46,15 +46,6 @@ abstract class AbstractParamAwareCommand extends Command
      */
     final public function addParam(InputParamInterface $param): self
     {
-        if (! is_array($this->inputParams)) {
-            throw new RuntimeException(sprintf(
-                'Command %s uses $inputParams property; please do not override that property when using %s,'
-                . ' as it becomes incompatible with input parameter usage',
-                static::class,
-                __NAMESPACE__ . '\ParamAwareCommandTrait'
-            ));
-        }
-
         $name = $param->getName();
 
         $this->addOption(
@@ -104,15 +95,21 @@ abstract class AbstractParamAwareCommand extends Command
             return $input;
         }
 
-        $consoleVersion      = strstr(Versions::getVersion('symfony/console'), '@', true);
+        /** @psalm-suppress DeprecatedClass */
+        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true);
+        Assert::string($consoleVersion);
+
         $inputDecoratorClass = str_replace('v', '', $consoleVersion) >= '5.0.0'
             ? TypeHintedParamAwareInput::class
             : NonHintedParamAwareInput::class;
 
+        $helperSet = $this->getHelperSet();
+        Assert::isInstanceOf($helperSet, HelperSet::class);
+
         return new $inputDecoratorClass(
             $input,
             $output,
-            $this->getHelperSet()->get('question'),
+            $helperSet->get('question'),
             $this->inputParams
         );
     }

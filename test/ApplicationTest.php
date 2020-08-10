@@ -23,8 +23,6 @@ use LaminasTest\Cli\TestAsset\ExampleDependencyFactory;
 use LaminasTest\Cli\TestAsset\InputMapper\CustomInputMapper;
 use LaminasTest\Cli\TestAsset\ParamCommand;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\ApplicationTester;
@@ -32,10 +30,9 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 use function array_filter;
 use function current;
 
+/** @psalm-suppress PropertyNotSetInConstructor */
 class ApplicationTest extends TestCase
 {
-    use ProphecyTrait;
-
     public static function getValidConfiguration(): array
     {
         return [
@@ -57,8 +54,10 @@ class ApplicationTest extends TestCase
         ];
     }
 
+    /** @psalm-param int[] $exitCodes */
     private function getApplication(array $exitCodes = []): Application
     {
+        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject */
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
             [ExampleCommand::class, true],
@@ -247,8 +246,12 @@ class ApplicationTest extends TestCase
      * @param string[] $doesNotContain
      * @param int[]    $exitCodes
      */
-    public function testChainCommand(array $answers, array $contains, array $doesNotContain, array $exitCodes = [])
-    {
+    public function testChainCommand(
+        array $answers,
+        array $contains,
+        array $doesNotContain,
+        array $exitCodes = []
+    ): void {
         $application = $this->getApplication($exitCodes);
 
         $applicationTester = new ApplicationTester($application);
@@ -274,7 +277,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testPassCustomParams()
+    public function testPassCustomParams(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
@@ -334,7 +337,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testCustomInputMapper()
+    public function testCustomInputMapper(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
@@ -391,7 +394,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testList()
+    public function testList(): void
     {
         $application = $this->getApplication();
 
@@ -415,7 +418,7 @@ class ApplicationTest extends TestCase
         );
     }
 
-    public function testParamInput()
+    public function testParamInput(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
@@ -469,7 +472,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testParamInputNonInteractiveMissingParameter()
+    public function testParamInputNonInteractiveMissingParameter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->with(ParamCommand::class)->willReturn(true);
@@ -512,7 +515,7 @@ class ApplicationTest extends TestCase
      * @see https://github.com/laminas/laminas-cli/pull/28
      * @see https://github.com/laminas/laminas-cli/pull/29
      */
-    public function testListIncludesCommandWithDependencies()
+    public function testListIncludesCommandWithDependencies(): void
     {
         $config = [
             'laminas-cli' => [
@@ -522,27 +525,33 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @var ContainerInterface|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
-        $container->get('config')->willReturn($config)->shouldBeCalled();
+        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject $container */
+        $container = $this->createMock(ContainerInterface::class);
         $container
-            ->get(ExampleCommandWithDependencies::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleCommandWithDependenciesFactory();
-                return $factory($container->reveal());
-            })
-            ->shouldBeCalled();
+            ->expects($this->atLeastOnce())
+            ->method('has')
+            ->with($this->equalTo(ExampleCommandWithDependencies::class))
+            ->willReturn(true);
+
         $container
-            ->get(ExampleDependency::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleDependencyFactory();
-                return $factory($container->reveal());
-            })
-            ->shouldBeCalled();
+            ->method('get')
+            ->will($this->returnCallback(function (string $service) use ($config, $container) {
+                switch ($service) {
+                    case 'config':
+                        return $config;
+                    case ExampleDependency::class:
+                        $factory = new ExampleDependencyFactory();
+                        return $factory($container);
+                    case ExampleCommandWithDependencies::class:
+                        $factory = new ExampleCommandWithDependenciesFactory();
+                        return $factory($container);
+                    default:
+                        return null;
+                }
+            }));
 
         $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container->reveal());
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
         $statusCode        = $applicationTester->run(['command' => 'list']);
@@ -564,7 +573,7 @@ class ApplicationTest extends TestCase
      * @see https://github.com/laminas/laminas-cli/pull/28
      * @see https://github.com/laminas/laminas-cli/pull/29
      */
-    public function testHelpDisplaysInformationForCommandWithDependencies()
+    public function testHelpDisplaysInformationForCommandWithDependencies(): void
     {
         $config = [
             'laminas-cli' => [
@@ -574,27 +583,34 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @var ContainerInterface|ObjectProphecy $container */
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
-        $container->get('config')->willReturn($config)->shouldBeCalled();
+        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject $container */
+        $container = $this->createMock(ContainerInterface::class);
+
         $container
-            ->get(ExampleCommandWithDependencies::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleCommandWithDependenciesFactory();
-                return $factory($container->reveal());
-            })
-            ->shouldBeCalled();
+            ->expects($this->atLeastOnce())
+            ->method('has')
+            ->with($this->equalTo(ExampleCommandWithDependencies::class))
+            ->willReturn(true);
+
         $container
-            ->get(ExampleDependency::class)
-            ->will(function () use ($container) {
-                $factory = new ExampleDependencyFactory();
-                return $factory($container->reveal());
-            })
-            ->shouldBeCalled();
+            ->method('get')
+            ->will($this->returnCallback(function (string $service) use ($config, $container) {
+                switch ($service) {
+                    case 'config':
+                        return $config;
+                    case ExampleDependency::class:
+                        $factory = new ExampleDependencyFactory();
+                        return $factory($container);
+                    case ExampleCommandWithDependencies::class:
+                        $factory = new ExampleCommandWithDependenciesFactory();
+                        return $factory($container);
+                    default:
+                        return null;
+                }
+            }));
 
         $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container->reveal());
+        $application        = $applicationFactory($container);
 
         $applicationTester = new ApplicationTester($application);
         $statusCode        = $applicationTester->run([

@@ -15,6 +15,7 @@ use Laminas\Cli\Input\IntParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Assert\Assert;
 
 class ParamCommand extends AbstractParamAwareCommand
 {
@@ -29,11 +30,11 @@ class ParamCommand extends AbstractParamAwareCommand
         );
     }
 
-    /**
-     * @param ParamAwareInputInterface $input
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        Assert::isInstanceOf($input, ParamAwareInputInterface::class);
+
+        /** @var int $int */
         $int = $input->getParam('int-param');
         $output->writeln('Int param value: ' . $int);
 

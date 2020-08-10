@@ -10,15 +10,13 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\Command;
 
-use Laminas\Cli\Command\AbstractParamAwareCommand;
 use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStubNonHinted;
 use PackageVersions\Versions;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,27 +27,36 @@ use function strstr;
 
 class ParamAwareCommandTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var AbstractParamAwareCommand */
+    /** @var ParamAwareCommandStub|ParamAwareCommandStubNonHinted */
     private $command;
 
-    /** @var QuestionHelper|ObjectProphecy */
+    /**
+     * @var QuestionHelper|MockObject
+     * @psalm-var QuestionHelper&MockObject
+     */
     private $questionHelper;
 
     public function setUp(): void
     {
-        $this->questionHelper = $this->prophesize(QuestionHelper::class)->reveal();
+        $this->questionHelper = $this->createMock(QuestionHelper::class);
 
-        $helperSet = $this->prophesize(HelperSet::class);
-        $helperSet->get('question')->willReturn($this->questionHelper);
+        /** @psalm-var HelperSet&MockObject $helperSet */
+        $helperSet = $this->createMock(HelperSet::class);
+        $helperSet
+            ->expects($this->any())
+            ->method('get')
+            ->with(
+                $this->equalTo('question')
+            )
+            ->willReturn($this->questionHelper);
 
-        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true);
+        /** @psalm-suppress DeprecatedClass */
+        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true) ?: '';
         $commandClass   = str_replace('v', '', $consoleVersion) >= '5.0.0'
             ? ParamAwareCommandStub::class
             : ParamAwareCommandStubNonHinted::class;
 
-        $this->command = new $commandClass($helperSet->reveal());
+        $this->command = new $commandClass($helperSet);
     }
 
     public function testAddParamProxiesToAddOption(): void
@@ -65,6 +72,7 @@ class ParamAwareCommandTest extends TestCase
         $this->assertArrayHasKey('test', $this->command->options);
 
         $option = $this->command->options['test'];
+        $this->assertIsArray($option);
         $this->assertSame($param->getShortcut(), $option['shortcut']);
         $this->assertSame($param->getOptionMode(), $option['mode']);
         $this->assertSame($param->getDescription(), $option['description']);
@@ -73,8 +81,10 @@ class ParamAwareCommandTest extends TestCase
 
     public function testRunDecoratesInputInParameterAwareInputInstance(): void
     {
-        $input  = $this->prophesize(InputInterface::class)->reveal();
-        $output = $this->prophesize(OutputInterface::class)->reveal();
+        /** @psalm-var InputInterface&MockObject $input */
+        $input = $this->createMock(InputInterface::class);
+        /** @psalm-var OutputInterface&MockObject $output */
+        $output = $this->createMock(OutputInterface::class);
         $param  = (new BoolParam('test'))
             ->setDescription('Yes or no')
             ->setDefault(false)

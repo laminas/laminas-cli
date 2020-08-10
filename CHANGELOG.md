@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 0.1.4 - 2020-08-10
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- This version introduces static analysis tools into the development process, as well as usage of webmozart/assert for type assertions. The primary impact is on developers of new commands, as we will now be throwing `InvalidArgumentException` where before we were throwing either `RuntimeException` or `Laminas\Cli\Exception\ConfigurationException`, for invalid user input.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 0.1.3 - 2020-07-30
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#37](https://github.com/laminas/laminas-cli/pull/37) modifies how chained commands work. When a command within a chain is executed, if it is not one provided by the Laminas Project (or its subprojects), a warning is emitted when prompting to execute it.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.1.2 - 2020-07-29
 
 ### Added

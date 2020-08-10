@@ -17,16 +17,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ParamAwareCommandStub extends AbstractParamAwareCommand
 {
-    /** @var InputInterface */
+    /** @var null|InputInterface */
     public $input;
 
-    /** @var OutputInterface */
+    /** @var null|OutputInterface */
     public $output;
 
     /** @var array */
     public $options = [];
 
-    /** HelperSet */
+    /** @var HelperSet */
     private $helperSet;
 
     public function __construct(HelperSet $helperSet)

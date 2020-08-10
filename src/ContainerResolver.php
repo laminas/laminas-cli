@@ -15,6 +15,7 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\ArrayUtils;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 use function class_exists;
 use function file_exists;
@@ -51,22 +52,36 @@ final class ContainerResolver
      */
     private static function resolveDefaultContainer(): ContainerInterface
     {
+        /**
+         * @psalm-suppress MissingFile
+         * @psalm-var ContainerInterface $container
+         */
         $container = include 'config/container.php';
-        if (! $container instanceof ContainerInterface) {
-            throw new RuntimeException('Failed to load PSR-11 container');
-        }
 
+        Assert::implementsInterface($container, ContainerInterface::class, 'Failed to load PSR-11 container');
         return $container;
     }
 
     private static function resolveMvcContainer(): ContainerInterface
     {
+        /**
+         * @psalm-suppress MissingFile
+         * @psalm-var array<int|string, mixed> $appConfig
+         */
         $appConfig = include 'config/application.config.php';
+        Assert::isMap($appConfig);
+
         if (file_exists('config/development.config.php')) {
-            $appConfig = ArrayUtils::merge(
-                $appConfig,
-                include 'config/development.config.php'
-            );
+            /**
+             * @psalm-suppress MissingFile
+             * @psalm-var array<int|string, mixed> $devConfig
+             */
+            $devConfig = include 'config/development.config.php';
+            Assert::isMap($devConfig);
+
+            /** @psalm-var array<int|string, mixed> $appConfig */
+            $appConfig = ArrayUtils::merge($appConfig, $devConfig);
+            Assert::isMap($appConfig);
         }
 
         $smConfig = new ServiceManagerConfig($appConfig['service_manager'] ?? []);

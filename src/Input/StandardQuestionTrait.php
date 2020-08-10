@@ -13,6 +13,7 @@ namespace Laminas\Cli\Input;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 
+use function array_map;
 use function implode;
 use function is_array;
 use function sprintf;
@@ -45,13 +46,9 @@ trait StandardQuestionTrait
 {
     private function createQuestion(): Question
     {
+        /** @var null|string|string[] $defaultValue */
         $defaultValue  = $this->getDefault();
-        $defaultPrompt = $defaultValue !== null
-            ? sprintf(
-                ' [<comment>%s</comment>]',
-                is_array($defaultValue) ? implode(', ', $defaultValue) : $defaultValue
-            )
-            : '';
+        $defaultPrompt = $this->getDefaultPrompt($defaultValue);
         $multiPrompt   = sprintf(
             "\n(Multiple entries allowed; hit Return after each.%s Hit Return to stop prompting)\n",
             $this->isRequired() ? ' At least one entry is required.' : ''
@@ -67,6 +64,28 @@ trait StandardQuestionTrait
             ),
             $defaultValue
         );
+    }
+
+    /**
+     * @param null|string|array $defaultValue
+     * @psalm-param null|string|scalar[] $defaultValue
+     */
+    private function getDefaultPrompt($defaultValue): string
+    {
+        if (null === $defaultValue) {
+            return '';
+        }
+
+        if (is_array($defaultValue)) {
+            $defaultValue = implode(', ', array_map(
+                function ($value): string {
+                    return (string) $value;
+                },
+                $defaultValue
+            ));
+        }
+
+        return sprintf(' [<comment>%s</comment>]', $defaultValue);
     }
 
     /** @return mixed */

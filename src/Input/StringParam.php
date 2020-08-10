@@ -11,11 +11,10 @@ declare(strict_types=1);
 namespace Laminas\Cli\Input;
 
 use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Console\Question\Question;
+use Webmozart\Assert\Assert;
 
 use function get_debug_type;
-use function is_string;
 use function preg_match;
 use function restore_error_handler;
 use function set_error_handler;
@@ -36,17 +35,28 @@ final class StringParam extends AbstractInputParam
     {
         $question = $this->createQuestion();
 
-        $question->setValidator(function ($value) {
-            if (! is_string($value)) {
-                throw new RuntimeException(sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
-            }
+        $question->setValidator(
+            /**
+             * @psalm-template ValueType of mixed
+             * @psalm-param callable(ValueType): bool $validator
+             * @psalm-param ValueType $value
+             */
+            function ($value): string {
+                Assert::string($value, sprintf(
+                    'Invalid value: string expected, %s given',
+                    get_debug_type($value)
+                ));
 
-            if ($this->pattern !== null && ! preg_match($this->pattern, $value)) {
-                throw new RuntimeException('Invalid value: does not match pattern: ' . $this->pattern);
-            }
+                if ($this->pattern !== null) {
+                    Assert::regex($value, $this->pattern, sprintf(
+                        'Invalid value: does not match pattern: %s',
+                        $this->pattern
+                    ));
+                }
 
-            return $value;
-        });
+                return $value;
+            }
+        );
 
         return $question;
     }
@@ -65,7 +75,7 @@ final class StringParam extends AbstractInputParam
 
     private function validatePattern(string $pattern): bool
     {
-        set_error_handler(static function ($errno, $errstr) {
+        set_error_handler(static function (int $errno, string $errstr) {
             if (! strstr($errstr, 'preg_match')) {
                 return false;
             }

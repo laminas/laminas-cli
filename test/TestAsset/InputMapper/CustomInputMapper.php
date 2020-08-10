@@ -19,8 +19,14 @@ class CustomInputMapper implements InputMapperInterface
 {
     public function __invoke(InputInterface $input): array
     {
+        /** @var string $arg */
+        $arg = $input->getArgument('arg');
+
+        /** @var string $opt */
+        $opt = $input->getOption('opt');
+
         return [
-            'arg1'   => ucwords($input->getArgument('arg') . ' ' . $input->getOption('opt')),
+            'arg1'   => ucwords($arg . ' ' . $opt),
             '--opt1' => 'my-value',
         ];
     }

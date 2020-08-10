@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Assert\Assert;
 
 abstract class AbstractCommand extends Command
 {
@@ -35,17 +36,29 @@ abstract class AbstractCommand extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Description of ' . static::$defaultName);
+        Assert::stringNotEmpty(static::$defaultName);
+        Assert::stringNotEmpty($this->argName);
+        Assert::stringNotEmpty($this->optName);
+
+        $name = static::$defaultName ?? '';
+
+        $this->setDescription('Description of ' . $name);
         $this->addArgument($this->argName, InputArgument::OPTIONAL);
         $this->addOption($this->optName, null, InputOption::VALUE_OPTIONAL);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var string $arg */
+        $arg = $input->getArgument($this->argName) ?: '';
+
+        /** @var string $opt */
+        $opt = $input->getOption($this->optName) ?: '';
+
         $output->writeln(
             static::class
-            . ': arg=' . $input->getArgument($this->argName)
-            . ', opt=' . $input->getOption($this->optName)
+            . ': arg=' . $arg
+            . ', opt=' . $opt
         );
 
         return $this->statusCode;

@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Webmozart\Assert\Assert;
 
 use function array_map;
 use function array_walk;
@@ -79,13 +80,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         $value      = $this->input->getOption($name);
         $inputParam = $this->params[$name];
 
-        if (! $inputParam instanceof InputParamInterface) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid parameter type; must be of type %s',
-                InputParamInterface::class
-            ));
-        }
-
         $question = $inputParam->getQuestion();
         $this->modifyQuestion($question);
 
@@ -93,6 +87,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             ! $this->isParamValueProvided($inputParam, $value)
             && ! $this->input->isInteractive()
         ) {
+            /** @psalm-suppress MixedAssignment */
             $value = $inputParam->getDefault();
         }
 
@@ -113,6 +108,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             $originalValidator = $this->prependSkipValidator($question);
         }
 
+        /** @var null|bool|string|array $value */
         $value = $this->askQuestion($question, $valueIsArray, $inputParam->isRequired());
 
         // Reset the validator if we prepended it earlier.
@@ -121,6 +117,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         // set the option value so it can be reused in chains
+        /** @psalm-suppress MixedArgumentTypeCoercion */
         $this->input->setOption($name, $value);
 
         return $value;
@@ -129,42 +126,54 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     // Proxy methods implementing interface (common across symfony/console versions)
     // phpcs:disable WebimpressCodingStandard.Functions.Param.MissingSpecification, WebimpressCodingStandard.Functions.ReturnType.ReturnValue
 
-    public function getFirstArgument()
+    public function getFirstArgument(): ?string
     {
         return $this->input->getFirstArgument();
     }
 
-    public function bind(InputDefinition $definition)
+    public function bind(InputDefinition $definition): void
     {
         $this->input->bind($definition);
     }
 
-    public function validate()
+    public function validate(): void
     {
         $this->input->validate();
     }
 
-    public function getArguments()
+    /**
+     * @return mixed[]
+     */
+    public function getArguments(): array
     {
         return $this->input->getArguments();
     }
 
-    public function hasArgument($name)
+    /**
+     * @param string|int $name
+     */
+    public function hasArgument($name): ?bool
     {
         return $this->input->hasArgument($name);
     }
 
-    public function getOptions()
+    /**
+     * @return mixed[]
+     */
+    public function getOptions(): array
     {
         return $this->input->getOptions();
     }
 
-    public function isInteractive()
+    public function isInteractive(): ?bool
     {
         return $this->input->isInteractive();
     }
 
-    public function setStream($stream)
+    /**
+     * @param resource $stream
+     */
+    public function setStream($stream): void
     {
         if (! $this->input instanceof StreamableInputInterface) {
             return;
@@ -172,6 +181,9 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         $this->input->setStream($stream);
     }
 
+    /**
+     * @return null|resource
+     */
     public function getStream()
     {
         if (! $this->input instanceof StreamableInputInterface) {
@@ -213,6 +225,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         // Array value: map each to the normalizer
+        Assert::isArray($value);
         return array_map($normalizer, $value);
     }
 
@@ -239,14 +252,12 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         // Array value expected, but not an array: raise an exception
-        if (! is_array($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Option --%s expects an array of values, but received "%s";'
-                . ' check to ensure the command has provided a valid default.',
-                $paramName,
-                get_debug_type($value)
-            ));
-        }
+        Assert::isArray($value, sprintf(
+            'Option --%s expects an array of values, but received "%s";'
+            . ' check to ensure the command has provided a valid default.',
+            $paramName,
+            get_debug_type($value)
+        ));
 
         // Array value: validate each item in the array
         array_walk($value, $validator);
@@ -260,26 +271,45 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     private function askQuestion(Question $question, bool $valueIsArray, bool $valueIsRequired)
     {
         if (! $valueIsArray) {
+            /** @psalm-suppress MixedAssignment */
             return $this->helper->ask($this, $this->output, $question);
         }
 
         $validator = $question->getValidator();
         $value     = null;
-        $values    = [];
+
+        /** @var mixed[] $values */
+        $values = [];
+
         do {
             if (null !== $value) {
+                /** @psalm-suppress MixedAssignment */
                 $values[] = $value;
             }
+
+            /** @var mixed $value */
             $value = $this->helper->ask($this, $this->output, $question);
 
             if ($valueIsRequired && [] === $values) {
-                $question->setValidator(static function ($value) use ($validator) {
-                    if (null === $value || '' === $value) {
-                        return $value;
-                    }
+                $question->setValidator(
+                    /**
+                     * @psalm-template ValueType of mixed
+                     * @psalm-param callable(ValueType): bool $validator
+                     * @psalm-param ValueType $value
+                     */
+                    static function ($value) use ($validator) {
+                        if (null === $value || '' === $value) {
+                            return $value;
+                        }
 
-                    return $validator($value);
-                });
+                        if (null === $validator) {
+                            return $value;
+                        }
+
+                        /** @psalm-suppress MixedAssignment */
+                        return $validator($value);
+                    }
+                );
             }
         } while (! in_array($value, [null, ''], true));
 
@@ -295,13 +325,20 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             return null;
         }
 
-        $question->setValidator(static function ($value) use ($originalValidator) {
-            if ($value === null) {
-                return null;
-            }
+        $question->setValidator(
+            /**
+             * @psalm-template ValueType of mixed
+             * @psalm-param callable(ValueType): bool $validator
+             * @psalm-param ValueType $value
+             */
+            static function ($value) use ($originalValidator) {
+                if ($value === null) {
+                    return null;
+                }
 
-            return $originalValidator($value);
-        });
+                return $originalValidator($value);
+            }
+        );
 
         return $originalValidator;
     }

@@ -10,20 +10,22 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
+use InvalidArgumentException;
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
-use Laminas\Cli\Exception\ConfigurationException;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
+use LaminasTest\Cli\TestAsset\ExampleCommandWithDependencies;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Command\Command;
+use Webmozart\Assert\Assert;
 
 use function chdir;
 use function getcwd;
 
+/** @psalm-suppress PropertyNotSetInConstructor */
 class ContainerCommandLoaderTest extends TestCase
 {
-    public function testGetCommandHasName()
+    public function testGetCommandHasName(): void
     {
         $commands = [
             'foo-bar-command' => TestAsset\ExampleCommand::class,
@@ -43,11 +45,11 @@ class ContainerCommandLoaderTest extends TestCase
 
         $command = $loader->get('foo-bar-command');
 
-        self::assertInstanceOf(Command::class, $command);
+        self::assertInstanceOf(TestAsset\ExampleCommand::class, $command);
         self::assertSame('foo-bar-command', $command->getName());
     }
 
-    public function testGetCommandReturnsCommand()
+    public function testGetCommandReturnsCommand(): void
     {
         $cwd = getcwd();
         chdir(__DIR__ . '/TestAsset');
@@ -55,12 +57,21 @@ class ContainerCommandLoaderTest extends TestCase
         chdir($cwd);
 
         $config = $container->get('ApplicationConfig');
+        Assert::isMap($config);
+        Assert::keyExists($config, 'laminas-cli');
 
-        $loader = new ContainerCommandLoader($container, $config['laminas-cli']['commands']);
+        $config = $config['laminas-cli'];
+        Assert::isMap($config);
+        Assert::keyExists($config, 'commands');
+
+        /** @psalm-var array<string, string> */
+        $commands = $config['commands'];
+
+        $loader = new ContainerCommandLoader($container, $commands);
 
         $command = $loader->get('example:command-with-deps');
 
-        self::assertInstanceOf(Command::class, $command);
+        self::assertInstanceOf(ExampleCommandWithDependencies::class, $command);
     }
 
     public function testHasWillReturnTrueWhenTheCommandIsMappedButNotPresentInTheContainer(): void
@@ -113,7 +124,7 @@ class ContainerCommandLoaderTest extends TestCase
 
         try {
             $loader->get('my:command');
-        } catch (ConfigurationException $exception) {
+        } catch (InvalidArgumentException $exception) {
             $message = $exception->getMessage();
 
             $this->assertStringContainsString('my:command', $message);

@@ -29,13 +29,22 @@ use function preg_match;
 
 class TerminateListenerTest extends TestCase
 {
-    /** @var MockObject|Command */
+    /**
+     * @var Command|MockObject
+     * @psalm-var Command&MockObject
+     */
     private $command;
 
-    /** @var MockObject|InputInterface */
+    /**
+     * @var InputInterface|MockObject
+     * @psalm-var InputInterface&MockObject
+     */
     private $input;
 
-    /** @var MockObject|OutputInterface */
+    /**
+     * @var OutputInterface|MockObject
+     * @psalm-var OutputInterface&MockObject
+     */
     private $output;
 
     protected function setUp(): void
@@ -47,7 +56,7 @@ class TerminateListenerTest extends TestCase
         $this->output  = $this->createMock(OutputInterface::class);
     }
 
-    public function testSkipIfExitStatusIsNotZero()
+    public function testSkipIfExitStatusIsNotZero(): void
     {
         $this->input->expects($this->never())->method('isInteractive');
         $this->command->expects($this->never())->method('getApplication');
@@ -58,7 +67,7 @@ class TerminateListenerTest extends TestCase
         $listener($event);
     }
 
-    public function testSkipIfNotInteractiveMode()
+    public function testSkipIfNotInteractiveMode(): void
     {
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
@@ -69,7 +78,7 @@ class TerminateListenerTest extends TestCase
         $listener($event);
     }
 
-    public function testSkipIfThereIsNoChain()
+    public function testSkipIfThereIsNoChain(): void
     {
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $this->command->expects($this->never())->method('getApplication');
@@ -80,7 +89,7 @@ class TerminateListenerTest extends TestCase
         $listener($event);
     }
 
-    public function testSkipIfChainConfigurationIsNotAnArray()
+    public function testSkipIfChainConfigurationIsNotAnArray(): void
     {
         $this->input->expects($this->once())->method('isInteractive')->willReturn(true);
         $command = new ExampleCommand();

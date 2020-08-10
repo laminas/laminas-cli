@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<psalm
+    totallyTyped="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <file name="bin/laminas"/>
+        <directory name="src"/>
+        <directory name="test"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+            <file name="src/Input/NonHintedParamAwareInput.php"/>
+            <file name="test/TestAsset/ParamAwareCommandStubNonHinted.php"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <InternalClass>
+            <errorLevel type="suppress">
+                <file name="test/ApplicationTest.php"/>
+                <file name="test/ContainerCommandLoaderTest.php"/>
+                <file name="test/Listener/TerminateListenerTest.php"/>
+            </errorLevel>
+        </InternalClass>
+
+        <InternalMethod>
+            <errorLevel type="suppress">
+                <file name="bin/laminas"/>
+                <file name="test/ContainerCommandLoaderTest.php"/>
+            </errorLevel>
+        </InternalMethod>
+
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <file name="test/**/*Test.php"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+    </issueHandlers>
+</psalm>
