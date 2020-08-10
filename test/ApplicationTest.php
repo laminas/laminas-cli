@@ -23,7 +23,6 @@ use LaminasTest\Cli\TestAsset\ExampleDependencyFactory;
 use LaminasTest\Cli\TestAsset\InputMapper\CustomInputMapper;
 use LaminasTest\Cli\TestAsset\ParamCommand;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\ApplicationTester;
@@ -34,8 +33,6 @@ use function current;
 /** @psalm-suppress PropertyNotSetInConstructor */
 class ApplicationTest extends TestCase
 {
-    use ProphecyTrait;
-
     public static function getValidConfiguration(): array
     {
         return [
@@ -528,35 +525,30 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @psalm-var ContainerInterface&\Prophecy\Prophecy\ObjectProphecy $containerMock */
-        $containerMock = $this->prophesize(ContainerInterface::class);
-        /** @psalm-suppress all */
-        $containerMock->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
-        /** @psalm-suppress all */
-        $containerMock->get('config')->willReturn($config)->shouldBeCalled();
-        /** @psalm-suppress all */
-        $containerMock
-            ->get(ExampleCommandWithDependencies::class)
-            ->will(function () use ($containerMock) {
-                /** @psalm-var ContainerInterface $container */
-                $container = $containerMock->reveal();
-                $factory   = new ExampleCommandWithDependenciesFactory();
-                return $factory($container);
-            })
-            ->shouldBeCalled();
-        /** @psalm-suppress all */
-        $containerMock
-            ->get(ExampleDependency::class)
-            ->will(function () use ($containerMock) {
-                /** @psalm-var ContainerInterface $container */
-                $container = $containerMock->reveal();
-                $factory   = new ExampleDependencyFactory();
-                return $factory($container);
-            })
-            ->shouldBeCalled();
+        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject $container */
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects($this->atLeastOnce())
+            ->method('has')
+            ->with($this->equalTo(ExampleCommandWithDependencies::class))
+            ->willReturn(true);
 
-        /** @psalm-var ContainerInterface $container */
-        $container = $containerMock->reveal();
+        $container
+            ->method('get')
+            ->will($this->returnCallback(function (string $service) use ($config, $container) {
+                switch ($service) {
+                    case 'config':
+                        return $config;
+                    case ExampleDependency::class:
+                        $factory = new ExampleDependencyFactory();
+                        return $factory($container);
+                    case ExampleCommandWithDependencies::class:
+                        $factory = new ExampleCommandWithDependenciesFactory();
+                        return $factory($container);
+                    default:
+                        return null;
+                }
+            }));
 
         $applicationFactory = new ApplicationFactory();
         $application        = $applicationFactory($container);
@@ -591,35 +583,31 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @psalm-var ContainerInterface&\Prophecy\Prophecy\ObjectProphecy $containerMock */
-        $containerMock = $this->prophesize(ContainerInterface::class);
-        /** @psalm-suppress all */
-        $containerMock->has(ExampleCommandWithDependencies::class)->willReturn(true)->shouldBeCalled();
-        /** @psalm-suppress all */
-        $containerMock->get('config')->willReturn($config)->shouldBeCalled();
-        /** @psalm-suppress all */
-        $containerMock
-            ->get(ExampleCommandWithDependencies::class)
-            ->will(function () use ($containerMock) {
-                /** @psalm-var ContainerInterface $container */
-                $container = $containerMock->reveal();
-                $factory   = new ExampleCommandWithDependenciesFactory();
-                return $factory($container);
-            })
-            ->shouldBeCalled();
-        /** @psalm-suppress all */
-        $containerMock
-            ->get(ExampleDependency::class)
-            ->will(function () use ($containerMock) {
-                /** @psalm-var ContainerInterface $container */
-                $container = $containerMock->reveal();
-                $factory   = new ExampleDependencyFactory();
-                return $factory($container);
-            })
-            ->shouldBeCalled();
+        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject $container */
+        $container = $this->createMock(ContainerInterface::class);
 
-        /** @psalm-var ContainerInterface $container */
-        $container = $containerMock->reveal();
+        $container
+            ->expects($this->atLeastOnce())
+            ->method('has')
+            ->with($this->equalTo(ExampleCommandWithDependencies::class))
+            ->willReturn(true);
+
+        $container
+            ->method('get')
+            ->will($this->returnCallback(function (string $service) use ($config, $container) {
+                switch ($service) {
+                    case 'config':
+                        return $config;
+                    case ExampleDependency::class:
+                        $factory = new ExampleDependencyFactory();
+                        return $factory($container);
+                    case ExampleCommandWithDependencies::class:
+                        $factory = new ExampleCommandWithDependenciesFactory();
+                        return $factory($container);
+                    default:
+                        return null;
+                }
+            }));
 
         $applicationFactory = new ApplicationFactory();
         $application        = $applicationFactory($container);

@@ -15,9 +15,8 @@ use Laminas\Cli\Input\ParamAwareInputInterface;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStubNonHinted;
 use PackageVersions\Versions;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,27 +27,28 @@ use function strstr;
 
 class ParamAwareCommandTest extends TestCase
 {
-    use ProphecyTrait;
-
     /** @var ParamAwareCommandStub|ParamAwareCommandStubNonHinted */
     private $command;
 
     /**
-     * @var QuestionHelper|ObjectProphecy
-     * @psalm-var QuestionHelper&ObjectProphecy
+     * @var QuestionHelper|MockObject
+     * @psalm-var QuestionHelper&MockObject
      */
     private $questionHelper;
 
     public function setUp(): void
     {
-        /** @psalm-var QuestionHelper&ObjectProphecy $questionHelper */
-        $questionHelper       = $this->prophesize(QuestionHelper::class)->reveal();
-        $this->questionHelper = $questionHelper;
+        $this->questionHelper = $this->createMock(QuestionHelper::class);
 
-        /** @psalm-var HelperSet&ObjectProphecy $helperSet */
-        $helperSet = $this->prophesize(HelperSet::class);
-        /** @psalm-suppress TooManyArguments */
-        $helperSet->get('question')->willReturn($this->questionHelper);
+        /** @psalm-var HelperSet&MockObject $helperSet */
+        $helperSet = $this->createMock(HelperSet::class);
+        $helperSet
+            ->expects($this->any())
+            ->method('get')
+            ->with(
+                $this->equalTo('question')
+            )
+            ->willReturn($this->questionHelper);
 
         /** @psalm-suppress DeprecatedClass */
         $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true) ?: '';
@@ -56,7 +56,7 @@ class ParamAwareCommandTest extends TestCase
             ? ParamAwareCommandStub::class
             : ParamAwareCommandStubNonHinted::class;
 
-        $this->command = new $commandClass($helperSet->reveal());
+        $this->command = new $commandClass($helperSet);
     }
 
     public function testAddParamProxiesToAddOption(): void
@@ -81,10 +81,10 @@ class ParamAwareCommandTest extends TestCase
 
     public function testRunDecoratesInputInParameterAwareInputInstance(): void
     {
-        /** @psalm-var InputInterface&ObjectProphecy $input */
-        $input = $this->prophesize(InputInterface::class)->reveal();
-        /** @psalm-var OutputInterface&ObjectProphecy $output */
-        $output = $this->prophesize(OutputInterface::class)->reveal();
+        /** @psalm-var InputInterface&MockObject $input */
+        $input = $this->createMock(InputInterface::class);
+        /** @psalm-var OutputInterface&MockObject $output */
+        $output = $this->createMock(OutputInterface::class);
         $param  = (new BoolParam('test'))
             ->setDescription('Yes or no')
             ->setDefault(false)
