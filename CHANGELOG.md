@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- This version introduces static analysis tools into the development process, as well as usage of webmozart/assert for type assertions. The primary impact is on developers of new commands, as we will now be throwing `InvalidArgumentException` where before we were throwing either `RuntimeException` or `Laminas\Cli\Exception\ConfigurationException`, for invalid user input.
 
 ### Deprecated
 
