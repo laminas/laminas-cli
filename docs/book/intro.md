@@ -59,6 +59,7 @@ you will need to do the following:
     ];
     ```
 
+### Register Command in an Application with `Configprovider` Class like Mezzio
 
 If your component is providing a `ConfigProvider` (such as in Mezzio
 applications), please provide the configuration in that class instead:
@@ -95,6 +96,8 @@ class ConfigProvider
     }
 }
 ```
+
+### Register Command in a laminas-mvc Application
 
 If you want to provide a `Module` class for Laminas MVC, provide a
 `ConfigProvider` as noted above, and then add the following `Module` class
@@ -149,17 +152,23 @@ container to seed its application.
 
 ## Usage
 
+### List
+
 To list all available commands, run:
 
 ```bash
 $ ./vendor/bin/laminas
 ```
 
+### Execute
+
 To execute a specific command, run:
 
 ```bash
 $ ./vendor/bin/laminas <command-name>
 ```
+
+### Help
 
 To get help on a single command, run:
 
