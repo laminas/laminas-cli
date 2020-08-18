@@ -7,7 +7,7 @@ It provides seamless integration with Laminas MVC and Mezzio applications.
 Both third-party packages and your own application can extend it by writing
 commands and exposing them to the laminas-cli binary via configuration.
 
-## Integrating in components
+## Integrating in Components
 
 If you'd like to add integration with laminas-cli into your components,
 you will need to do the following:
