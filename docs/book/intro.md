@@ -7,57 +7,59 @@ It provides seamless integration with Laminas MVC and Mezzio applications.
 Both third-party packages and your own application can extend it by writing
 commands and exposing them to the laminas-cli binary via configuration.
 
-## Integrating in components
+## Integrating in Components
 
 If you'd like to add integration with laminas-cli into your components,
 you will need to do the following:
 
 1. Add `laminas/laminas-cli` as a dev dependency:
 
-```bash
-$ composer require --dev laminas/laminas-cli
-```
+    ```bash
+    $ composer require --dev laminas/laminas-cli
+    ```
 
 2. Create a command class in your library:
 
-```php
-namespace MyNamespace\Command;
-
-use Symfony\Component\Console\Command\Command;
-
-class MyCommand extends Command
-{
-    // ...
-}
-```
+    ```php
+    namespace MyNamespace\Command;
+    
+    use Symfony\Component\Console\Command\Command;
+    
+    class MyCommand extends Command
+    {
+        // ...
+    }
+    ```
 
 3. If your command has dependencies, register the command and its factory in the
    container. Commands that can be instantiated with no constructor arguments
    can omit container configuration:
 
-```php
-// config/autoload/dependencies.global.php:
-return [
-    'dependencies' => [
-        'factories' => [
-            MyNamespace\Command\MyCommand::class => MyNamespace\Command\MyCommandFactory::class,
+    ```php
+    // config/autoload/dependencies.global.php:
+    return [
+        'dependencies' => [
+            'factories' => [
+                MyNamespace\Command\MyCommand::class => MyNamespace\Command\MyCommandFactory::class,
+            ],
         ],
-    ],
-];
-```
+    ];
+    ```
 
 4. Register the command with the CLI tooling:
 
-```php
-// config/autoload/global.php:
-return [
-    'laminas-cli' => [
-        'commands' => [
-            'package:command-name' => MyNamespace\Command\MyCommand::class,
+    ```php
+    // config/autoload/global.php:
+    return [
+        'laminas-cli' => [
+            'commands' => [
+                'package:command-name' => MyNamespace\Command\MyCommand::class,
+            ],
         ],
-    ],
-];
-```
+    ];
+    ```
+
+### Register Command in an Application with `Configprovider` Class like Mezzio
 
 If your component is providing a `ConfigProvider` (such as in Mezzio
 applications), please provide the configuration in that class instead:
@@ -94,6 +96,8 @@ class ConfigProvider
     }
 }
 ```
+
+### Register Command in a laminas-mvc Application
 
 If you want to provide a `Module` class for Laminas MVC, provide a
 `ConfigProvider` as noted above, and then add the following `Module` class
@@ -148,17 +152,23 @@ container to seed its application.
 
 ## Usage
 
+### List
+
 To list all available commands, run:
 
 ```bash
 $ ./vendor/bin/laminas
 ```
 
+### Execute
+
 To execute a specific command, run:
 
 ```bash
 $ ./vendor/bin/laminas <command-name>
 ```
+
+### Help
 
 To get help on a single command, run:
 
