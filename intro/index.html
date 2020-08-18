@@ -262,7 +262,7 @@
             <ul class="toc__list">
                 
                     <li class="toc__entry">
-                        <a href="#integrating-in-components" class="toc__link nav-link">Integrating in components</a>
+                        <a href="#integrating-in-components" class="toc__link nav-link">Integrating in Components</a>
                     </li>
                 
                     <li class="toc__entry">
@@ -310,17 +310,17 @@
 <p>It provides seamless integration with Laminas MVC and Mezzio applications.</p>
 <p>Both third-party packages and your own application can extend it by writing
 commands and exposing them to the laminas-cli binary via configuration.</p>
-<h2 id="integrating-in-components">Integrating in components</h2>
+<h2 id="integrating-in-components">Integrating in Components</h2>
 <p>If you'd like to add integration with laminas-cli into your components,
 you will need to do the following:</p>
 <ol>
-<li>Add <code>laminas/laminas-cli</code> as a dev dependency:</li>
-</ol>
+<li>
+<p>Add <code>laminas/laminas-cli</code> as a dev dependency:</p>
 <pre class="highlight"><code class="language-bash">$ composer require --dev laminas/laminas-cli</code></pre>
 
-<ol>
-<li>Create a command class in your library:</li>
-</ol>
+</li>
+<li>
+<p>Create a command class in your library:</p>
 <pre class="highlight"><code class="language-php">namespace MyNamespace\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -330,11 +330,11 @@ class MyCommand extends Command
     // ...
 }</code></pre>
 
-<ol>
-<li>If your command has dependencies, register the command and its factory in the
+</li>
+<li>
+<p>If your command has dependencies, register the command and its factory in the
    container. Commands that can be instantiated with no constructor arguments
-   can omit container configuration:</li>
-</ol>
+   can omit container configuration:</p>
 <pre class="highlight"><code class="language-php">// config/autoload/dependencies.global.php:
 return [
     'dependencies' =&gt; [
@@ -344,9 +344,9 @@ return [
     ],
 ];</code></pre>
 
-<ol>
-<li>Register the command with the CLI tooling:</li>
-</ol>
+</li>
+<li>
+<p>Register the command with the CLI tooling:</p>
 <pre class="highlight"><code class="language-php">// config/autoload/global.php:
 return [
     'laminas-cli' =&gt; [
@@ -356,6 +356,9 @@ return [
     ],
 ];</code></pre>
 
+</li>
+</ol>
+<h3>Register Command in an Application with <code>Configprovider</code> Class like Mezzio</h3>
 <p>If your component is providing a <code>ConfigProvider</code> (such as in Mezzio
 applications), please provide the configuration in that class instead:</p>
 <pre class="highlight"><code class="language-php">namespace MyNamespace;
@@ -389,6 +392,7 @@ class ConfigProvider
     }
 }</code></pre>
 
+<h3>Register Command in a laminas-mvc Application</h3>
 <p>If you want to provide a <code>Module</code> class for Laminas MVC, provide a
 <code>ConfigProvider</code> as noted above, and then add the following <code>Module</code> class
 declaration:</p>
@@ -432,12 +436,15 @@ return $factory(new Config($config));</code></pre>
 <p>Once such a file is in place, the laminas-cli binary will be able to use your
 container to seed its application.</p>
 <h2 id="usage">Usage</h2>
+<h3>List</h3>
 <p>To list all available commands, run:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas</code></pre>
 
+<h3>Execute</h3>
 <p>To execute a specific command, run:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas &lt;command-name&gt;</code></pre>
 
+<h3>Help</h3>
 <p>To get help on a single command, run:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas help &lt;command-name&gt;</code></pre>
 
