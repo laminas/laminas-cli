@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 0.1.5 - TBD
+
+### Added
+
+- [#50](https://github.com/laminas/laminas-cli/pull/50) Add PHP 8.0 support
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.1.4 - 2020-08-10
 
 ### Added
