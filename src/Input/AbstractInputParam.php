@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Webmozart\Assert\Assert;
 
 use function array_walk;
+use function get_debug_type;
 use function is_string;
 use function sprintf;
 use function trim;

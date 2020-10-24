@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 0.1.5 - 2020-10-24
+
+### Added
+
+- [#50](https://github.com/laminas/laminas-cli/pull/50) Add PHP 8.0 support
+
+
+-----
+
+### Release Notes for [0.1.5](https://github.com/laminas/laminas-cli/milestone/4)
+
+
+
+### 0.1.5
+
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
+
+#### Enhancement,hacktoberfest-accepted
+
+ - [50: PHP 8.0 support](https://github.com/laminas/laminas-cli/pull/50) thanks to @Thaix
+
 ## 0.1.4 - 2020-08-10
 
 ### Added
