@@ -130,7 +130,7 @@ class ParamAwareInputTest extends TestCase
         yield 'hasArgument' => ['hasArgument', ['argument'], true];
         yield 'getOptions' => ['getOptions', [], ['name', 'bool', 'choices']];
         yield 'isInteractive' => ['isInteractive', [], true];
-        
+
         // Implementation-specific methods
         yield 'hasParameterOption' => ['hasParameterOption', [['some', 'values'], true], true];
         yield 'getParameterOption' => ['getParameterOption', [['some', 'values'], null, true], 'value'];
@@ -163,7 +163,7 @@ class ParamAwareInputTest extends TestCase
             $this->helper,
             $this->params
         );
-        
+
         $this->assertSame($expectedOutput, $input->$method(...$arguments));
     }
 
