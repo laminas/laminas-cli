@@ -87,7 +87,7 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
     /** @psalm-param class-string<Command> $class */
     private function createCommand(string $class, string $name): Command
     {
-        /** @psalm-suppress MixedMethodCall */
+        /** @psalm-suppress UnsafeInstantiation */
         $command = new $class();
         $command->setName($name);
         return $command;

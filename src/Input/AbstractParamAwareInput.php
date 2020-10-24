@@ -22,6 +22,7 @@ use Webmozart\Assert\Assert;
 
 use function array_map;
 use function array_walk;
+use function get_debug_type;
 use function in_array;
 use function is_array;
 use function sprintf;
