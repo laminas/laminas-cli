@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#53](https://github.com/laminas/laminas-cli/pull/53) changes the behavior of `ParamInputInterface` implementations with regards to reporting third-party commands. Previously, any command not shipped via Laminas or Mezzio was flagged as a third-party command; now, commands with namespaces that do not originate in the Composer vendor directory will not be flagged as third-party commands (with the assumption that these have been developed in the target application, and are thus local).
 
 ### Deprecated
 
