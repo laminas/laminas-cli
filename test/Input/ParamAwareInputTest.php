@@ -22,6 +22,7 @@ use Laminas\Cli\Input\TypeHintedParamAwareInput;
 use PackageVersions\Versions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Formatter\NullOutputFormatter;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,10 +30,13 @@ use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+use function class_exists;
 use function fopen;
 use function fwrite;
+use function preg_match;
 use function rewind;
 use function str_replace;
+use function strpos;
 use function strstr;
 
 use const PHP_EOL;
@@ -560,10 +564,22 @@ class ParamAwareInputTest extends TestCase
             ->method('setOption')
             ->with($this->equalTo('non-required'), $this->isNull());
 
+        if (class_exists(NullOutputFormatter::class)) {
+            $formatter = new NullOutputFormatter();
+
+            $this->output
+                ->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($formatter);
+        }
+
         $this->output
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('write')
-            ->with($this->stringContains('<question>'));
+            ->with($this->callback(function (string $message): bool {
+                return preg_match('/^\s*$/', $message)
+                    || false !== strpos($message, '<question>');
+            }));
 
         $helper = new QuestionHelper();
         $input  = new $this->class(
