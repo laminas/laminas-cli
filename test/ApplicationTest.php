@@ -475,7 +475,13 @@ class ApplicationTest extends TestCase
     public function testParamInputNonInteractiveMissingParameter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')->with(ParamCommand::class)->willReturn(true);
+        $container
+            ->expects($this->atLeast(2))
+            ->method('has')
+            ->willReturnMap([
+                ['Laminas\Cli\SymfonyEventDispatcher', false],
+                [ParamCommand::class, true],
+            ]);
         $container->method('get')->willReturnMap([
             [
                 'config',
@@ -528,10 +534,12 @@ class ApplicationTest extends TestCase
         /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject $container */
         $container = $this->createMock(ContainerInterface::class);
         $container
-            ->expects($this->atLeastOnce())
+            ->expects($this->atLeast(2))
             ->method('has')
-            ->with($this->equalTo(ExampleCommandWithDependencies::class))
-            ->willReturn(true);
+            ->willReturnMap([
+                ['Laminas\Cli\SymfonyEventDispatcher', false],
+                [ExampleCommandWithDependencies::class, true],
+            ]);
 
         $container
             ->method('get')
@@ -587,10 +595,12 @@ class ApplicationTest extends TestCase
         $container = $this->createMock(ContainerInterface::class);
 
         $container
-            ->expects($this->atLeastOnce())
+            ->expects($this->atLeast(2))
             ->method('has')
-            ->with($this->equalTo(ExampleCommandWithDependencies::class))
-            ->willReturn(true);
+            ->willReturnMap([
+                ['Laminas\Cli\SymfonyEventDispatcher', false],
+                [ExampleCommandWithDependencies::class, true],
+            ]);
 
         $container
             ->method('get')
