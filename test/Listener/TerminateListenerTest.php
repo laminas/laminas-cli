@@ -13,8 +13,12 @@ namespace LaminasTest\Cli\Listener;
 use Laminas\Cli\Listener\TerminateListener;
 use LaminasTest\Cli\ApplicationTest;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
+use Local\LocalCommand;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psalm\Internal\PluginManager\Command\ShowCommand;
+use Psalm\Internal\PluginManager\PluginListFactory;
+use ReflectionMethod;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -23,8 +27,8 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use ThirdParty\Console\ThirdPartyCommand;
 
+use function getcwd;
 use function preg_match;
 
 class TerminateListenerTest extends TestCase
@@ -109,17 +113,22 @@ class TerminateListenerTest extends TestCase
         $listener = new TerminateListener([
             'commands' => [
                 'example:command-name' => ExampleCommand::class,
-                'third-party:command'  => ThirdPartyCommand::class,
+                'psalm:show'           => ShowCommand::class,
             ],
             'chains'   => [
                 ExampleCommand::class => [
-                    ThirdPartyCommand::class => [],
+                    ShowCommand::class => [],
                 ],
             ],
         ]);
 
-        $thirdPartyCommand = new ThirdPartyCommand();
-        $thirdPartyCommand->configure();
+        $thirdPartyCommand = new ShowCommand(new PluginListFactory(
+            getcwd(),
+            getcwd() . '/vendor/vimeo/psalm'
+        ));
+        $r                 = new ReflectionMethod($thirdPartyCommand, 'configure');
+        $r->setAccessible(true);
+        $r->invoke($thirdPartyCommand);
 
         $this->input
             ->expects($this->once())
@@ -162,8 +171,79 @@ class TerminateListenerTest extends TestCase
         $app
             ->expects($this->once())
             ->method('find')
-            ->with($this->equalTo('third-party:command'))
+            ->with($this->equalTo('psalm:show'))
             ->willReturn($thirdPartyCommand);
+
+        $command = new ExampleCommand();
+        $command->setApplication($app);
+
+        $event = new ConsoleTerminateEvent(
+            $command,
+            $this->input,
+            $this->output,
+            0
+        );
+
+        $this->assertNull($listener($event));
+    }
+
+    public function testDoesNotNotifyForLocalCommandInChain(): void
+    {
+        $listener = new TerminateListener([
+            'commands' => [
+                'example:command-name' => ExampleCommand::class,
+                'local:command'        => LocalCommand::class,
+            ],
+            'chains'   => [
+                ExampleCommand::class => [
+                    LocalCommand::class => [],
+                ],
+            ],
+        ]);
+
+        $localCommand = new LocalCommand();
+        $localCommand->configure();
+
+        $this->input
+            ->expects($this->once())
+            ->method('isInteractive')
+            ->willReturn(true);
+
+        $expectedChoiceQuestion = function (Question $question): bool {
+            $query = $question->getQuestion();
+            return ! preg_match('#<error>.*?This is a third-party command</error>#i', $query)
+                && (bool) preg_match('#<info>Executing local:command</info>#i', $query);
+        };
+
+        $questionHelper = $this->createMock(QuestionHelper::class);
+        $questionHelper
+            ->expects($this->once())
+            ->method('ask')
+            ->with(
+                $this->equalTo($this->input),
+                $this->equalTo($this->output),
+                $this->callback($expectedChoiceQuestion)
+            )
+            ->willReturn('y');
+
+        $helperSet = $this->createMock(HelperSet::class);
+        $helperSet
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->equalTo('question'))
+            ->willReturn($questionHelper);
+
+        $app = $this->createMock(Application::class);
+        $app
+            ->expects($this->atLeastOnce())
+            ->method('getHelperSet')
+            ->willReturn($helperSet);
+
+        $app
+            ->expects($this->once())
+            ->method('find')
+            ->with($this->equalTo('local:command'))
+            ->willReturn($localCommand);
 
         $command = new ExampleCommand();
         $command->setApplication($app);
