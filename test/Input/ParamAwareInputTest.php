@@ -22,6 +22,7 @@ use Laminas\Cli\Input\TypeHintedParamAwareInput;
 use PackageVersions\Versions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Formatter\NullOutputFormatter;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,10 +30,13 @@ use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
+use function class_exists;
 use function fopen;
 use function fwrite;
+use function preg_match;
 use function rewind;
 use function str_replace;
+use function strpos;
 use function strstr;
 
 use const PHP_EOL;
@@ -79,24 +83,34 @@ class ParamAwareInputTest extends TestCase
         $this->output         = $this->createMock(OutputInterface::class);
         $this->helper         = $this->createMock(QuestionHelper::class);
 
+        $stringParam = new StringParam('name');
+        $stringParam->setDescription('Your name');
+        $stringParam->setRequiredFlag(true);
+
+        $boolParam = new BoolParam('bool');
+        $boolParam->setDescription('True or false');
+        $boolParam->setRequiredFlag(true);
+
+        $choiceParam = new ChoiceParam('choices', ['a', 'b', 'c']);
+        $choiceParam->setDescription('Choose one');
+        $choiceParam->setDefault('a');
+
+        $multiIntParamWithDefault = new IntParam('multi-int-with-default');
+        $multiIntParamWithDefault->setDescription('Allowed integers');
+        $multiIntParamWithDefault->setDefault([1, 2]);
+        $multiIntParamWithDefault->setAllowMultipleFlag(true);
+
+        $multiIntParamRequired = new IntParam('multi-int-required');
+        $multiIntParamRequired->setDescription('Required integers');
+        $multiIntParamRequired->setRequiredFlag(true);
+        $multiIntParamRequired->setAllowMultipleFlag(true);
+
         $this->params = [
-            'name'                   => (new StringParam('name'))
-                ->setDescription('Your name')
-                ->setRequiredFlag(true),
-            'bool'                   => (new BoolParam('bool'))
-                ->setDescription('True or false')
-                ->setRequiredFlag(true),
-            'choices'                => (new ChoiceParam('choices', ['a', 'b', 'c']))
-                ->setDescription('Choose one')
-                ->setDefault('a'),
-            'multi-int-with-default' => (new IntParam('multi-int-with-default'))
-                ->setDescription('Allowed integers')
-                ->setDefault([1, 2])
-                ->setAllowMultipleFlag(true),
-            'multi-int-required'     => (new IntParam('multi-int-required'))
-                ->setDescription('Required integers')
-                ->setRequiredFlag(true)
-                ->setAllowMultipleFlag(true),
+            'name'                   => $stringParam,
+            'bool'                   => $boolParam,
+            'choices'                => $choiceParam,
+            'multi-int-with-default' => $multiIntParamWithDefault,
+            'multi-int-required'     => $multiIntParamRequired,
         ];
     }
 
@@ -560,10 +574,22 @@ class ParamAwareInputTest extends TestCase
             ->method('setOption')
             ->with($this->equalTo('non-required'), $this->isNull());
 
+        if (class_exists(NullOutputFormatter::class)) {
+            $formatter = new NullOutputFormatter();
+
+            $this->output
+                ->expects($this->any())
+                ->method('getFormatter')
+                ->willReturn($formatter);
+        }
+
         $this->output
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('write')
-            ->with($this->stringContains('<question>'));
+            ->with($this->callback(function (string $message): bool {
+                return preg_match('/^\s*$/', $message)
+                    || false !== strpos($message, '<question>');
+            }));
 
         $helper = new QuestionHelper();
         $input  = new $this->class(

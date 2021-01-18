@@ -114,7 +114,7 @@ final class TerminateListener
             $exitCode = $application->run(new ArrayInput($params), $output);
 
             if ($exitCode !== 0) {
-                $event->setExitCode((int) $exitCode);
+                $event->setExitCode($exitCode);
                 return;
             }
         }
