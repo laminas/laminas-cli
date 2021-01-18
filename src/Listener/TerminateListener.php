@@ -111,7 +111,7 @@ final class TerminateListener
             $inputMapper = $this->createInputMapper($inputMapperSpec, $nextCommandClass);
 
             $params   = ['command' => $nextCommandName] + $inputMapper($input);
-            $exitCode = $application->run(new ArrayInput($params), $output);
+            $exitCode = $application->run(new ArrayInput($params), $output) ?? 0;
 
             if ($exitCode !== 0) {
                 $event->setExitCode($exitCode);
