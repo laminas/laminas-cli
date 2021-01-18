@@ -38,6 +38,7 @@ final class ApplicationFactory
 
         $commands = $config['commands'] ?? [];
         Assert::isMap($commands);
+        Assert::allString($commands);
 
         $dispatcher = new EventDispatcher();
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));

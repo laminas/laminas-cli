@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Laminas\Cli;
 
+use Laminas\ModuleManager\ModuleManagerInterface;
 use Laminas\Mvc\Service\ServiceManagerConfig;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\ArrayUtils;
@@ -54,11 +55,10 @@ final class ContainerResolver
     {
         /**
          * @psalm-suppress MissingFile
-         * @psalm-var ContainerInterface $container
          */
         $container = include 'config/container.php';
 
-        Assert::implementsInterface($container, ContainerInterface::class, 'Failed to load PSR-11 container');
+        Assert::isInstanceOf($container, ContainerInterface::class, 'Failed to load PSR-11 container');
         return $container;
     }
 
@@ -84,13 +84,18 @@ final class ContainerResolver
             Assert::isMap($appConfig);
         }
 
-        $smConfig = new ServiceManagerConfig($appConfig['service_manager'] ?? []);
+        $servicesConfig = $appConfig['service_manager'] ?? [];
+        Assert::isMap($servicesConfig);
+
+        $smConfig = new ServiceManagerConfig($servicesConfig);
 
         $serviceManager = new ServiceManager();
         $smConfig->configureServiceManager($serviceManager);
         $serviceManager->setService('ApplicationConfig', $appConfig);
 
-        $serviceManager->get('ModuleManager')->loadModules();
+        $moduleManager = $serviceManager->get('ModuleManager');
+        Assert::isInstanceOf($moduleManager, ModuleManagerInterface::class);
+        $moduleManager->loadModules();
 
         return $serviceManager;
     }
