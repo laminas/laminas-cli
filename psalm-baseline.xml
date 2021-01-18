@@ -10,6 +10,14 @@
       <code>?bool</code>
     </ImplementedReturnTypeMismatch>
   </file>
+  <file src="src/Listener/TerminateListener.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>0</code>
+    </DocblockTypeContradiction>
+    <RedundantConditionGivenDocblockType occurrences="1">
+      <code>$application-&gt;run(new ArrayInput($params), $output)</code>
+    </RedundantConditionGivenDocblockType>
+  </file>
   <file src="test/ContainerCommandLoaderTest.php">
     <MixedAssignment occurrences="1">
       <code>$config</code>
