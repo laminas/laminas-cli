@@ -26,6 +26,7 @@ use function file_get_contents;
 use function get_class;
 use function getcwd;
 use function gettype;
+use function in_array;
 use function is_array;
 use function is_object;
 use function is_string;
@@ -48,6 +49,11 @@ final class TerminateListener
         'laminas',
         'laminas-api-tools',
         'mezzio',
+    ];
+
+    private const HOME_PATHS = [
+        '~',
+        '$HOME',
     ];
 
     /** @var array */
@@ -183,17 +189,21 @@ final class TerminateListener
     /**
      * @psalm-return non-empty-string
      */
-    private function getVendorDirectory(): string
+    private function getVendorDirectory(?string $composerJson = null): string
     {
-        $basePath     = realpath(getcwd());
-        $composerJson = file_get_contents($basePath . '/composer.json');
-        Assert::string($composerJson);
+        $basePath = getcwd();
+        if (null === $composerJson) {
+            $composerJson = file_get_contents($basePath . '/composer.json');
+            Assert::string($composerJson);
+        }
 
         $composer = json_decode($composerJson, true);
         Assert::isMap($composer);
 
         $vendorDir = $composer['config']['vendor-dir'] ?? $basePath . '/vendor';
         Assert::string($vendorDir);
+
+        $vendorDir = $this->resolveHomePath($vendorDir);
         Assert::directory($vendorDir);
 
         $vendorDir = $this->normalizePath(realpath($vendorDir));
@@ -232,5 +242,31 @@ final class TerminateListener
     private function normalizePath(string $path): string
     {
         return preg_replace('#\\\\#', '/', $path);
+    }
+
+    /**
+     * Resolve references to the HOME directory.
+     *
+     * Composer allows you to specify the strings "~" or "$HOME" for the
+     * config.vendor-dir setting. If so specified, it will replace it with the
+     * value of the $HOME path.
+     *
+     * This routine detects the usage of one of those strings, and returns the
+     * value of $_SERVER['HOME'] if it exists. If not, it returns the $directory
+     * argument verbatim.
+     */
+    private function resolveHomePath(string $directory): string
+    {
+        if (! in_array($directory, self::HOME_PATHS, true)) {
+            return $directory;
+        }
+
+        if (! isset($_SERVER['HOME'])) {
+            return $directory;
+        }
+
+        Assert::string($_SERVER['HOME']);
+
+        return $_SERVER['HOME'];
     }
 }

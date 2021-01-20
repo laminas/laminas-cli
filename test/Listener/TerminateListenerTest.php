@@ -27,9 +27,13 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Webmozart\Assert\Assert;
 
 use function getcwd;
 use function preg_match;
+use function preg_replace;
+use function realpath;
+use function rtrim;
 
 class TerminateListenerTest extends TestCase
 {
@@ -256,5 +260,66 @@ class TerminateListenerTest extends TestCase
         );
 
         $this->assertNull($listener($event));
+    }
+
+    public function testVendorDirectoryCanBeResolvedViaComposerSetting(): void
+    {
+        $path         = realpath(__DIR__);
+        $composerJson = <<<END
+            {
+                "config": {
+                    "vendor-dir": "$path"
+                }
+            }
+            END;
+
+        $expected = rtrim(realpath(preg_replace('#\\\\#', '/', __DIR__)), '/') . '/';
+
+        $listener = new TerminateListener([]);
+        $r        = new ReflectionMethod($listener, 'getVendorDirectory');
+        $r->setAccessible(true);
+
+        $this->assertSame(
+            $expected,
+            $r->invoke($listener, $composerJson)
+        );
+    }
+
+    /**
+     * @psalm-return array<string, array{0: string}>
+     */
+    public function homeDirectorySpecifications(): array
+    {
+        return [
+            '$HOME' => ['$HOME'],
+            '~'     => ['~'],
+        ];
+    }
+
+    /**
+     * @dataProvider homeDirectorySpecifications
+     */
+    public function testVendorDirectorySpecifiedAsHomeInComposerSettingResolvesToHomeDirectory(string $spec): void
+    {
+        $composerJson = <<<END
+            {
+                "config": {
+                    "vendor-dir": "$spec"
+                }
+            }
+            END;
+
+        $home = $_SERVER['HOME'];
+        Assert::string($home);
+
+        $expected = rtrim(realpath(preg_replace('#\\\\#', '/', $home)), '/') . '/';
+        $listener = new TerminateListener([]);
+        $r        = new ReflectionMethod($listener, 'getVendorDirectory');
+        $r->setAccessible(true);
+
+        $this->assertSame(
+            $expected,
+            $r->invoke($listener, $composerJson)
+        );
     }
 }
