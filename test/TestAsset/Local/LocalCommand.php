@@ -8,19 +8,19 @@
 
 declare(strict_types=1);
 
-namespace ThirdParty\Console;
+namespace Local;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ThirdPartyCommand extends Command
+class LocalCommand extends Command
 {
-    protected static $defaultName = 'third-party:command';
+    protected static $defaultName = 'local:command';
 
     public function configure(): void
     {
-        $this->setDescription('third-party command');
+        $this->setDescription('local command');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
