@@ -9,6 +9,9 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>?bool</code>
     </ImplementedReturnTypeMismatch>
+    <MixedAssignment occurrences="1">
+      <code>$normalizedValue</code>
+    </MixedAssignment>
   </file>
   <file src="src/Listener/TerminateListener.php">
     <DocblockTypeContradiction occurrences="1">

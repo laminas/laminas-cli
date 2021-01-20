@@ -91,6 +91,10 @@ class ParamAwareInputTest extends TestCase
         $boolParam->setDescription('True or false');
         $boolParam->setRequiredFlag(true);
 
+        $intParam = new IntParam('int');
+        $intParam->setDescription('Integer');
+        $intParam->setRequiredFlag(false);
+
         $choiceParam = new ChoiceParam('choices', ['a', 'b', 'c']);
         $choiceParam->setDescription('Choose one');
         $choiceParam->setDefault('a');
@@ -108,6 +112,7 @@ class ParamAwareInputTest extends TestCase
         $this->params = [
             'name'                   => $stringParam,
             'bool'                   => $boolParam,
+            'int'                    => $intParam,
             'choices'                => $choiceParam,
             'multi-int-with-default' => $multiIntParamWithDefault,
             'multi-int-required'     => $multiIntParamRequired,
@@ -296,6 +301,32 @@ class ParamAwareInputTest extends TestCase
         );
 
         $this->assertSame([1, 2], $input->getParam('multi-int-with-default'));
+    }
+
+    /**
+     * @see https://github.com/laminas/laminas-cli/issues/55
+     */
+    public function testGetParamReturnsOptionValueWhenInputOptionPassedForScalarParam(): void
+    {
+        $this->decoratedInput
+            ->expects($this->once())
+            ->method('getOption')
+            ->with($this->equalTo('int'))
+            // Values provided via command line are always strings.
+            // This means we're also testing that normalizers are run first.
+            ->willReturn('10');
+        $this->decoratedInput
+            ->expects($this->never())
+            ->method('isInteractive');
+
+        $input = new $this->class(
+            $this->decoratedInput,
+            $this->output,
+            $this->helper,
+            ['int' => $this->params['int']]
+        );
+
+        $this->assertSame(10, $input->getParam('int'));
     }
 
     public function testGetParamReturnsOptionValueWhenInputOptionPassedForArrayParam(): void
