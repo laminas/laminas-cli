@@ -30,8 +30,11 @@ use Symfony\Component\Console\Question\Question;
 use Webmozart\Assert\Assert;
 
 use function getcwd;
+use function is_dir;
+use function opendir;
 use function preg_match;
 use function preg_replace;
+use function readdir;
 use function realpath;
 use function rtrim;
 
@@ -313,6 +316,52 @@ class TerminateListenerTest extends TestCase
         Assert::string($home);
 
         $expected = rtrim(realpath(preg_replace('#\\\\#', '/', $home)), '/') . '/';
+        $listener = new TerminateListener([]);
+        $r        = new ReflectionMethod($listener, 'getVendorDirectory');
+        $r->setAccessible(true);
+
+        $this->assertSame(
+            $expected,
+            $r->invoke($listener, $composerJson)
+        );
+    }
+
+    private function getFirstHomeSubdirectory(string $home): ?string
+    {
+        Assert::directory($home);
+        $handle = opendir($home);
+        while (false !== ($entry = readdir($handle))) {
+            $path = $home . '/' . $entry;
+            if (! preg_match('/^\.{1,2}$/', $entry) && is_dir($path)) {
+                return $entry;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @dataProvider homeDirectorySpecifications
+     */
+    public function testVendorDirectoryStartingWithHomeInComposerSettingResolvesViaHomeDirectory(string $spec): void
+    {
+        $home = $_SERVER['HOME'];
+        Assert::string($home);
+
+        $subdir = $this->getFirstHomeSubdirectory($home);
+        if (null === $subdir) {
+            $this->markTestSkipped('No $HOME subdirectory; cannot complete test');
+        }
+
+        $composerJson = <<<END
+            {
+                "config": {
+                    "vendor-dir": "$spec/$subdir"
+                }
+            }
+            END;
+
+        $expected = rtrim(realpath(preg_replace('#\\\\#', '/', $home)), '/') . '/' . $subdir . '/';
         $listener = new TerminateListener([]);
         $r        = new ReflectionMethod($listener, 'getVendorDirectory');
         $r->setAccessible(true);

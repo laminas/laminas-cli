@@ -26,11 +26,11 @@ use function file_get_contents;
 use function get_class;
 use function getcwd;
 use function gettype;
-use function in_array;
 use function is_array;
 use function is_object;
 use function is_string;
 use function json_decode;
+use function preg_match;
 use function preg_replace;
 use function realpath;
 use function rtrim;
@@ -51,10 +51,7 @@ final class TerminateListener
         'mezzio',
     ];
 
-    private const HOME_PATHS = [
-        '~',
-        '$HOME',
-    ];
+    private const HOME_PATH_REGEX = '#^(~|\$HOME)#';
 
     /** @var array */
     private $config;
@@ -247,17 +244,17 @@ final class TerminateListener
     /**
      * Resolve references to the HOME directory.
      *
-     * Composer allows you to specify the strings "~" or "$HOME" for the
-     * config.vendor-dir setting. If so specified, it will replace it with the
-     * value of the $HOME path.
+     * Composer allows you to specify the strings "~" or "$HOME" within the
+     * config.vendor-dir setting. If so specified, it will replace those values
+     * with the value of the $HOME path.
      *
-     * This routine detects the usage of one of those strings, and returns the
-     * value of $_SERVER['HOME'] if it exists. If not, it returns the $directory
-     * argument verbatim.
+     * This routine detects the usage of one of those strings, replacing it with
+     * the value of $_SERVER['HOME'] if it exists. If not, it returns the
+     * $directory argument verbatim.
      */
     private function resolveHomePath(string $directory): string
     {
-        if (! in_array($directory, self::HOME_PATHS, true)) {
+        if (! preg_match(self::HOME_PATH_REGEX, $directory)) {
             return $directory;
         }
 
@@ -267,6 +264,9 @@ final class TerminateListener
 
         Assert::string($_SERVER['HOME']);
 
-        return $_SERVER['HOME'];
+        $updated = preg_replace(self::HOME_PATH_REGEX, $_SERVER['HOME'], $directory);
+        Assert::string($updated);
+
+        return $updated;
     }
 }
