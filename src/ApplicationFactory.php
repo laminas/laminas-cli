@@ -16,6 +16,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Webmozart\Assert\Assert;
 
 use function strstr;
@@ -38,8 +39,14 @@ final class ApplicationFactory
 
         $commands = $config['commands'] ?? [];
         Assert::isMap($commands);
+        Assert::allString($commands);
 
-        $dispatcher = new EventDispatcher();
+        $eventDispatcherServiceName = __NAMESPACE__ . '\SymfonyEventDispatcher';
+        $dispatcher                 = $container->has($eventDispatcherServiceName)
+            ? $container->get($eventDispatcherServiceName)
+            : new EventDispatcher();
+        Assert::isInstanceOf($dispatcher, EventDispatcherInterface::class);
+
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
 
         $application = new Application('laminas', $version);

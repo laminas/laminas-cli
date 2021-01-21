@@ -94,8 +94,9 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
         $valueIsArray = (bool) ($inputParam->getOptionMode() & InputOption::VALUE_IS_ARRAY);
         if ($this->isParamValueProvided($inputParam, $value)) {
-            $this->validateValue($value, $valueIsArray, $question->getValidator(), $name);
-            return $this->normalizeValue($value, $valueIsArray, $question->getNormalizer());
+            $normalizedValue = $this->normalizeValue($value, $question->getNormalizer());
+            $this->validateValue($normalizedValue, $valueIsArray, $question->getValidator(), $name);
+            return $normalizedValue;
         }
 
         if (! $this->input->isInteractive() && $inputParam->isRequired()) {
@@ -213,7 +214,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
      * @param mixed $value
      * @return mixed
      */
-    private function normalizeValue($value, bool $valueIsArray, ?callable $normalizer)
+    private function normalizeValue($value, ?callable $normalizer)
     {
         // No normalizer: nothing to do
         if ($normalizer === null) {
@@ -221,12 +222,11 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         // Non-array value: normalize it directly
-        if (! $valueIsArray && ! is_array($value)) {
+        if (! is_array($value)) {
             return $normalizer($value);
         }
 
         // Array value: map each to the normalizer
-        Assert::isArray($value);
         return array_map($normalizer, $value);
     }
 

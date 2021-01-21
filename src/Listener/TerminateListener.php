@@ -12,6 +12,7 @@ namespace Laminas\Cli\Listener;
 
 use Laminas\Cli\Input\Mapper\ArrayInputMapper;
 use Laminas\Cli\Input\Mapper\InputMapperInterface;
+use ReflectionClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -21,13 +22,20 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Webmozart\Assert\Assert;
 
 use function array_search;
+use function file_get_contents;
 use function get_class;
+use function getcwd;
 use function gettype;
 use function is_array;
 use function is_object;
 use function is_string;
+use function json_decode;
 use function preg_match;
+use function preg_replace;
+use function realpath;
+use function rtrim;
 use function sprintf;
+use function strpos;
 use function strtolower;
 
 use const PHP_EOL;
@@ -37,6 +45,14 @@ use const PHP_EOL;
  */
 final class TerminateListener
 {
+    private const ALLOWED_VENDORS = [
+        'laminas',
+        'laminas-api-tools',
+        'mezzio',
+    ];
+
+    private const HOME_PATH_REGEX = '#^(~|\$HOME)#';
+
     /** @var array */
     private $config;
 
@@ -74,10 +90,11 @@ final class TerminateListener
         $helper = $application->getHelperSet()->get('question');
         Assert::isInstanceOf($helper, QuestionHelper::class);
 
-        $input  = $event->getInput();
-        $output = $event->getOutput();
+        $vendorDir = $this->getVendorDirectory();
+        $input     = $event->getInput();
+        $output    = $event->getOutput();
 
-        /** @psalm-var array<string, string|array> $chain */
+        /** @psalm-var array<class-string, string|array> $chain */
         foreach ($chain as $nextCommandClass => $inputMapperSpec) {
             $nextCommandName = array_search($nextCommandClass, $commands, true);
             Assert::string($nextCommandName, sprintf(
@@ -87,7 +104,7 @@ final class TerminateListener
             ));
 
             $nextCommand       = $application->find($nextCommandName);
-            $thirdPartyMessage = (bool) preg_match('/^(Mezzio|Laminas)\b/', $nextCommandClass)
+            $thirdPartyMessage = $this->matchesApplicationClass($nextCommandClass, $vendorDir)
                 ? ''
                 : PHP_EOL . '<error>WARNING: This is a third-party command</error>';
 
@@ -111,10 +128,10 @@ final class TerminateListener
             $inputMapper = $this->createInputMapper($inputMapperSpec, $nextCommandClass);
 
             $params   = ['command' => $nextCommandName] + $inputMapper($input);
-            $exitCode = $application->run(new ArrayInput($params), $output);
+            $exitCode = $application->run(new ArrayInput($params), $output) ?? 0;
 
             if ($exitCode !== 0) {
-                $event->setExitCode((int) $exitCode);
+                $event->setExitCode($exitCode);
                 return;
             }
         }
@@ -164,5 +181,92 @@ final class TerminateListener
             Assert::isMap($value, 'Malformed input mapper for ' . $commandClass);
             Assert::allString($value, 'Malformed input mapper for ' . $commandClass);
         }
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    private function getVendorDirectory(?string $composerJson = null): string
+    {
+        $basePath = getcwd();
+        if (null === $composerJson) {
+            $composerJson = file_get_contents($basePath . '/composer.json');
+            Assert::string($composerJson);
+        }
+
+        $composer = json_decode($composerJson, true);
+        Assert::isMap($composer);
+
+        $vendorDir = $composer['config']['vendor-dir'] ?? $basePath . '/vendor';
+        Assert::string($vendorDir);
+
+        $vendorDir = $this->resolveHomePath($vendorDir);
+        Assert::directory($vendorDir);
+
+        $vendorDir = $this->normalizePath(realpath($vendorDir));
+        return rtrim($vendorDir, '/') . '/';
+    }
+
+    /**
+     * @psalm-param class-string $class
+     */
+    private function matchesApplicationClass(string $class, string $vendorDir): bool
+    {
+        $r = new ReflectionClass($class);
+
+        $filename = $r->getFileName();
+        Assert::string($filename, sprintf(
+            'Cannot determine file where command class "%s" is declared; is it really a command?',
+            $class
+        ));
+
+        $filename = $this->normalizePath($filename);
+        if (0 !== strpos($filename, $vendorDir)) {
+            return true;
+        }
+
+        foreach (self::ALLOWED_VENDORS as $vendor) {
+            $path = $vendorDir . $vendor . '/';
+            if (0 === strpos($filename, $path)) {
+                // Matches a Laminas or Mezzio command name
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function normalizePath(string $path): string
+    {
+        return preg_replace('#\\\\#', '/', $path);
+    }
+
+    /**
+     * Resolve references to the HOME directory.
+     *
+     * Composer allows you to specify the strings "~" or "$HOME" within the
+     * config.vendor-dir setting. If so specified, it will replace those values
+     * with the value of the $HOME path.
+     *
+     * This routine detects the usage of one of those strings, replacing it with
+     * the value of $_SERVER['HOME'] if it exists. If not, it returns the
+     * $directory argument verbatim.
+     */
+    private function resolveHomePath(string $directory): string
+    {
+        if (! preg_match(self::HOME_PATH_REGEX, $directory)) {
+            return $directory;
+        }
+
+        if (! isset($_SERVER['HOME'])) {
+            return $directory;
+        }
+
+        Assert::string($_SERVER['HOME']);
+
+        $updated = preg_replace(self::HOME_PATH_REGEX, $_SERVER['HOME'], $directory);
+        Assert::string($updated);
+
+        return $updated;
     }
 }
