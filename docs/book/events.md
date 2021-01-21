@@ -62,6 +62,8 @@ Finally, we need to wire both our `ErrorListener` and our `EventDispatcher` serv
 We can do so by creating a configuration file named `config/autoload/console.global.php` if it does not already exist, and adding the following contents:
 
 ```php
+<?php
+
 return [
     '{CONTAINER_KEY}' => [
         'factories' => [
