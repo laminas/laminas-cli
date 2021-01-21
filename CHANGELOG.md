@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.1.6 - TBD
+## 0.1.6 - 2021-01-21
 
 ### Added
 
@@ -14,17 +14,30 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#53](https://github.com/laminas/laminas-cli/pull/53) changes the behavior of `ParamInputInterface` implementations with regards to reporting third-party commands. Previously, any command not shipped via Laminas or Mezzio was flagged as a third-party command; now, commands with namespaces that do not originate in the Composer vendor directory will not be flagged as third-party commands (with the assumption that these have been developed in the target application, and are thus local).
 
-### Deprecated
 
-- Nothing.
+-----
 
-### Removed
+### Release Notes for [0.1.6](https://github.com/laminas/laminas-cli/milestone/5)
 
-- Nothing.
+0.1.x bugfix release (patch)
 
-### Fixed
+### 0.1.6
 
-- Nothing.
+- Total issues resolved: **4**
+- Total pull requests resolved: **6**
+- Total contributors: **4**
+
+#### Enhancement
+
+ - [61: Replace $HOME and ~ at start of vendor-dir setting](https://github.com/laminas/laminas-cli/pull/61) thanks to @weierophinney and @michalbundyra
+ - [57: Ensure TerminateListener works correctly for null return values from commands](https://github.com/laminas/laminas-cli/pull/57) thanks to @weierophinney
+ - [56: Perform QA improvements for PHPUnit and Psalm](https://github.com/laminas/laminas-cli/pull/56) thanks to @weierophinney
+ - [54: Allow defining an EventDispatcher service in the container](https://github.com/laminas/laminas-cli/pull/54) thanks to @weierophinney and @vaclavvanik
+ - [53: Remove third-party notice for local commands](https://github.com/laminas/laminas-cli/pull/53) thanks to @weierophinney and @michalbundyra
+
+#### Bug
+
+ - [58: Ensure parameter normalization occurs before validation when parameter is passed as an option during invocation](https://github.com/laminas/laminas-cli/pull/58) thanks to @weierophinney and @jbh
 
 ## 0.1.5 - 2020-10-24
 
