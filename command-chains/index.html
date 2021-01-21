@@ -186,6 +186,20 @@
                     
                         
                             <li class="subnavigation__list-item ">
+                                <a href="../events/" class="subnavigation__link">Events</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
                                 <a href="../faq/" class="subnavigation__link">FAQ</a>
                             </li>
                         
@@ -230,7 +244,7 @@
             </div>
 
             
-            <div class="col-4 text-sm-right">
+            <div class="col-4 text-right">
                 
                     
 
@@ -334,7 +348,6 @@ class FirstCommand extends Command
         return 0;
     }
 }</code></pre>
-
 <pre class="highlight"><code class="language-php">namespace MyApp\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -360,7 +373,6 @@ class SecondCommand extends Command
         return 0;
     }
 }</code></pre>
-
 <p>We can expose each to laminas-cli, and also create a <em>chain</em>, whereby when the
 first command finishes execution, it will then invoke the second:</p>
 <pre class="highlight"><code class="language-php">namespace MyApp\Command;
@@ -378,7 +390,6 @@ return [
         ],
     ],
 ];</code></pre>
-
 <blockquote>
 <h3>"chains" configuration options</h3>
 <p>We discuss <a href="#chain-configuration">chain configuration in more detail below</a>.</p>
@@ -395,7 +406,6 @@ Executing second-command. Do you want to continue?
 &gt; yes, continue
 
 Second command: Foo</code></pre>
-
 <p>Please note that only successful result of the first command will trigger the
 second command.  The final result (exit code) of the chained commands will be
 the result of the last executed command. If a command in the middle of the chain
@@ -410,14 +420,12 @@ return [
         'chains' =&gt; [ /* . . . */ ],
     ],
 ];</code></pre>
-
 <p>The configuration is expected to be an associative array mapping command names
 you have previously defined in the "commands" section of the "laminas-cli"
 configuration, and the value is an associative array:</p>
 <pre class="highlight"><code class="language-php">'chains' =&gt; [
     COMMAND_CLASS_NAME =&gt; CHAINED_COMMANDS
 ],</code></pre>
-
 <p>The chained commands (<code>CHAINED_COMMANDS</code>) are themselves an associative array,
 where the key is the name of a command you have already defined in the
 "commands" section of the "laminas-cli" configuration, and the value is an
@@ -427,7 +435,6 @@ associative array:</p>
         CHAINED_COMMAND_CLASS_NAME =&gt; INPUT_MAPPER,
     ],
 ],</code></pre>
-
 <p>An input mapper (<code>INPUT_MAPPER</code>) can be one of two things:</p>
 <ul>
 <li>a string class name of an implemention of <code>Laminas\Cli\Input\Mapper\InputMapperInterface</code></li>
@@ -451,7 +458,6 @@ two forms:</p>
         ['--an-option-on-this-command' =&gt; 'option value to supply'],
     ],
 ],</code></pre>
-
 <p>When specifying options, the <code>--</code> prefix should be used with the option names,
 just like you'd invoke them from the command line if you were to call the
 command by itself.</p>
@@ -472,7 +478,6 @@ return [
         ],
     ],
 ];</code></pre>
-
 <p>We have defined two commands, <code>FirstCommand</code> and <code>SecondCommand</code>. <code>FirstCommand</code>
 defines the option <code>--name</code>, while <code>SecondCommand</code> defines the option
 <code>--module</code>. In the above configuration, we indicate that when we call
@@ -482,10 +487,8 @@ defines the option <code>--name</code>, while <code>SecondCommand</code> defines
 effect, that would be similar to calling the following commands in sequence:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas first-command --name Foo
 $ ./vendor/bin/laminas second-command --module Foo</code></pre>
-
 <p>Since <code>FirstCommand</code> now provides a chain, we can call:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas first-command --name Foo</code></pre>
-
 <p>and <code>Foo</code> will be passed for the <code>--module</code> option when <code>SecondCommand</code> is
 invoked as part of the chain.</p>
 <h2 id="inputmapperinterface">InputMapperInterface</h2>
@@ -501,7 +504,6 @@ interface InputMapperInterface
 {
     public function __invoke(InputInterface $input): array;
 }</code></pre>
-
 <p>The return value should be an associative array mapping arguments and options to
 the values they contain, suitable for use with
 <code>Symfony\Component\Console\Input\ArrayInput</code> (<a href="https://symfony.com/doc/current/console/calling_commands.html">see symfony/console documentation
@@ -514,7 +516,6 @@ for details</a>);</p>
    ['additional-arg'   =&gt; 'arg-value'], // adds "additional-arg" argument to the next command call with the value "arg-value"
    ['--additional-opt' =&gt; 'opt-value'], // adds "--additional-opt" option to the next command call with the value "opt-value"
 ],</code></pre>
-
 <p>It is also possible to provide class name (string) which implements <code>Laminas\Cli\Input\Mapper\InputMapperInterface</code>
 if you need more customised mapper between input of the previous and next command.</p>
 
@@ -650,6 +651,20 @@ if you need more customised mapper between input of the previous and next comman
                     
                         
                             <li class="subnavigation__list-item ">
+                                <a href="../events/" class="subnavigation__link">Events</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
                                 <a href="../faq/" class="subnavigation__link">FAQ</a>
                             </li>
                         
@@ -659,6 +674,7 @@ if you need more customised mapper between input of the previous and next comman
         </ul>
     </div>
 
+                    
                 
             </div>
         </div>
@@ -731,7 +747,7 @@ if you need more customised mapper between input of the previous and next comman
                         <p>
                             <!--Built with love by the Laminas team with the help of our
                             <a href="https://github.com/laminas/laminas-cli/graphs/contributors">contributors</a>.<br>-->
-                            &copy; 2020 <a href="https://getlaminas.org/">Laminas Project</a> a Series of LF Projects, LLC.
+                            &copy; 2021 <a href="https://getlaminas.org/">Laminas Project</a> a Series of LF Projects, LLC.
                         </p>
                     </div>
                 </div>

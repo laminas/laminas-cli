@@ -6,10 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Command-line interface for Laminas projects">  
-    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/">
+    <link rel="canonical" href="https://docs.laminas.dev/laminas-cli/events/">
     <link rel="shortcut icon" href="https://docs.laminas.dev/img/trademark-laminas-foundation-rgb.svg">
 
-    <title>laminas-cli - Laminas Docs</title>
+    <title>Events - laminas-cli - Laminas Docs</title>
 
     <link rel="stylesheet" href="https://docs.laminas.dev/css/styles.css">
     
@@ -115,7 +115,7 @@
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href=".">laminas-cli</a>
+            <a href="..">laminas-cli</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -130,7 +130,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="intro/" class="subnavigation__link">Introduction</a>
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
                             </li>
                         
                     
@@ -144,7 +144,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="command-chains/" class="subnavigation__link">Command Chains</a>
+                                <a href="../command-chains/" class="subnavigation__link">Command Chains</a>
                             </li>
                         
                     
@@ -158,7 +158,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="command-params/" class="subnavigation__link">Command Params</a>
+                                <a href="../command-params/" class="subnavigation__link">Command Params</a>
                             </li>
                         
                     
@@ -172,7 +172,21 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="autocompletion/" class="subnavigation__link">Autocompletion</a>
+                                <a href="../autocompletion/" class="subnavigation__link">Autocompletion</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Events</a>
                             </li>
                         
                     
@@ -186,21 +200,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="events/" class="subnavigation__link">Events</a>
-                            </li>
-                        
-                    
-                
-            
-
-                
-                
-
-                    
-                    
-                        
-                            <li class="subnavigation__list-item ">
-                                <a href="faq/" class="subnavigation__link">FAQ</a>
+                                <a href="../faq/" class="subnavigation__link">FAQ</a>
                             </li>
                         
                     
@@ -266,6 +266,13 @@
             <div class="col-md-9 col-sm-12 content" role="main">
                 
                 
+                    
+    
+
+    
+    
+
+                
 
                 
                     <nav aria-label="breadcrumb">
@@ -275,7 +282,11 @@
             <li class="breadcrumb-item"><a href="https://docs.laminas.dev/components/">Components</a></li>
 
             
-                <li class="breadcrumb-item">laminas-cli</li>
+                <li class="breadcrumb-item"><a href="..">laminas-cli</a></li>
+
+                
+
+                <li class="breadcrumb-item active" aria-current="page">Events</li>
             
         
     </ol>
@@ -285,22 +296,84 @@
 
 
 
-    <h1>laminas-cli</h1>
-<p>Command-line interface for Laminas projects</p>
 
+    
+    
 
-    <h2>Installation</h2>
-    <h3>Using Composer</h3>
-    <pre><code class="language-bash">$ composer require laminas/laminas-cli</code></pre>
+    <h1 id="events">Events</h1>
+<p>The <a href="https://symfony.com/doc/current/components/console.html">symfony/console component</a> allows attaching an event dispatcher instance to a console application.
+During the lifetime of a console command, the application will trigger a number of events, to which you may subscribe listeners.
+Internally, laminas/laminas-cli itself adds a listener on the <code>Symfony\Component\Console\ConsoleEvents::TERMINATE</code> event in order to provide <a href="../command-chains/">command chains</a>.</p>
+<p>If you wish to subscribe to any of the various <a href="https://symfony.com/doc/current/components/console/events.html">symfony/console events</a>, you will need to provide an alternate event dispatcher instance.
+You may do so by defining a <code>Laminas\Cli\SymfonyEventDispatcher</code> service in your container that resolves to a <code>Symfony\Component\EventDispatcher\EventDispatcherInterface</code> instance. (We use this instead of the more generic <code>Symfony\Contracts\EventDispatcher\EventDispatcherInterface</code> so that we can use its <code>addListener()</code> method to subscribe our own listener.)</p>
+<p>As an example, let's say you want to register the <code>Symfony\Component\Console\EventListener\ErrorListener</code> in your console application for purposes of debugging.
+First, we will create a factory for this listener in the file <code>src/App/ConsoleErrorListenerFactory.php</code>:</p>
+<pre class="highlight"><code class="language-php">&lt;?php
 
+declare(strict_types=1);
 
-<h2>Support</h2>
+namespace App;
+
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventListener\ErrorListener;
+
+final class ConsoleErrorListenerFactory
+{
+    public function __invoke(ContainerInterface $container): ErrorListener
+    {
+        return new ErrorListener($container-&gt;get(LoggerInterface::class));
+    }
+}</code></pre>
+<blockquote>
+<p>The above example assumes you have already wired the <code>Psr\Log\LoggerInterface</code> service in your container configuration.</p>
+</blockquote>
+<p>Next, we will create the class <code>App\ConsoleEventDispatcherFactory</code> in the file <code>src/App/ConsoleEventDispatcherFactory.php</code>.
+The factory will create an <code>EventDispatcher</code> instance, attach the error listener, and return the dispatcher.</p>
+<pre class="highlight"><code class="language-php">&lt;?php
+
+declare(strict_types=1);
+
+namespace App;
+
+use Psr\Container\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventListener\ErrorListener;
+
+final class ConsoleEventDispatcherFactory
+{
+    public function __invoke(ContainerInterface $container): EventDispatcher
+    {
+        $dispatcher = new EventDispatcher();
+        $dispatcher-&gt;addListener($container-&gt;get(ErrorListener::class));
+
+        return $dispatcher;
+    }
+}</code></pre>
+<p>Finally, we need to wire both our <code>ErrorListener</code> and our <code>EventDispatcher</code> services in our container.
+We can do so by creating a configuration file named <code>config/autoload/console.global.php</code> if it does not already exist, and adding the following contents:</p>
+<pre class="highlight"><code class="language-php">&lt;?php
+
+return [
+    '{CONTAINER_KEY}' =&gt; [
+        'factories' =&gt; [
+            'Laminas\Cli\SymfonyEventDispatcher' =&gt; \App\ConsoleEventDispatcherFactory::class,
+            \Symfony\Component\EventDispatcher\EventListener\ErrorListener::class =&gt; \App\ConsoleErrorListenerFactory::class,
+            // ...
+        ],
+        // ...
+    ],
+    // ...
+];</code></pre>
+<blockquote>
+<p>For the value of <code>{CONTAINER_KEY}</code>, substitute the following:</p>
 <ul>
-    <li>Issues: <a href="https://github.com/laminas/laminas-cli/issues">github.com/laminas/laminas-cli/issues</a></li>
-    <li>Source: <a href="https://github.com/laminas/laminas-cli/">github.com/laminas/laminas-cli/</a></li>
-    <li>Chat: <a href="https://laminas.dev/chat">laminas.dev/chat</a></li>
-    <li>Forum: <a href="https://discourse.laminas.dev/">discourse.laminas.dev</a></li>
+<li>For laminas-mvc applications, use the value "service_manager".</li>
+<li>For Mezzio applications, use the value "dependencies".</li>
 </ul>
+</blockquote>
+<p>Later, if you want to register other listeners, you can either update your <code>App\ConsoleEventDispatcherFactory</code>, or you can add <a href="https://docs.laminas.dev/laminas-servicemanager/delegators/">delegator factories</a> on the "Laminas\Cli\SymfonyEventDispatcher" service.</p>
+<p>Read the <a href="https://symfony.com/doc/current/components/console/events.html">symfony/console events documentation</a> more information on how to add listeners to the event dispatcher.</p>
 
 
 
@@ -311,12 +384,16 @@
         
         <li class="page-nav__item">
             
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../autocompletion/">
+                    <i class="fa fa-chevron-left"></i> Previous
+                </a>
+            
         </li>
 
         
         <li class="page-nav__item">
             
-                <a rel="next" class="page-nav__link page-nav__link--next" href="intro/">
+                <a rel="next" class="page-nav__link page-nav__link--next" href="../faq/">
                     Next <i class="fa fa-chevron-right"></i>
                 </a>
             
@@ -326,6 +403,15 @@
 
 
 
+
+    <div class="help-wanted">
+        <p>
+            Found a mistake or want to contribute to the documentation?
+            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/events.md" target="_blank" class="help-wanted__link">
+                Edit this page on GitHub!
+            </a>
+        </p>
+    </div>
 
                 
             </div>
@@ -350,7 +436,7 @@
                     
     <div class="subnavigation hidden-print">
         <h4 class="subnavigation__title">
-            <a href=".">laminas-cli</a>
+            <a href="..">laminas-cli</a>
         </h4>
 
         <h5 class="subnavigation__subtitle">Table of Contents</h5>
@@ -365,7 +451,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="intro/" class="subnavigation__link">Introduction</a>
+                                <a href="../intro/" class="subnavigation__link">Introduction</a>
                             </li>
                         
                     
@@ -379,7 +465,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="command-chains/" class="subnavigation__link">Command Chains</a>
+                                <a href="../command-chains/" class="subnavigation__link">Command Chains</a>
                             </li>
                         
                     
@@ -393,7 +479,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="command-params/" class="subnavigation__link">Command Params</a>
+                                <a href="../command-params/" class="subnavigation__link">Command Params</a>
                             </li>
                         
                     
@@ -407,7 +493,21 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="autocompletion/" class="subnavigation__link">Autocompletion</a>
+                                <a href="../autocompletion/" class="subnavigation__link">Autocompletion</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item subnavigation__list-item--active">
+                                <a href="./" class="subnavigation__link">Events</a>
                             </li>
                         
                     
@@ -421,21 +521,7 @@
                     
                         
                             <li class="subnavigation__list-item ">
-                                <a href="events/" class="subnavigation__link">Events</a>
-                            </li>
-                        
-                    
-                
-            
-
-                
-                
-
-                    
-                    
-                        
-                            <li class="subnavigation__list-item ">
-                                <a href="faq/" class="subnavigation__link">FAQ</a>
+                                <a href="../faq/" class="subnavigation__link">FAQ</a>
                             </li>
                         
                     
@@ -527,13 +613,13 @@
 </footer>
 
     <script>
-        let base_url = '.',
+        let base_url = '..',
             project  = "components",
             siteName = 'laminas-cli';
     </script>
     <script src="https://docs.laminas.dev/js/scripts.js"></script>
     
-        <script src="search/main.js"></script>
+        <script src="../search/main.js"></script>
     
 
     
@@ -562,8 +648,3 @@
 
 
 </html>
-
-<!--
-MkDocs version : 1.1.2
-Build Date UTC : 2021-01-21 15:39:15.291098+00:00
--->
