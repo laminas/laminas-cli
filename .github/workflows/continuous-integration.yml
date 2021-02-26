@@ -1,114 +1,33 @@
-name: continuous-integration
+name: "Continuous Integration"
 
 on:
   pull_request:
-    paths-ignore:
-    - 'docs/**'
-    - 'mkdocs.yml'
-    - '*.md'
+  push:
+    branches:
+      - '[0-9]+.[0-9]+.x'
+      - 'refs/pull/*'
+    tags:
 
 jobs:
-  run:
+  matrix:
+    name: Generate job matrix
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Gather CI configuration
+        id: matrix
+        uses: laminas/laminas-ci-matrix-action@v1
+
+  qa:
+    name: QA Checks
+    needs: [matrix]
+    runs-on: ${{ matrix.operatingSystem }}
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - php-version: '7.3'
-            deps-version: 'lowest'
-            cs-check: ''
-            test-coverage: 'none'
-            composer-args: '--no-interaction'
-          - php-version: '7.3'
-            deps-version: 'latest'
-            cs-check: ''
-            test-coverage: 'none'
-            composer-args: '--no-interaction'
-          - php-version: '7.4'
-            deps-version: 'lowest'
-            cs-check: ''
-            test-coverage: 'none'
-            composer-args: '--no-interaction'
-          - php-version: '7.4'
-            deps-version: 'latest'
-            cs-check: 'true'
-            test-coverage: 'xdebug'
-            composer-args: '--no-interaction'
-          - php-version: '8.0'
-            deps-version: 'lowest'
-            cs-check: ''
-            test-coverage: 'none'
-            composer-args: '--no-interaction --ignore-platform-reqs'
-          - php-version: '8.0'
-            deps-version: 'latest'
-            cs-check: ''
-            test-coverage: 'none'
-            composer-args: '--no-interaction --ignore-platform-reqs'
-
+      matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: ${{ matrix.name }}
+        uses: laminas/laminas-continuous-integration-action@v1
         with:
-          php-version: ${{ matrix.php-version }}
-          extensions: mbstring, intl, readline
-          coverage: ${{ matrix.test-coverage }}
-          tools: composer:v2, cs2pr
-        env:
-          update: true
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install dependencies
-        env:
-          COVERAGE_DEPS: 'php-coveralls/php-coveralls'
-          DEPS: ${{ matrix.deps-version }}
-          COMPOSER_ARGS: ${{ matrix.composer-args }}
-          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TEST_COVERAGE: ${{ matrix.test-coverage }}
-        run: |
-          composer install $COMPOSER_ARGS
-          if [[ $DEPS == 'latest' ]]; then composer update $COMPOSER_ARGS ; fi
-          if [[ $DEPS == 'lowest' ]]; then composer update --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
-          if [[ $TEST_COVERAGE != 'none' ]]; then composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
-          composer show
-
-      - name: Run CS checks
-        env:
-          CS_CHECK: ${{ matrix.cs-check }}
-        shell: bash
-        run: |
-          if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
-
-      - name: Run static analysis
-        env:
-          TEST_COVERAGE: ${{ matrix.test-coverage }}
-        shell: bash
-        run: |
-          if [[ $TEST_COVERAGE != 'none' ]]; then composer static-analysis ; fi
-
-      - name: Run unit tests
-        env:
-          TEST_COVERAGE: ${{ matrix.test-coverage }}
-        shell: bash
-        run: |
-          if [[ $TEST_COVERAGE != 'none' ]]; then composer test-coverage ; else composer test ; fi
-
-      - name: Upload coverage
-        env:
-          TEST_COVERAGE: ${{ matrix.test-coverage }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          if [[ $TEST_COVERAGE != 'none' && -f clover.xml ]]; then vendor/bin/php-coveralls -v ; fi
+          job: ${{ matrix.job }}
