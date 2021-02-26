@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ExampleCommandWithDependencies extends Command
 {
-    /** @var string */
+    /** @var string|null */
     protected static $defaultName = 'example:command-with-deps';
 
     /** @var ExampleDependency */
