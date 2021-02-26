@@ -135,4 +135,15 @@ class ContainerCommandLoaderTest extends TestCase
 
         $this->fail('An exception was not thrown');
     }
+
+    public function testLoaderReturnsFalseWhenTestingCommandThatDoesNotExist(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->expects(self::never())
+            ->method('has');
+
+        $loader = new ContainerCommandLoader($container, []);
+
+        $this->assertFalse($loader->has('my:command'));
+    }
 }
