@@ -15,6 +15,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Webmozart\Assert\Assert;
 
+use function array_key_exists;
 use function array_keys;
 use function sprintf;
 
@@ -61,6 +62,10 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
 
     protected function hasCommand(string $name): bool
     {
+        if (! array_key_exists($name, $this->commandMap)) {
+            return false;
+        }
+
         if ($this->container->has($this->commandMap[$name])) {
             return true;
         }

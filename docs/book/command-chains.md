@@ -81,6 +81,7 @@ return [
 ];
 ```
 
+<!-- markdownlint-disable-next-line MD001 -->
 > ### "chains" configuration options
 >
 > We discuss [chain configuration in more detail below](#chain-configuration).

@@ -20,4 +20,3 @@ $ composer require composer/package-versions-deprecated laminas/laminas-cli
 is a drop-in replacement for ocramius/package-versions that works across a
 broader number of PHP versions. It is marked "deprecated" as Composer v2 will
 incorporate the functionality it provides natively.
-

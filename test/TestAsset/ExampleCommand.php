@@ -12,7 +12,7 @@ namespace LaminasTest\Cli\TestAsset;
 
 class ExampleCommand extends AbstractCommand
 {
-    /** @var string */
+    /** @var string|null */
     protected static $defaultName = 'example:command-name';
 
     /** @var string */
