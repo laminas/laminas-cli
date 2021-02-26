@@ -12,7 +12,7 @@ namespace LaminasTest\Cli\TestAsset;
 
 class Chained2Command extends AbstractCommand
 {
-    /** @var string */
+    /** @var string|null */
     protected static $defaultName = 'example:chained-2';
 
     /** @var string */
