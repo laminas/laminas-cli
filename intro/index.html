@@ -368,7 +368,7 @@ return [
 ];</code></pre>
 </li>
 </ol>
-<h3>Register Command in an Application with <code>Configprovider</code> Class like Mezzio</h3>
+<h3 id="register-command-in-an-application-with-configprovider-class-like-mezzio">Register Command in an Application with <code>Configprovider</code> Class like Mezzio</h3>
 <p>If your component is providing a <code>ConfigProvider</code> (such as in Mezzio
 applications), please provide the configuration in that class instead:</p>
 <pre class="highlight"><code class="language-php">namespace MyNamespace;
@@ -401,7 +401,7 @@ class ConfigProvider
         ];
     }
 }</code></pre>
-<h3>Register Command in a laminas-mvc Application</h3>
+<h3 id="register-command-in-a-laminas-mvc-application">Register Command in a laminas-mvc Application</h3>
 <p>If you want to provide a <code>Module</code> class for Laminas MVC, provide a
 <code>ConfigProvider</code> as noted above, and then add the following <code>Module</code> class
 declaration:</p>
@@ -443,13 +443,13 @@ return $factory(new Config($config));</code></pre>
 <p>Once such a file is in place, the laminas-cli binary will be able to use your
 container to seed its application.</p>
 <h2 id="usage">Usage</h2>
-<h3>List</h3>
+<h3 id="list">List</h3>
 <p>To list all available commands, run:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas</code></pre>
-<h3>Execute</h3>
+<h3 id="execute">Execute</h3>
 <p>To execute a specific command, run:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas &lt;command-name&gt;</code></pre>
-<h3>Help</h3>
+<h3 id="help">Help</h3>
 <p>To get help on a single command, run:</p>
 <pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas help &lt;command-name&gt;</code></pre>
 

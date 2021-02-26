@@ -438,7 +438,7 @@ exposing the <code>setAllowMultipleFlag()</code> flag.</p>
 <p>Additionally, when writing validators, you do not need to check if the value is
 not required and an empty value submitted;
 <code>ParamAwareInputInterface::getParam()</code> does this for you.</p>
-<h3>BoolParam</h3>
+<h3 id="boolparam">BoolParam</h3>
 <p><code>Laminas\Cli\Input\BoolParam</code> allows specifying a parameter with a boolean
 value. It emits a <code>Symfony\Component\Console\Question\ConfirmationQuestion</code>.</p>
 <pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
@@ -447,7 +447,7 @@ final class BoolParam extends AbstractInputParam
 {
     public function __construct(string $name);
 }</code></pre>
-<h3>ChoiceParam</h3>
+<h3 id="choiceparam">ChoiceParam</h3>
 <p><code>Laminas\Cli\Input\ChoiceParam</code> allows specifying a set of choices from which
 the user may select a value, emitting a <code>Symfony\Component\Console\Question\ChoiceQuestion</code>.</p>
 <pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
@@ -458,7 +458,7 @@ final class ChoiceParam extends AbstractInputParam
 
     public function __construct(string $name, array $haystack);
 }</code></pre>
-<h3>IntParam</h3>
+<h3 id="intparam">IntParam</h3>
 <p><code>Laminas\Cli\Input\IntParam</code> allows specifying that a value must be an integer,
 and optionally be more than a minimum value and/or less than a maximum value.</p>
 <pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
@@ -473,7 +473,7 @@ final class IntParam extends AbstractInputParam
 
     public function setMax(?int $max): self;
 }</code></pre>
-<h3>PathParam</h3>
+<h3 id="pathparam">PathParam</h3>
 <p><code>Laminas\Cli\Input\PathParam</code> allows specifying that a value must be a path on
 the filesystem, requiring that you specifiy which, and optionally requiring that
 it exist.</p>
@@ -494,7 +494,7 @@ final class PathParam extends AbstractInputParam
 
     public function setPathMustExist(bool $flag): self;
 }</code></pre>
-<h3>StringParam</h3>
+<h3 id="stringparam">StringParam</h3>
 <p><code>Laminas\Cli\Input\StringParam</code> allows specifying that a value must be a string,
 and optionally match a PCRE regex.</p>
 <pre class="highlight"><code class="language-php">namespace Laminas\Cli\Input;
@@ -551,7 +551,7 @@ final class HelloCommand extends AbstractParamAwareCommand
     }
 }</code></pre>
 <blockquote>
-<h3>ParamAwareInputInterface</h3>
+<h3 id="paramawareinputinterface">ParamAwareInputInterface</h3>
 <p>Internally, we decorate the input instance from the
 application with a class implementing our own <code>ParamAwareInputInterface</code>. This
 interface extends each of <code>Symfony\Component\Console\Input\InputInterface</code> and
@@ -582,7 +582,7 @@ Hello Michal!</code></pre>
 Hello Michal!</code></pre>
 <p>As you can see, there is no prompt!</p>
 <blockquote>
-<h3>AbstractParamAwareCommand::run</h3>
+<h3 id="abstractparamawarecommandrun">AbstractParamAwareCommand::run</h3>
 <p>The <code>AbstractParamAwareCommand</code> class overrides the symfony/console
 <code>Command::run()</code> method internally in order to decorate the input in a
 <code>ParamAwareInputInterface</code> implementation. If you decide you need to override
