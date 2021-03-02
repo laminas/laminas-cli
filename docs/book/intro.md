@@ -59,7 +59,7 @@ you will need to do the following:
     ];
     ```
 
-### Register Command in an Application with `Configprovider` Class like Mezzio
+### Register Command in an Application with `ConfigProvider` Class like Mezzio
 
 If your component is providing a `ConfigProvider` (such as in Mezzio
 applications), please provide the configuration in that class instead:
