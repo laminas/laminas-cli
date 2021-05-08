@@ -41,11 +41,10 @@ final class ContainerResolverTest extends TestCase
         ]);
 
         $input = $this->createMock(InputInterface::class);
+
         $input
-            ->expects(self::once())
-            ->method('hasOption')
-            ->with(ApplicationFactory::CONTAINER_OPTION)
-            ->willReturn(true);
+            ->expects(self::never())
+            ->method('hasOption');
 
         $input
             ->expects(self::once())
@@ -107,10 +106,8 @@ final class ContainerResolverTest extends TestCase
         $containerPath = sprintf('%s/%s', $directory->url(), $containerFileName);
         $input         = $this->createMock(InputInterface::class);
         $input
-            ->expects(self::once())
-            ->method('hasOption')
-            ->with(ApplicationFactory::CONTAINER_OPTION)
-            ->willReturn(true);
+            ->expects(self::never())
+            ->method('hasOption');
 
         $input
             ->expects(self::once())

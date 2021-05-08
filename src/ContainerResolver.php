@@ -53,28 +53,27 @@ final class ContainerResolver
      */
     public function resolve(InputInterface $input): ContainerInterface
     {
-        if ($input->hasOption(ApplicationFactory::CONTAINER_OPTION)) {
-            $pathToContainer = $input->getOption(ApplicationFactory::CONTAINER_OPTION);
-            assert(is_string($pathToContainer) && $pathToContainer !== '');
+        $pathToContainer = $input->getOption(ApplicationFactory::CONTAINER_OPTION) ?? '';
+        Assert::string($pathToContainer);
 
-            // Verify if an absolute path was passed
-            if (! file_exists($pathToContainer)) {
+        if ($pathToContainer !== '') {
+            if (!file_exists($pathToContainer)) {
                 $pathToContainer = sprintf('%s/%s', $this->projectRoot, $pathToContainer);
-                assert($pathToContainer !== '');
+                Assert::stringNotEmpty($pathToContainer);
             }
 
             return $this->resolveContainerFromPath($pathToContainer);
         }
 
         $mezzioContainer = sprintf('%s/config/container.php', $this->projectRoot);
-        assert($mezzioContainer !== '');
+        Assert::stringNotEmpty($mezzioContainer);
 
         if (file_exists($mezzioContainer)) {
             return $this->resolveContainerFromPath($mezzioContainer);
         }
 
         $applicationConfiguration = sprintf('%s/config/application.config.php', $this->projectRoot);
-        assert($applicationConfiguration !== '');
+        Assert::stringNotEmpty($applicationConfiguration);
         if (
             file_exists($applicationConfiguration)
             && class_exists(ServiceManager::class)
