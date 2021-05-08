@@ -112,6 +112,7 @@ abstract class AbstractInputParam implements InputParamInterface
 
     /**
      * @param mixed $defaultValue
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function setDefault($defaultValue): InputParamInterface
     {

@@ -54,7 +54,6 @@ class ApplicationFactoryTest extends TestCase
                 $dispatcher
             );
 
-        /** @psalm-suppress InternalClass */
         $this->assertInstanceOf(Application::class, (new ApplicationFactory())($container));
     }
 }

@@ -94,6 +94,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
         $valueIsArray = (bool) ($inputParam->getOptionMode() & InputOption::VALUE_IS_ARRAY);
         if ($this->isParamValueProvided($inputParam, $value)) {
+            /** @psalm-suppress MixedAssignment */
             $normalizedValue = $this->normalizeValue($value, $question->getNormalizer());
             $this->validateValue($normalizedValue, $valueIsArray, $question->getValidator(), $name);
             return $normalizedValue;
@@ -153,6 +154,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
     /**
      * @param string|int $name
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function hasArgument($name): ?bool
     {
@@ -272,7 +274,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     private function askQuestion(Question $question, bool $valueIsArray, bool $valueIsRequired)
     {
         if (! $valueIsArray) {
-            /** @psalm-suppress MixedAssignment */
             return $this->helper->ask($this, $this->output, $question);
         }
 
@@ -307,7 +308,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
                             return $value;
                         }
 
-                        /** @psalm-suppress MixedAssignment */
                         return $validator($value);
                     }
                 );

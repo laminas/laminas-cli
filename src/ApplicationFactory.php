@@ -22,9 +22,11 @@ use Webmozart\Assert\Assert;
 use function strstr;
 
 /**
- * @internal This factory is not registered in the container on purpose.
- *     We do not want expose Laminas\Cli as a Module/ConfigProvider.
- *     It is just for internal use.
+ * This factory is not registered in the container on purpose.
+ * We do not want expose Laminas\Cli as a Module/ConfigProvider.
+ * It is just for internal use.
+ *
+ * @internal
  */
 final class ApplicationFactory
 {

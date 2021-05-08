@@ -27,6 +27,7 @@ use function get_class;
 use function getcwd;
 use function gettype;
 use function is_array;
+use function is_int;
 use function is_object;
 use function is_string;
 use function json_decode;
@@ -128,7 +129,11 @@ final class TerminateListener
             $inputMapper = $this->createInputMapper($inputMapperSpec, $nextCommandClass);
 
             $params   = ['command' => $nextCommandName] + $inputMapper($input);
-            $exitCode = $application->run(new ArrayInput($params), $output) ?? 0;
+            $exitCode = $application->run(new ArrayInput($params), $output);
+            /** @psalm-suppress DocblockTypeContradiction */
+            if (! is_int($exitCode)) {
+                $exitCode = 0;
+            }
 
             if ($exitCode !== 0) {
                 $event->setExitCode($exitCode);

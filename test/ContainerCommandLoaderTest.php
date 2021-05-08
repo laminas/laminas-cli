@@ -60,6 +60,7 @@ class ContainerCommandLoaderTest extends TestCase
         Assert::isMap($config);
         Assert::keyExists($config, 'laminas-cli');
 
+        /** @psalm-suppress MixedAssignment */
         $config = $config['laminas-cli'];
         Assert::isMap($config);
         Assert::keyExists($config, 'commands');
