@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     findUnusedPsalmSuppress="true"
+    errorLevel="1"
 >
     <projectFiles>
         <file name="bin/laminas"/>
