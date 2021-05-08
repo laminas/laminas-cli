@@ -18,7 +18,7 @@ $ composer require laminas/laminas-cli
 ## Usage
 
 ```bash
-$ vendor/bin/laminas [command-name]
+$ vendor/bin/laminas [--container=<path>] [command-name]
 ```
 
 ## Custom command

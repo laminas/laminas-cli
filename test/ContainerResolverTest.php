@@ -1,0 +1,135 @@
+<?php
+
+/**
+ * @see       https://github.com/laminas/laminas-cli for the canonical source repository
+ * @copyright https://github.com/laminas/laminas-cli/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas/laminas-cli/blob/master/LICENSE.md New BSD License
+ */
+
+declare(strict_types=1);
+
+namespace LaminasTest\Cli;
+
+use Laminas\Cli\ApplicationFactory;
+use Laminas\Cli\ContainerResolver;
+use Laminas\ServiceManager\ServiceManager;
+use LaminasTest\Cli\TestAsset\ExampleDependency;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
+
+use function assert;
+use function sprintf;
+use function sys_get_temp_dir;
+
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
+final class ContainerResolverTest extends TestCase
+{
+    public function testWillLoadContainerFromInputOption(): void
+    {
+        $containerFileContents = sprintf(<<<EOT
+            <?php return new \Laminas\ServiceManager\ServiceManager();
+        EOT);
+
+        $containerPath = 'container.php';
+        $directory     = vfsStream::setup('root', null, [
+            $containerPath => $containerFileContents,
+        ]);
+
+        $input = $this->createMock(InputInterface::class);
+        $input
+            ->expects(self::once())
+            ->method('hasOption')
+            ->with(ApplicationFactory::CONTAINER_OPTION)
+            ->willReturn(true);
+
+        $input
+            ->expects(self::once())
+            ->method('getOption')
+            ->with(ApplicationFactory::CONTAINER_OPTION)
+            ->willReturn($containerPath);
+
+        $projectRoot = $directory->url();
+        assert($projectRoot !== '');
+        $resolver = new ContainerResolver($projectRoot);
+        $resolver->resolve($input);
+    }
+
+    public function testWillLoadContainerFromApplicationConfig(): void
+    {
+        $input = $this->createMock(InputInterface::class);
+
+        $resolver  = new ContainerResolver(__DIR__ . '/TestAsset');
+        $container = $resolver->resolve($input);
+        self::assertInstanceOf(ServiceManager::class, $container);
+        self::assertTrue($container->has(ExampleDependency::class));
+    }
+
+    public function testWillLoadContainerFromMezzioContainerPath(): void
+    {
+        $containerFileContents = sprintf(<<<EOT
+            <?php \$container = new \Laminas\ServiceManager\ServiceManager();
+            \$container->setService('foo', 'bar');
+            return \$container;
+        EOT);
+
+        $containerPath = 'config/container.php';
+        $directory     = vfsStream::setup('root', null, [
+            $containerPath => $containerFileContents,
+        ]);
+
+        $input = $this->createMock(InputInterface::class);
+
+        $projectRoot = $directory->url();
+        assert($projectRoot !== '');
+        $resolver  = new ContainerResolver($projectRoot);
+        $container = $resolver->resolve($input);
+        self::assertTrue($container->has('foo'));
+    }
+
+    public function testCanHandleAbsolutePathForContainerOption(): void
+    {
+        $containerFileContents = sprintf(<<<EOT
+            <?php return new \Laminas\ServiceManager\ServiceManager();
+        EOT);
+
+        $containerFileName = 'container.php';
+        $directory         = vfsStream::setup('root', null, [
+            $containerFileName => $containerFileContents,
+        ]);
+
+        $containerPath = sprintf('%s/%s', $directory->url(), $containerFileName);
+        $input         = $this->createMock(InputInterface::class);
+        $input
+            ->expects(self::once())
+            ->method('hasOption')
+            ->with(ApplicationFactory::CONTAINER_OPTION)
+            ->willReturn(true);
+
+        $input
+            ->expects(self::once())
+            ->method('getOption')
+            ->with(ApplicationFactory::CONTAINER_OPTION)
+            ->willReturn($containerPath);
+
+        $projectRoot = $directory->url();
+        assert($projectRoot !== '');
+        $resolver = new ContainerResolver($projectRoot);
+        $resolver->resolve($input);
+    }
+
+    public function testWillThrowRuntimeExceptionWhenNoContainerCouldBeDetected(): void
+    {
+        $tempDirectory = sys_get_temp_dir();
+        assert($tempDirectory !== '');
+        $resolver = new ContainerResolver($tempDirectory);
+        $input    = $this->createMock(InputInterface::class);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot detect PSR-11 container');
+        $resolver->resolve($input);
+    }
+}

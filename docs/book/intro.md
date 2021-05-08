@@ -129,8 +129,7 @@ the default configuration and your [PSR-11 container](https://www.php-fig.org/ps
 cannot be detected automatically, you can still use the laminas-cli tool.
 
 To integrate such applications with laminas-cli, you will need to create a file
-that returns a PSR-11 container. Do so in the file `config/container.php`. Such
-a file might look like the following:
+that returns a PSR-11 container. Do so in the file `config/container.php` or if you already have such a file in another location, use the `--container=<path>` option. Such a file might look like the following:
 
 ```php
 <?php
@@ -157,7 +156,7 @@ container to seed its application.
 To list all available commands, run:
 
 ```bash
-$ ./vendor/bin/laminas
+$ ./vendor/bin/laminas [--container=<path>]
 ```
 
 ### Execute
@@ -165,7 +164,7 @@ $ ./vendor/bin/laminas
 To execute a specific command, run:
 
 ```bash
-$ ./vendor/bin/laminas <command-name>
+$ ./vendor/bin/laminas [--container=<path>] <command-name>
 ```
 
 ### Help
@@ -173,5 +172,5 @@ $ ./vendor/bin/laminas <command-name>
 To get help on a single command, run:
 
 ```bash
-$ ./vendor/bin/laminas help <command-name>
+$ ./vendor/bin/laminas [--container=<path>] help <command-name>
 ```
