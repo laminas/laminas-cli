@@ -25,7 +25,6 @@ use function class_exists;
 use function file_exists;
 use function is_string;
 use function sprintf;
-use function var_dump;
 
 /**
  * @internal

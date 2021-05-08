@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
+use bovigo\vfs\vfsStream;
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ContainerResolver;
 use Laminas\ServiceManager\ServiceManager;
 use LaminasTest\Cli\TestAsset\ExampleDependency;
-use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,7 +35,8 @@ final class ContainerResolverTest extends TestCase
         EOT);
 
         $containerPath = 'container.php';
-        $directory     = vfsStream::setup('root', null, [
+        /** @psalm-suppress InvalidArgument */
+        $directory = vfsStream::setup('root', null, [
             $containerPath => $containerFileContents,
         ]);
 
@@ -76,9 +77,10 @@ final class ContainerResolverTest extends TestCase
             return \$container;
         EOT);
 
-        $containerPath = 'config/container.php';
-        $directory     = vfsStream::setup('root', null, [
-            $containerPath => $containerFileContents,
+        $directory = vfsStream::setup('root', null, [
+            'config' => [
+                'container.php' => $containerFileContents,
+            ],
         ]);
 
         $input = $this->createMock(InputInterface::class);
@@ -97,7 +99,8 @@ final class ContainerResolverTest extends TestCase
         EOT);
 
         $containerFileName = 'container.php';
-        $directory         = vfsStream::setup('root', null, [
+        /** @psalm-suppress InvalidArgument */
+        $directory = vfsStream::setup('root', null, [
             $containerFileName => $containerFileContents,
         ]);
 
