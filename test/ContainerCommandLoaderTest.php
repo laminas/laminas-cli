@@ -1,6 +1,8 @@
-<?php // phpcs:disable WebimpressCodingStandard.PHP.CorrectClassNameCase
+<?php
 
 declare(strict_types=1);
+
+// phpcs:disable WebimpressCodingStandard.PHP.CorrectClassNameCase
 
 namespace LaminasTest\Cli;
 

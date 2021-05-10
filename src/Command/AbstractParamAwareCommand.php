@@ -1,6 +1,8 @@
-<?php // phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
+<?php
 
 declare(strict_types=1);
+
+// phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
 
 namespace Laminas\Cli\Command;
 

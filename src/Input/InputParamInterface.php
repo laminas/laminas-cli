@@ -1,6 +1,8 @@
-<?php // phpcs:disable WebimpressCodingStandard.Functions.ReturnType
+<?php
 
 declare(strict_types=1);
+
+// phpcs:disable WebimpressCodingStandard.Functions.ReturnType
 
 namespace Laminas\Cli\Input;
 

@@ -11,6 +11,7 @@ use function str_replace;
 use function strstr;
 
 /** @psalm-suppress DeprecatedClass */
+
 $version = strstr(Versions::getVersion('symfony/console'), '@', true) ?: '';
 
 if (str_replace('v', '', $version) >= '5.0.0') {
