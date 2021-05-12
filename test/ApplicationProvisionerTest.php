@@ -67,7 +67,7 @@ final class ApplicationProvisionerTest extends TestCase
         $application
             ->expects(self::once())
             ->method('setCommandLoader')
-            ->with(self::callback(static function (containercommandloader $loader) use ($container): bool {
+            ->with(self::callback(static function (ContainerCommandLoader $loader) use ($container): bool {
                 self::assertEquals($loader->getContainer(), $container);
                 return true;
             }));

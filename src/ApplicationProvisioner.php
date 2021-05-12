@@ -40,7 +40,6 @@ final class ApplicationProvisioner
 
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
 
-        // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase
         $application->setCommandLoader(new ContainerCommandLoader($container, $commands));
         $application->setDispatcher($dispatcher);
 
