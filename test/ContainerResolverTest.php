@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 
-use function assert;
 use function sprintf;
 use function sys_get_temp_dir;
 

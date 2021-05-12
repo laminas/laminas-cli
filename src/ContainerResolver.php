@@ -23,6 +23,7 @@ use Webmozart\Assert\Assert;
 use function class_exists;
 use function file_exists;
 use function sprintf;
+use function strpos;
 
 /**
  * @internal
@@ -55,19 +56,19 @@ final class ContainerResolver
         Assert::string($pathToContainer);
 
         if ($pathToContainer !== '') {
-            if (!file_exists($pathToContainer)) {
+            if (! $this->isAbsolutePath($pathToContainer)) {
                 $pathToContainer = sprintf('%s/%s', $this->projectRoot, $pathToContainer);
                 Assert::stringNotEmpty($pathToContainer);
             }
 
-            return $this->resolveContainerFromPath($pathToContainer);
+            return $this->resolveContainerFromAbsolutePath($pathToContainer);
         }
 
         $mezzioContainer = sprintf('%s/config/container.php', $this->projectRoot);
         Assert::stringNotEmpty($mezzioContainer);
 
         if (file_exists($mezzioContainer)) {
-            return $this->resolveContainerFromPath($mezzioContainer);
+            return $this->resolveContainerFromAbsolutePath($mezzioContainer);
         }
 
         $applicationConfiguration = sprintf('%s/config/application.config.php', $this->projectRoot);
@@ -132,15 +133,39 @@ final class ContainerResolver
     /**
      * @psalm-param non-empty-string $containerPath
      */
-    private function resolveContainerFromPath(string $containerPath): ContainerInterface
+    private function resolveContainerFromAbsolutePath(string $containerPath): ContainerInterface
     {
         if (! file_exists($containerPath)) {
-            throw new InvalidArgumentException('Provided path must be relative to the project root.');
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Provided container path could not be resolved to an existing file: %s',
+                    $containerPath
+                )
+            );
         }
 
         $container = include $containerPath;
         Assert::isInstanceOf($container, ContainerInterface::class, 'Failed to load PSR-11 container');
 
         return $container;
+    }
+
+    /**
+     * Verifies that the provided path does not contain an absolute path.
+     * Absolute paths can be either start with `/` or provided as an URI.
+     *
+     * @psalm-param non-empty-string $pathToContainer
+     */
+    private function isAbsolutePath(string $pathToContainer): bool
+    {
+        if ($pathToContainer[0] === '/') {
+            return true;
+        }
+
+        if (strpos($pathToContainer, '://') !== false) {
+            return true;
+        }
+
+        return false;
     }
 }
