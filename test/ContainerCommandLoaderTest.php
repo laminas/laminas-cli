@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable WebimpressCodingStandard.PHP.CorrectClassNameCase
 
 /**
  * @see       https://github.com/laminas/laminas-cli for the canonical source repository

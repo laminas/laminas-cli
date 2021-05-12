@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable WebimpressCodingStandard.PHP.CorrectClassNameCase
 
 /**
  * @see       https://github.com/laminas/laminas-cli for the canonical source repository
@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace LaminasTest\Cli;
 
 use Laminas\Cli\ApplicationProvisioner;
-use laminas\cli\containercommandloader;
+use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\Listener\TerminateListener;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

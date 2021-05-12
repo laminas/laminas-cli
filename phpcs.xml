@@ -21,7 +21,4 @@
     <rule ref="SlevomatCodingStandard.Commenting.ForbiddenComments.CommentForbidden">
         <exclude name="SlevomatCodingStandard.Commenting.ForbiddenComments.CommentForbidden"/>
     </rule>
-    <rule ref="WebimpressCodingStandard.PHP.CorrectClassNameCase">
-        <exclude name="WebimpressCodingStandard.PHP.CorrectClassNameCase"/>
-    </rule>
 </ruleset>
