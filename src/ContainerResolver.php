@@ -20,10 +20,8 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
 
-use function assert;
 use function class_exists;
 use function file_exists;
-use function is_string;
 use function sprintf;
 
 /**

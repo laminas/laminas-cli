@@ -53,7 +53,8 @@ final class ContainerResolverTest extends TestCase
             ->willReturn($containerPath);
 
         $projectRoot = $directory->url();
-        assert($projectRoot !== '');
+        self::assertNotSame($projectRoot, '');
+        /** @psalm-var non-empty-string $projectRoot */
         $resolver = new ContainerResolver($projectRoot);
         $resolver->resolve($input);
     }
@@ -85,7 +86,8 @@ final class ContainerResolverTest extends TestCase
         $input = $this->createMock(InputInterface::class);
 
         $projectRoot = $directory->url();
-        assert($projectRoot !== '');
+        self::assertNotSame($projectRoot, '');
+        /** @psalm-var non-empty-string $projectRoot */
         $resolver  = new ContainerResolver($projectRoot);
         $container = $resolver->resolve($input);
         self::assertTrue($container->has('foo'));
@@ -116,7 +118,8 @@ final class ContainerResolverTest extends TestCase
             ->willReturn($containerPath);
 
         $projectRoot = $directory->url();
-        assert($projectRoot !== '');
+        self::assertNotSame($projectRoot, '');
+        /** @psalm-var non-empty-string $projectRoot */
         $resolver = new ContainerResolver($projectRoot);
         $resolver->resolve($input);
     }
@@ -124,7 +127,10 @@ final class ContainerResolverTest extends TestCase
     public function testWillThrowRuntimeExceptionWhenNoContainerCouldBeDetected(): void
     {
         $tempDirectory = sys_get_temp_dir();
-        assert($tempDirectory !== '');
+        if ($tempDirectory === '') {
+            self::fail('Temporary directory not available.');
+        }
+
         $resolver = new ContainerResolver($tempDirectory);
         $input    = $this->createMock(InputInterface::class);
 
