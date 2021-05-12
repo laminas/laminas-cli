@@ -40,7 +40,7 @@ final class ApplicationFactory
         $definition->addOption(
             new InputOption(
                 self::CONTAINER_OPTION,
-                'c',
+                null,
                 InputOption::VALUE_REQUIRED,
                 'Path to a file which returns a PSR-11 container'
             )
