@@ -41,13 +41,15 @@ try {
     $container = (new ContainerResolver($projectRoot))->resolve($input);
     $app = (new ApplicationProvisioner())($app, $container);
 } catch (\Symfony\Component\Console\Exception\RuntimeException $exception) {
-    // Suppress as it will be part of the application output
+    // Running the app after suppressing container resolution exceptions allows symfony/console to report usage information
 } catch (RuntimeException | InvalidArgumentException $exception) {
+    // Usage information provided by the `ContainerResolver` should be passed to the CLI output
     $containerNotFoundMessage = sprintf('<error>%s</error>', $exception->getMessage());
 } finally {
     $input = new ArgvInput();
 }
 
+// By running the app even if its not provisioned allows symfony/console to report problems and/or display available options (like `--container`
 $exitCode = $app->run($input, $output);
 
 if ($containerNotFoundMessage) {
