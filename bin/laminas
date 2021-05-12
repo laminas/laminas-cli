@@ -9,11 +9,10 @@
 
 declare(strict_types=1);
 
-use Laminas\Cli\ApplicationConfigurator;
+use Laminas\Cli\ApplicationProvisioner;
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ContainerResolver;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
@@ -40,7 +39,7 @@ try {
     $input = new ArgvInput();
     $input->bind($definition);
     $container = (new ContainerResolver($projectRoot))->resolve($input);
-    $app = (new ApplicationConfigurator())($app, $container);
+    $app = (new ApplicationProvisioner())($app, $container);
 } catch (\Symfony\Component\Console\Exception\RuntimeException $exception) {
     // Suppress as it will be part of the application output
 } catch (RuntimeException | InvalidArgumentException $exception) {

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
-use Laminas\Cli\ApplicationConfigurator;
+use Laminas\Cli\ApplicationProvisioner;
 use laminas\cli\containercommandloader;
 use Laminas\Cli\Listener\TerminateListener;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
-final class ApplicationConfiguratorTest extends TestCase
+final class ApplicationProvisionerTest extends TestCase
 {
     public function testWillConfigureApplication(): void
     {
@@ -72,6 +72,6 @@ final class ApplicationConfiguratorTest extends TestCase
                 return true;
             }));
 
-        (new ApplicationConfigurator())($application, $container);
+        (new ApplicationProvisioner())($application, $container);
     }
 }

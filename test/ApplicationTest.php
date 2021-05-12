@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace LaminasTest\Cli;
 
 use Generator;
-use Laminas\Cli\ApplicationConfigurator;
 use Laminas\Cli\ApplicationFactory;
+use Laminas\Cli\ApplicationProvisioner;
 use LaminasTest\Cli\TestAsset\Chained1Command;
 use LaminasTest\Cli\TestAsset\Chained2Command;
 use LaminasTest\Cli\TestAsset\Chained3Command;
@@ -638,6 +638,6 @@ class ApplicationTest extends TestCase
     private function createApplicationInstance(ContainerInterface $container): Application
     {
         $applicationFactory = new ApplicationFactory();
-        return (new ApplicationConfigurator())($applicationFactory(), $container);
+        return (new ApplicationProvisioner())($applicationFactory(), $container);
     }
 }

@@ -21,7 +21,7 @@ use Webmozart\Assert\Assert;
 /**
  * @internal
  */
-final class ApplicationConfigurator
+final class ApplicationProvisioner
 {
     public function __invoke(Application $application, ContainerInterface $container): Application
     {
