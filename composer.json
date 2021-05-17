@@ -1,30 +1,13 @@
 {
     "name": "laminas/laminas-cli",
     "description": "Command-line interface for Laminas projects",
-    "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
         "cli",
         "console",
         "command"
     ],
-    "support": {
-        "docs": "https://docs.laminas.dev/laminas-cli/",
-        "issues": "https://github.com/mezzio/laminas-cli/issues",
-        "source": "https://github.com/mezzio/laminas-cli",
-        "rss": "https://github.com/mezzio/laminas-cli/releases.atom",
-        "chat": "https://laminas.dev/chat",
-        "forum": "https://discourse.laminas.dev"
-    },
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev",
-            "dev-develop": "1.1.x-dev"
-        }
-    },
+    "license": "BSD-3-Clause",
     "require": {
         "php": "^7.3 || ~8.0.0",
         "composer/package-versions-deprecated": "^1.10.99",
@@ -41,13 +24,22 @@
         "phpunit/phpunit": "^9.4.1",
         "vimeo/psalm": "^4.4.1"
     },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "1.1.x-dev",
+            "dev-master": "1.0.x-dev"
+        }
+    },
     "autoload": {
-        "files": [
-            "src/autoload.php"
-        ],
         "psr-4": {
             "Laminas\\Cli\\": "src/"
-        }
+        },
+        "files": [
+            "src/autoload.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -69,5 +61,13 @@
         "static-analysis": "psalm --shepherd --stats",
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+    },
+    "support": {
+        "issues": "https://github.com/mezzio/laminas-cli/issues",
+        "forum": "https://discourse.laminas.dev",
+        "chat": "https://laminas.dev/chat",
+        "source": "https://github.com/mezzio/laminas-cli",
+        "docs": "https://docs.laminas.dev/laminas-cli/",
+        "rss": "https://github.com/mezzio/laminas-cli/releases.atom"
     }
 }
