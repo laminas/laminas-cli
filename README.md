@@ -1,7 +1,7 @@
 # laminas-cli
 
-[![Build Status](https://travis-ci.com/laminas/laminas-cli.svg?branch=master)](https://travis-ci.com/laminas/laminas-cli)
-[![Coverage Status](https://coveralls.io/repos/github/laminas/laminas-cli/badge.svg?branch=master)](https://coveralls.io/github/laminas/laminas-cli?branch=master)
+[![Build Status](https://github.com/laminas/laminas-cli/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/laminas/laminas-cli/actions/workflows/continuous-integration.yml)
+
 
 Command-line interface for Laminas projects
 
