@@ -49,7 +49,8 @@ try {
     $input = new ArgvInput();
 }
 
-// By running the app even if its not provisioned allows symfony/console to report problems and/or display available options (like `--container`
+// By running the app even if its not provisioned allows symfony/console to report problems
+// and/or display available options (like `--container`)
 $exitCode = $app->run($input, $output);
 
 if ($containerNotFoundMessage) {
