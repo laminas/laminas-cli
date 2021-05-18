@@ -1,12 +1,8 @@
-<?php // phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
-
-/**
- * @see       https://github.com/laminas/laminas-cli for the canonical source repository
- * @copyright https://github.com/laminas/laminas-cli/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas/laminas-cli/blob/master/LICENSE.md New BSD License
- */
+<?php
 
 declare(strict_types=1);
+
+// phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
 
 namespace Laminas\Cli\Command;
 

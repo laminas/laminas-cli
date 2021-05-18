@@ -1,10 +1,4 @@
-<?php
-
-/**
- * @see       https://github.com/laminas/laminas-cli for the canonical source repository
- * @copyright https://github.com/laminas/laminas-cli/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas/laminas-cli/blob/master/LICENSE.md New BSD License
- */
+<?php // phpcs:disable PSR12.Files.FileHeader.IncorrectOrder,PSR12.Files.FileHeader.SpacingAfterBlock,WebimpressCodingStandard.Files.DeclareStrictTypes.BelowComment
 
 declare(strict_types=1);
 
