@@ -17,10 +17,8 @@ use LaminasTest\Cli\TestAsset\ExampleCommand;
 use LaminasTest\Cli\TestAsset\ExampleCommandWithDependencies;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
-
-use function chdir;
-use function getcwd;
 
 /** @psalm-suppress PropertyNotSetInConstructor */
 class ContainerCommandLoaderTest extends TestCase
@@ -51,10 +49,9 @@ class ContainerCommandLoaderTest extends TestCase
 
     public function testGetCommandReturnsCommand(): void
     {
-        $cwd = getcwd();
-        chdir(__DIR__ . '/TestAsset');
-        $container = ContainerResolver::resolve();
-        chdir($cwd);
+        $input = $this->createMock(InputInterface::class);
+
+        $container = (new ContainerResolver(__DIR__ . '/TestAsset'))->resolve($input);
 
         $config = $container->get('ApplicationConfig');
         Assert::isMap($config);

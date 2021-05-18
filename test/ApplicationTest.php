@@ -12,6 +12,7 @@ namespace LaminasTest\Cli;
 
 use Generator;
 use Laminas\Cli\ApplicationFactory;
+use Laminas\Cli\ApplicationProvisioner;
 use LaminasTest\Cli\TestAsset\Chained1Command;
 use LaminasTest\Cli\TestAsset\Chained2Command;
 use LaminasTest\Cli\TestAsset\Chained3Command;
@@ -73,9 +74,7 @@ class ApplicationTest extends TestCase
             [Chained3Command::class, new Chained3Command($exitCodes[3] ?? 0)],
         ]);
 
-        $applicationFactory = new ApplicationFactory();
-
-        return $applicationFactory($container);
+        return $this->createApplicationInstance($container);
     }
 
     public function chainAnswer(): Generator
@@ -308,8 +307,7 @@ class ApplicationTest extends TestCase
             [Chained1Command::class, new Chained1Command()],
         ]);
 
-        $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container);
+        $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);
         $applicationTester->setInputs(['Y']);
@@ -365,8 +363,7 @@ class ApplicationTest extends TestCase
             [Chained1Command::class, new Chained1Command()],
         ]);
 
-        $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container);
+        $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);
         $applicationTester->setInputs(['Y']);
@@ -446,8 +443,7 @@ class ApplicationTest extends TestCase
             [Chained1Command::class, new Chained1Command()],
         ]);
 
-        $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container);
+        $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);
         $applicationTester->setInputs(['', '13', '-4', '5', 'Y']);
@@ -496,8 +492,7 @@ class ApplicationTest extends TestCase
             [ParamCommand::class, new ParamCommand()],
         ]);
 
-        $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container);
+        $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);
         $statusCode        = $applicationTester->run(
@@ -558,8 +553,7 @@ class ApplicationTest extends TestCase
                 }
             }));
 
-        $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container);
+        $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);
         $statusCode        = $applicationTester->run(['command' => 'list']);
@@ -619,8 +613,7 @@ class ApplicationTest extends TestCase
                 }
             }));
 
-        $applicationFactory = new ApplicationFactory();
-        $application        = $applicationFactory($container);
+        $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);
         $statusCode        = $applicationTester->run([
@@ -632,7 +625,7 @@ class ApplicationTest extends TestCase
 
         $contains = [
             "Usage:\n  example:dep [options]\n",
-            "  -s, --string=STRING   A string option [default: \"default value\"]\n",
+            "  -s, --string=STRING        A string option [default: \"default value\"]\n",
             "Help:\n  Execute a test command that includes dependencies",
         ];
 
@@ -640,5 +633,11 @@ class ApplicationTest extends TestCase
         foreach ($contains as $str) {
             self::assertStringContainsString($str, $display);
         }
+    }
+
+    private function createApplicationInstance(ContainerInterface $container): Application
+    {
+        $applicationFactory = new ApplicationFactory();
+        return (new ApplicationProvisioner())($applicationFactory(), $container);
     }
 }

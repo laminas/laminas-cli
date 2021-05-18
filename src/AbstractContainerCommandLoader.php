@@ -40,6 +40,11 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
         $this->commandMap = $commandMap;
     }
 
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
+    }
+
     protected function getCommand(string $name): Command
     {
         if ($this->container->has($this->commandMap[$name])) {

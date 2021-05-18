@@ -10,16 +10,20 @@ declare(strict_types=1);
 
 namespace Laminas\Cli;
 
+use InvalidArgumentException;
 use Laminas\ModuleManager\ModuleManagerInterface;
 use Laminas\Mvc\Service\ServiceManagerConfig;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\ArrayUtils;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
 
 use function class_exists;
 use function file_exists;
+use function sprintf;
+use function strpos;
 
 /**
  * @internal
@@ -27,59 +31,85 @@ use function file_exists;
 final class ContainerResolver
 {
     /**
+     * @var string
+     * @psalm-var non-empty-string
+     */
+    private $projectRoot;
+
+    /**
+     * @psalm-param non-empty-string $projectRoot
+     */
+    public function __construct(string $projectRoot)
+    {
+        $this->projectRoot = $projectRoot;
+    }
+
+    /**
      * Try to find container in Laminas application.
      * Supports out of the box Laminas MVC and Mezzio applications.
      *
      * @throws RuntimeException When cannot locate PSR-11 container for the application.
      */
-    public static function resolve(): ContainerInterface
+    public function resolve(InputInterface $input): ContainerInterface
     {
-        if (file_exists('config/container.php')) {
-            return self::resolveDefaultContainer();
+        $pathToContainer = $input->getOption(ApplicationFactory::CONTAINER_OPTION) ?? '';
+        Assert::string($pathToContainer);
+
+        if ($pathToContainer !== '') {
+            if (! $this->isAbsolutePath($pathToContainer)) {
+                $pathToContainer = sprintf('%s/%s', $this->projectRoot, $pathToContainer);
+                Assert::stringNotEmpty($pathToContainer);
+            }
+
+            return $this->resolveContainerFromAbsolutePath($pathToContainer);
         }
 
+        $mezzioContainer = sprintf('%s/config/container.php', $this->projectRoot);
+        Assert::stringNotEmpty($mezzioContainer);
+
+        if (file_exists($mezzioContainer)) {
+            return $this->resolveContainerFromAbsolutePath($mezzioContainer);
+        }
+
+        $applicationConfiguration = sprintf('%s/config/application.config.php', $this->projectRoot);
+        Assert::stringNotEmpty($applicationConfiguration);
         if (
-            file_exists('config/application.config.php')
+            file_exists($applicationConfiguration)
             && class_exists(ServiceManager::class)
         ) {
-            return self::resolveMvcContainer();
+            return $this->resolveMvcContainer($applicationConfiguration);
         }
 
-        throw new RuntimeException('Cannot detect PSR-11 container');
+        throw new RuntimeException(
+            sprintf(
+                'Cannot detect PSR-11 container to configure the laminas-cli application.'
+                . ' You can use the --%s option to provide a file which returns a PSR-11 container instance.',
+                ApplicationFactory::CONTAINER_OPTION
+            )
+        );
     }
 
     /**
-     * @throws RuntimeException When file contains not a valid PSR-11 container.
+     * @psalm-param non-empty-string $path
      */
-    private static function resolveDefaultContainer(): ContainerInterface
+    private function resolveMvcContainer(string $path): ContainerInterface
     {
         /**
-         * @psalm-suppress MissingFile
+         * @psalm-suppress UnresolvableInclude
+         * @psalm-var array<array-key, mixed> $appConfig
          */
-        $container = include 'config/container.php';
-
-        Assert::isInstanceOf($container, ContainerInterface::class, 'Failed to load PSR-11 container');
-        return $container;
-    }
-
-    private static function resolveMvcContainer(): ContainerInterface
-    {
-        /**
-         * @psalm-suppress MissingFile
-         * @psalm-var array<int|string, mixed> $appConfig
-         */
-        $appConfig = include 'config/application.config.php';
+        $appConfig = include $path;
         Assert::isMap($appConfig);
 
-        if (file_exists('config/development.config.php')) {
+        $developmentConfigPath = sprintf('%s/config/development.config.php', $this->projectRoot);
+        if (file_exists($developmentConfigPath)) {
             /**
-             * @psalm-suppress MissingFile
-             * @psalm-var array<int|string, mixed> $devConfig
+             * @psalm-var array<array-key, mixed> $devConfig
              */
-            $devConfig = include 'config/development.config.php';
+            $devConfig = include $developmentConfigPath;
             Assert::isMap($devConfig);
 
-            /** @psalm-var array<int|string, mixed> $appConfig */
+            /** @psalm-var array<array-key, mixed> $appConfig */
             $appConfig = ArrayUtils::merge($appConfig, $devConfig);
             Assert::isMap($appConfig);
         }
@@ -98,5 +128,44 @@ final class ContainerResolver
         $moduleManager->loadModules();
 
         return $serviceManager;
+    }
+
+    /**
+     * @psalm-param non-empty-string $containerPath
+     */
+    private function resolveContainerFromAbsolutePath(string $containerPath): ContainerInterface
+    {
+        if (! file_exists($containerPath)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Provided container path could not be resolved to an existing file: %s',
+                    $containerPath
+                )
+            );
+        }
+
+        $container = include $containerPath;
+        Assert::isInstanceOf($container, ContainerInterface::class, 'Failed to load PSR-11 container');
+
+        return $container;
+    }
+
+    /**
+     * Verifies that the provided path does not contain an absolute path.
+     * Absolute paths can be either start with `/` or provided as an URI.
+     *
+     * @psalm-param non-empty-string $pathToContainer
+     */
+    private function isAbsolutePath(string $pathToContainer): bool
+    {
+        if ($pathToContainer[0] === '/') {
+            return true;
+        }
+
+        if (strpos($pathToContainer, '://') !== false) {
+            return true;
+        }
+
+        return false;
     }
 }

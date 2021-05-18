@@ -10,13 +10,9 @@ declare(strict_types=1);
 
 namespace Laminas\Cli;
 
-use Laminas\Cli\Listener\TerminateListener;
 use PackageVersions\Versions;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Webmozart\Assert\Assert;
 
 use function strstr;
@@ -30,32 +26,25 @@ use function strstr;
  */
 final class ApplicationFactory
 {
-    public function __invoke(ContainerInterface $container): Application
-    {
-        $config = $container->get('config')['laminas-cli'] ?? [];
-        Assert::isMap($config);
+    public const CONTAINER_OPTION = 'container';
 
+    public function __invoke(): Application
+    {
         /** @psalm-suppress DeprecatedClass */
         $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
         Assert::string($version);
-
-        $commands = $config['commands'] ?? [];
-        Assert::isMap($commands);
-        Assert::allString($commands);
-
-        $eventDispatcherServiceName = __NAMESPACE__ . '\SymfonyEventDispatcher';
-        $dispatcher                 = $container->has($eventDispatcherServiceName)
-            ? $container->get($eventDispatcherServiceName)
-            : new EventDispatcher();
-        Assert::isInstanceOf($dispatcher, EventDispatcherInterface::class);
-
-        $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
-
         $application = new Application('laminas', $version);
-        // phpcs:ignore WebimpressCodingStandard.PHP.CorrectClassNameCase
-        $application->setCommandLoader(new ContainerCommandLoader($container, $commands));
-        $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);
+
+        $definition = $application->getDefinition();
+        $definition->addOption(
+            new InputOption(
+                self::CONTAINER_OPTION,
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Path to a file which returns a PSR-11 container'
+            )
+        );
 
         return $application;
     }
