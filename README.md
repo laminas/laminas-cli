@@ -2,7 +2,6 @@
 
 [![Build Status](https://github.com/laminas/laminas-cli/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/laminas/laminas-cli/actions/workflows/continuous-integration.yml)
 
-
 Command-line interface for Laminas projects
 
 ## Installation
@@ -23,8 +22,7 @@ $ vendor/bin/laminas [--container=<path>] [command-name]
 
 ## Custom command
 
-if you want to add any command for Laminas MVC or Mezzio application just implement normal
-Symfony console command and add register the command for the cli:
+If you want to add a command for a Laminas MVC or Mezzio application, implement a standard [Symfony console](https://symfony.com/doc/current/components/console.html) command and register the command to use with laminas-cli via application configuration:
 
 ```php
 return [
@@ -36,8 +34,21 @@ return [
 ];
 ```
 
-Please remember that if command has some dependencies you should register also factory within
-the container, for example:
+Please remember that if a command has any constructor dependencies, you should also map a factory for the command within the container.
+
+For Laminas MVC applications, this would like like:
+
+```php
+return [
+    'service_manager' => [
+        'factories' => [
+            MyCommand::class => MyCommandFactory::class,
+        ],
+    ],
+];
+```
+
+For Mezzio applications, this would like like:
 
 ```php
 return [
