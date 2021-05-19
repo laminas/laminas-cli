@@ -29,23 +29,28 @@ $app = (new ApplicationFactory())();
 $definition = $app->getDefinition();
 $output = new ConsoleOutput();
 $containerNotFoundMessage = '';
+$input = new ArgvInput();
+
 try {
-    $input = new ArgvInput();
     $input->bind($definition);
+} catch (\Symfony\Component\Console\Exception\RuntimeException $exception) {
+    // Ignore validation issues as we did not yet have the commands definition
+    // As we only need the `--container` option, we are good to go until it is passed *before* the first command argument
+    // Symfony parses the `argv` in its direct order and raises an error when more arguments or options are passed
+    // than described by the default definition.
+}
+
+try {
     $container = (new ContainerResolver($projectRoot))->resolve($input);
     $app = (new ApplicationProvisioner())($app, $container);
-} catch (\Symfony\Component\Console\Exception\RuntimeException $exception) {
-    // Running the app after suppressing container resolution exceptions allows symfony/console to report usage information
 } catch (RuntimeException | InvalidArgumentException $exception) {
     // Usage information provided by the `ContainerResolver` should be passed to the CLI output
     $containerNotFoundMessage = sprintf('<error>%s</error>', $exception->getMessage());
-} finally {
-    $input = new ArgvInput();
 }
 
 // By running the app even if its not provisioned allows symfony/console to report problems
 // and/or display available options (like `--container`)
-$exitCode = $app->run($input, $output);
+$exitCode = $app->run(null, $output);
 
 if ($containerNotFoundMessage) {
     $output->writeln($containerNotFoundMessage);
