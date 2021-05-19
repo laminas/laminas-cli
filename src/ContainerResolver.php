@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Laminas\Cli;
 
 use InvalidArgumentException;
+use Laminas\Cli\Input\ContainerInputInterface;
 use Laminas\ModuleManager\ModuleManagerInterface;
 use Laminas\Mvc\Service\ServiceManagerConfig;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\ArrayUtils;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
 
 use function class_exists;
@@ -44,10 +44,9 @@ final class ContainerResolver
      *
      * @throws RuntimeException When cannot locate PSR-11 container for the application.
      */
-    public function resolve(InputInterface $input): ContainerInterface
+    public function resolve(ContainerInputInterface $containerInput): ContainerInterface
     {
-        $pathToContainer = $input->getOption(ApplicationFactory::CONTAINER_OPTION) ?? '';
-        Assert::string($pathToContainer);
+        $pathToContainer = $containerInput->get();
 
         if ($pathToContainer !== '') {
             if (! $this->isAbsolutePath($pathToContainer)) {

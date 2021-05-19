@@ -6,7 +6,6 @@ namespace Laminas\Cli;
 
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputOption;
 use Webmozart\Assert\Assert;
 
 use function strstr;
@@ -20,7 +19,7 @@ use function strstr;
  */
 final class ApplicationFactory
 {
-    public const CONTAINER_OPTION = 'container';
+    public const CONTAINER_OPTION = ContainerOptionFactory::CONTAINER_OPTION;
 
     public function __invoke(): Application
     {
@@ -31,14 +30,7 @@ final class ApplicationFactory
         $application->setAutoExit(false);
 
         $definition = $application->getDefinition();
-        $definition->addOption(
-            new InputOption(
-                self::CONTAINER_OPTION,
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Path to a file which returns a PSR-11 container'
-            )
-        );
+        $definition->addOption((new ContainerOptionFactory())());
 
         return $application;
     }

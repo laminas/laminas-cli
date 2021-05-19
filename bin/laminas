@@ -6,7 +6,7 @@ declare(strict_types=1);
 use Laminas\Cli\ApplicationProvisioner;
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ContainerResolver;
-use Symfony\Component\Console\Input\ArgvInput;
+use Laminas\Cli\Input\ContainerInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 if (file_exists($a = __DIR__ . '/../../../autoload.php')) {
@@ -26,26 +26,20 @@ $projectRoot = dirname($a) . '/../';
 chdir($projectRoot);
 
 $app = (new ApplicationFactory())();
-$definition = $app->getDefinition();
 $output = new ConsoleOutput();
 $containerNotFoundMessage = '';
+
 try {
-    $input = new ArgvInput();
-    $input->bind($definition);
-    $container = (new ContainerResolver($projectRoot))->resolve($input);
+    $container = (new ContainerResolver($projectRoot))->resolve(new ContainerInput());
     $app = (new ApplicationProvisioner())($app, $container);
-} catch (\Symfony\Component\Console\Exception\RuntimeException $exception) {
-    // Running the app after suppressing container resolution exceptions allows symfony/console to report usage information
 } catch (RuntimeException | InvalidArgumentException $exception) {
     // Usage information provided by the `ContainerResolver` should be passed to the CLI output
     $containerNotFoundMessage = sprintf('<error>%s</error>', $exception->getMessage());
-} finally {
-    $input = new ArgvInput();
 }
 
 // By running the app even if its not provisioned allows symfony/console to report problems
 // and/or display available options (like `--container`)
-$exitCode = $app->run($input, $output);
+$exitCode = $app->run(null,$output);
 
 if ($containerNotFoundMessage) {
     $output->writeln($containerNotFoundMessage);

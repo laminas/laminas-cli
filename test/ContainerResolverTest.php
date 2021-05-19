@@ -11,13 +11,12 @@ declare(strict_types=1);
 namespace LaminasTest\Cli;
 
 use bovigo\vfs\vfsStream;
-use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ContainerResolver;
+use Laminas\Cli\Input\ContainerInputInterface;
 use Laminas\ServiceManager\ServiceManager;
 use LaminasTest\Cli\TestAsset\ExampleDependency;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputInterface;
 
 use function sprintf;
 use function sys_get_temp_dir;
@@ -39,16 +38,11 @@ final class ContainerResolverTest extends TestCase
             $containerPath => $containerFileContents,
         ]);
 
-        $input = $this->createMock(InputInterface::class);
-
-        $input
-            ->expects(self::never())
-            ->method('hasOption');
+        $input = $this->createMock(ContainerInputInterface::class);
 
         $input
             ->expects(self::once())
-            ->method('getOption')
-            ->with(ApplicationFactory::CONTAINER_OPTION)
+            ->method('get')
             ->willReturn($containerPath);
 
         $projectRoot = $directory->url();
@@ -60,7 +54,7 @@ final class ContainerResolverTest extends TestCase
 
     public function testWillLoadContainerFromApplicationConfig(): void
     {
-        $input = $this->createMock(InputInterface::class);
+        $input = $this->createMock(ContainerInputInterface::class);
 
         $resolver  = new ContainerResolver(__DIR__ . '/TestAsset');
         $container = $resolver->resolve($input);
@@ -82,7 +76,7 @@ final class ContainerResolverTest extends TestCase
             ],
         ]);
 
-        $input = $this->createMock(InputInterface::class);
+        $input = $this->createMock(ContainerInputInterface::class);
 
         $projectRoot = $directory->url();
         self::assertNotSame($projectRoot, '');
@@ -105,15 +99,11 @@ final class ContainerResolverTest extends TestCase
         ]);
 
         $containerPath = sprintf('%s/%s', $directory->url(), $containerFileName);
-        $input         = $this->createMock(InputInterface::class);
-        $input
-            ->expects(self::never())
-            ->method('hasOption');
+        $input         = $this->createMock(ContainerInputInterface::class);
 
         $input
             ->expects(self::once())
-            ->method('getOption')
-            ->with(ApplicationFactory::CONTAINER_OPTION)
+            ->method('get')
             ->willReturn($containerPath);
 
         $projectRoot = $directory->url();
@@ -131,7 +121,7 @@ final class ContainerResolverTest extends TestCase
         }
 
         $resolver = new ContainerResolver($tempDirectory);
-        $input    = $this->createMock(InputInterface::class);
+        $input    = $this->createMock(ContainerInputInterface::class);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot detect PSR-11 container');

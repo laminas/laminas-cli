@@ -9,11 +9,11 @@ namespace LaminasTest\Cli;
 use InvalidArgumentException;
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\ContainerResolver;
+use Laminas\Cli\Input\ContainerInputInterface;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
 use LaminasTest\Cli\TestAsset\ExampleCommandWithDependencies;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
 
 /** @psalm-suppress PropertyNotSetInConstructor */
@@ -45,7 +45,7 @@ class ContainerCommandLoaderTest extends TestCase
 
     public function testGetCommandReturnsCommand(): void
     {
-        $input = $this->createMock(InputInterface::class);
+        $input = $this->createMock(ContainerInputInterface::class);
 
         $container = (new ContainerResolver(__DIR__ . '/TestAsset'))->resolve($input);
 
