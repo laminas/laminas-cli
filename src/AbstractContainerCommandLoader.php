@@ -7,10 +7,11 @@ namespace Laminas\Cli;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface as SymfonyCommandLoaderInterface;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Webmozart\Assert\Assert;
 
-use function array_key_exists;
 use function array_keys;
+use function class_exists;
 use function sprintf;
 
 /**
@@ -21,13 +22,13 @@ abstract class AbstractContainerCommandLoader implements SymfonyCommandLoaderInt
     /** @var ContainerInterface */
     private $container;
 
-    /** @psalm-var array<string, string> */
+    /** @psalm-var array<string, string|Command> */
     private $commandMap;
 
     /** @var SymfonyCommandLoaderInterface|null */
     private $applicationCommandLoader;
 
-    /** @psalm-param array<string, string> $commandMap */
+    /** @psalm-param array<string, string|Command> $commandMap */
     final public function __construct(
         ContainerInterface $container,
         array $commandMap,
@@ -57,22 +58,33 @@ abstract class AbstractContainerCommandLoader implements SymfonyCommandLoaderInt
             return $this->applicationCommandLoader->get($name);
         }
 
-        if ($this->container->has($this->commandMap[$name])) {
-            return $this->fetchCommandFromContainer($name);
+        $command = $this->commandMap[$name] ?? null;
+        if ($command === null) {
+            throw new CommandNotFoundException(sprintf('Command with name "%s" not found.', $name));
         }
 
-        $class = $this->commandMap[$name];
-        Assert::classExists($class, sprintf('Command "%s" maps to class "%s", which does not exist', $name, $class));
+        if ($command instanceof Command) {
+            return $command;
+        }
+
+        if ($this->container->has($command)) {
+            return $this->fetchCommandFromContainer($command, $name);
+        }
+
+        Assert::classExists(
+            $command,
+            sprintf('Command "%s" maps to class "%s", which does not exist', $name, $command)
+        );
         /** @psalm-suppress DocblockTypeContradiction */
-        Assert::subclassOf($class, Command::class, sprintf(
+        Assert::subclassOf($command, Command::class, sprintf(
             'Command "%s" maps to class "%s", which does not extend %s',
             $name,
-            $class,
+            $command,
             Command::class
         ));
 
-        /** @psalm-var class-string<Command> $class */
-        return $this->createCommand($class, $name);
+        /** @psalm-var class-string<Command> $command */
+        return $this->createCommand($command, $name);
     }
 
     protected function hasCommand(string $name): bool
@@ -81,15 +93,20 @@ abstract class AbstractContainerCommandLoader implements SymfonyCommandLoaderInt
             return true;
         }
 
-        if (! array_key_exists($name, $this->commandMap)) {
+        if (! isset($this->commandMap[$name])) {
             return false;
         }
 
-        if ($this->container->has($this->commandMap[$name])) {
+        $command = $this->commandMap[$name];
+        if ($command instanceof Command) {
             return true;
         }
 
-        return isset($this->commandMap[$name]);
+        if ($this->container->has($command)) {
+            return true;
+        }
+
+        return class_exists($command);
     }
 
     /**
@@ -100,9 +117,9 @@ abstract class AbstractContainerCommandLoader implements SymfonyCommandLoaderInt
         return array_keys($this->commandMap);
     }
 
-    private function fetchCommandFromContainer(string $name): Command
+    private function fetchCommandFromContainer(string $serviceName, string $name): Command
     {
-        $command = $this->container->get($this->commandMap[$name]);
+        $command = $this->container->get($serviceName);
         Assert::isInstanceOf($command, Command::class);
         $command->setName($name);
         return $command;

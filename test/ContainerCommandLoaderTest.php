@@ -75,11 +75,11 @@ class ContainerCommandLoaderTest extends TestCase
         $container = $this->createMock(ContainerInterface::class);
         $container->expects(self::once())
             ->method('has')
-            ->with('CommandClassName')
+            ->with(ExampleCommand::class)
             ->willReturn(false);
 
         $loader = new ContainerCommandLoader($container, [
-            'my:command' => 'CommandClassName',
+            'my:command' => ExampleCommand::class,
         ]);
 
         self::assertTrue($loader->has('my:command'));
