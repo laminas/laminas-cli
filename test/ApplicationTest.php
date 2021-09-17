@@ -58,6 +58,7 @@ class ApplicationTest extends TestCase
             [Chained1Command::class, true],
             [Chained2Command::class, true],
             [Chained3Command::class, true],
+            ['config', true],
         ]);
         $container->method('get')->willReturnMap([
             ['config', ['laminas-cli' => $this->getValidConfiguration()]],
@@ -285,6 +286,7 @@ class ApplicationTest extends TestCase
         $container->method('has')->willReturnMap([
             [ExampleCommand::class, true],
             [Chained1Command::class, true],
+            ['config', true],
         ]);
         $container->method('get')->willReturnMap([
             [
@@ -344,6 +346,7 @@ class ApplicationTest extends TestCase
         $container->method('has')->willReturnMap([
             [ExampleCommand::class, true],
             [Chained1Command::class, true],
+            ['config', true],
         ]);
         $container->method('get')->willReturnMap([
             [
@@ -424,6 +427,7 @@ class ApplicationTest extends TestCase
         $container->method('has')->willReturnMap([
             [ParamCommand::class, true],
             [Chained1Command::class, true],
+            ['config', true],
         ]);
         $container->method('get')->willReturnMap([
             [
@@ -480,6 +484,7 @@ class ApplicationTest extends TestCase
             ->willReturnMap([
                 ['Laminas\Cli\SymfonyEventDispatcher', false],
                 [ParamCommand::class, true],
+                ['config', true],
             ]);
         $container->method('get')->willReturnMap([
             [
@@ -537,6 +542,7 @@ class ApplicationTest extends TestCase
             ->willReturnMap([
                 ['Laminas\Cli\SymfonyEventDispatcher', false],
                 [ExampleCommandWithDependencies::class, true],
+                ['config', true],
             ]);
 
         $container
@@ -597,6 +603,7 @@ class ApplicationTest extends TestCase
             ->willReturnMap([
                 ['Laminas\Cli\SymfonyEventDispatcher', false],
                 [ExampleCommandWithDependencies::class, true],
+                ['config', true],
             ]);
 
         $container

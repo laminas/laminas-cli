@@ -43,10 +43,13 @@ final class ApplicationProvisionerTest extends TestCase
 
         $container = $this->createMock(ContainerInterface::class);
         $container
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('has')
-            ->with('Laminas\Cli\SymfonyEventDispatcher')
-            ->willReturn(true);
+            ->willReturnMap([
+                ['config', true],
+                ['Laminas\Cli\SymfonyEventDispatcher', true],
+            ]);
+
         $container
             ->expects($this->exactly(2))
             ->method('get')
@@ -71,6 +74,22 @@ final class ApplicationProvisionerTest extends TestCase
                 self::assertEquals($loader->getContainer(), $container);
                 return true;
             }));
+
+        (new ApplicationProvisioner())($application, $container);
+    }
+
+    public function testCanHandleEmptyContainer(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects(self::never())
+            ->method('get');
+
+        $container
+            ->method('has')
+            ->willReturn(false);
+
+        $application = $this->createMock(Application::class);
 
         (new ApplicationProvisioner())($application, $container);
     }

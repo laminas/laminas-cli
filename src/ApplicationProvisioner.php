@@ -25,7 +25,9 @@ final class ApplicationProvisioner
 {
     public function __invoke(Application $application, ContainerInterface $container): Application
     {
-        $config = $container->get('config')['laminas-cli'] ?? [];
+        $config = $container->has('config')
+            ? $container->get('config')['laminas-cli'] ?? []
+            : [];
         Assert::isMap($config);
 
         $commands = $config['commands'] ?? [];
