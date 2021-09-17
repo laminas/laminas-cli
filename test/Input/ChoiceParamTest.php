@@ -37,6 +37,9 @@ class ChoiceParamTest extends TestCase
         $this->assertSame(InputOption::VALUE_REQUIRED, $this->param->getOptionMode());
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:?string,1:string}>
+     */
     public function defaultChoices(): iterable
     {
         $question = '<question>Which color?</question>';

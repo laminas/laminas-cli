@@ -27,6 +27,9 @@ class IntParamTest extends TestCase
         $this->assertSame(InputOption::VALUE_REQUIRED, $this->param->getOptionMode());
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:int|null,1:string}>
+     */
     public function defaultValues(): iterable
     {
         $question = '<question>A number:</question>';
@@ -54,6 +57,9 @@ class IntParamTest extends TestCase
         $this->assertIsCallable($normalizer);
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:numeric,1:int}>
+     */
     public function numericInput(): iterable
     {
         yield 'string zero'    => ['0', 0];
@@ -72,6 +78,9 @@ class IntParamTest extends TestCase
         $this->assertSame($expected, $normalizer($value));
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:mixed}>
+     */
     public function nonNumericInput(): iterable
     {
         yield 'string'              => ['string'];

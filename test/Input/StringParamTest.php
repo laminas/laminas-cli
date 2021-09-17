@@ -27,6 +27,9 @@ class StringParamTest extends TestCase
         $this->assertSame(InputOption::VALUE_REQUIRED, $this->param->getOptionMode());
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:?string,1:string}>
+     */
     public function defaultValues(): iterable
     {
         $question = '<question>A string:</question>';

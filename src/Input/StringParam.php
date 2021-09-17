@@ -28,23 +28,20 @@ final class StringParam extends AbstractInputParam
     public function getQuestion(): Question
     {
         $question = $this->createQuestion();
+        $pattern  = $this->pattern;
 
         $question->setValidator(
-            /**
-             * @psalm-template ValueType of mixed
-             * @psalm-param callable(ValueType): bool $validator
-             * @psalm-param ValueType $value
-             */
-            function ($value): string {
+            /** @param mixed $value */
+            static function ($value) use ($pattern): string {
                 Assert::string($value, sprintf(
                     'Invalid value: string expected, %s given',
                     get_debug_type($value)
                 ));
 
-                if ($this->pattern !== null) {
-                    Assert::regex($value, $this->pattern, sprintf(
+                if ($pattern !== null) {
+                    Assert::regex($value, $pattern, sprintf(
                         'Invalid value: does not match pattern: %s',
-                        $this->pattern
+                        $pattern
                     ));
                 }
 
@@ -69,11 +66,15 @@ final class StringParam extends AbstractInputParam
 
     private function validatePattern(string $pattern): bool
     {
-        set_error_handler(static function (int $errno, string $errstr) {
+        // phpcs:ignore WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
+        set_error_handler(static function (int $_, string $errstr): bool {
             if (! strstr($errstr, 'preg_match')) {
                 return false;
             }
+
+            return true;
         }, E_WARNING);
+        // phpcs:enable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
 
         $result = preg_match($pattern, '');
 

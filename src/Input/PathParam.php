@@ -67,23 +67,22 @@ final class PathParam extends AbstractInputParam
             }, $foundFilesAndDirs);
         });
 
+        $mustExist = $this->mustExist;
+        $type      = $this->type;
+
         $question->setValidator(
-            /**
-             * @psalm-template ValueType of mixed
-             * @psalm-param callable(ValueType): bool $validator
-             * @psalm-param ValueType $value
-             */
-            function ($value): string {
+            /** @param mixed $value */
+            static function ($value) use ($mustExist, $type): string {
                 Assert::string($value, sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
 
-                if (! $this->mustExist) {
+                if (! $mustExist) {
                     // No further checks needed
                     return $value;
                 }
 
                 Assert::fileExists($value, 'Path does not exist');
 
-                if ($this->type === self::TYPE_DIR) {
+                if ($type === self::TYPE_DIR) {
                     Assert::directory($value, 'Path is not a valid directory');
                 }
 

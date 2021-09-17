@@ -97,13 +97,9 @@ final class ContainerResolver
 
         $developmentConfigPath = sprintf('%s/config/development.config.php', $this->projectRoot);
         if (file_exists($developmentConfigPath)) {
-            /**
-             * @psalm-var array<array-key, mixed> $devConfig
-             */
             $devConfig = include $developmentConfigPath;
             Assert::isMap($devConfig);
 
-            /** @psalm-var array<array-key, mixed> $appConfig */
             $appConfig = ArrayUtils::merge($appConfig, $devConfig);
             Assert::isMap($appConfig);
         }
