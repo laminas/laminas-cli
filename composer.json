@@ -40,7 +40,8 @@
         "laminas/laminas-servicemanager": "^3.4",
         "mikey179/vfsstream": "2.0.x-dev",
         "phpunit/phpunit": "^9.4.1",
-        "vimeo/psalm": "^4.4.1"
+        "psalm/plugin-phpunit": "^0.16.1",
+        "vimeo/psalm": "^4.10"
     },
     "autoload": {
         "files": [

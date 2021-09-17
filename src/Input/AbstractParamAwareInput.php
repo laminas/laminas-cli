@@ -288,11 +288,10 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
             if ($valueIsRequired && [] === $values) {
                 $question->setValidator(
-                    /**
-                     * @psalm-template ValueType of mixed
-                     * @psalm-param callable(ValueType): bool $validator
-                     * @psalm-param ValueType $value
-                     */
+                /**
+                 * @param mixed $value
+                 * @return mixed
+                 */
                     static function ($value) use ($validator) {
                         if (null === $value || '' === $value) {
                             return $value;
@@ -321,11 +320,10 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         $question->setValidator(
-            /**
-             * @psalm-template ValueType of mixed
-             * @psalm-param callable(ValueType): bool $validator
-             * @psalm-param ValueType $value
-             */
+        /**
+         * @param mixed $value
+         * @return mixed
+         */
             static function ($value) use ($originalValidator) {
                 if ($value === null) {
                     return null;

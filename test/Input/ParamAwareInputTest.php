@@ -130,6 +130,9 @@ class ParamAwareInputTest extends TestCase
         return $stream;
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:string,1:list<mixed>,2:mixed}>
+     */
     public function proxyMethodsAndArguments(): iterable
     {
         // AbstractParamAwareInput methods
@@ -561,6 +564,9 @@ class ParamAwareInputTest extends TestCase
         $this->assertSame([10, 1], $input->getParam('multi-int-required'));
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:class-string<InputParamInterface>,1?:list<mixed>}>
+     */
     public function paramTypesToTestAgainstFalseRequiredFlag(): iterable
     {
         yield 'IntParam'    => [IntParam::class];

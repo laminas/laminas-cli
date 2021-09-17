@@ -71,6 +71,9 @@ class AbstractInputParamTest extends TestCase
         $this->assertNull($this->param->getShortcut());
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:mixed,1?:string}>
+     */
     public function invalidShortcutValues(): iterable
     {
         yield 'bool'                   => [true];
@@ -101,6 +104,9 @@ class AbstractInputParamTest extends TestCase
         $this->param->setShortcut($shortcut);
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:null|list<string>|string}>
+     */
     public function validShortcutValues(): iterable
     {
         yield 'null'                    => [null];

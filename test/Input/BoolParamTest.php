@@ -26,6 +26,9 @@ class BoolParamTest extends TestCase
         $this->assertSame(InputOption::VALUE_NONE, $this->param->getOptionMode());
     }
 
+    /**
+     * @psalm-return iterable<non-empty-string,array{0:bool,1:string}>
+     */
     public function defaultValues(): iterable
     {
         yield 'false' => [false, 'y/N'];

@@ -27,12 +27,10 @@ final class IntParam extends AbstractInputParam
         $question = $this->createQuestion();
 
         $question->setNormalizer(
-            /**
-             * @psalm-template ValueType of mixed
-             * @psalm-param callable(ValueType): bool $normalizer
-             * @psalm-param ValueType $value
-             * @psalm-return mixed
-             */
+        /**
+         * @param mixed $value
+         * @return mixed
+         */
             static function ($value) {
                 if (is_numeric($value) && (string) (int) $value === $value) {
                     return (int) $value;
@@ -42,28 +40,26 @@ final class IntParam extends AbstractInputParam
             }
         );
 
+        $min = $this->min;
+        $max = $this->max;
         $question->setValidator(
-            /**
-             * @psalm-template ValueType of mixed
-             * @psalm-param callable(ValueType): bool $validator
-             * @psalm-param ValueType $value
-             */
-            function ($value): int {
+            /** @param mixed $value */
+            static function ($value) use ($min, $max): int {
                 Assert::integer($value, sprintf('Invalid value: integer expected, %s given', get_debug_type($value)));
 
-                if ($this->min !== null) {
-                    Assert::greaterThanEq($value, $this->min, sprintf(
+                if ($min !== null) {
+                    Assert::greaterThanEq($value, $min, sprintf(
                         'Invalid value %d; minimum value is %d',
                         $value,
-                        $this->min
+                        $min
                     ));
                 }
 
-                if ($this->max !== null) {
-                    Assert::lessThanEq($value, $this->max, sprintf(
+                if ($max !== null) {
+                    Assert::lessThanEq($value, $max, sprintf(
                         'Invalid value %d; maximum value is %d',
                         $value,
-                        $this->max
+                        $max
                     ));
                 }
 

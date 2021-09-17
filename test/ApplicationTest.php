@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli;
 
-use Generator;
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ApplicationProvisioner;
 use LaminasTest\Cli\TestAsset\Chained1Command;
@@ -71,7 +70,17 @@ class ApplicationTest extends TestCase
         return $this->createApplicationInstance($container);
     }
 
-    public function chainAnswer(): Generator
+    /**
+     * @see Command
+     *
+     * @psalm-return iterable<non-empty-string,array{
+     *     0:list<string>,
+     *     1:list<string>,
+     *     2:list<class-string>,
+     *     3?:list<int>
+     * }>
+     */
+    public function chainAnswer(): iterable
     {
         yield 'execute whole chain' => [
             ['Y', 'Y', 'Y'],
