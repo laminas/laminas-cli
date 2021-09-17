@@ -11,11 +11,13 @@ declare(strict_types=1);
 namespace LaminasTest\Cli;
 
 use Laminas\Cli\ApplicationProvisioner;
+use Laminas\Cli\CommandLoaderInterface;
 use Laminas\Cli\ContainerCommandLoader;
 use Laminas\Cli\Listener\TerminateListener;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\CommandLoader\CommandLoaderInterface as SymfonyCommandLoaderInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -90,6 +92,33 @@ final class ApplicationProvisionerTest extends TestCase
             ->willReturn(false);
 
         $application = $this->createMock(Application::class);
+
+        (new ApplicationProvisioner())($application, $container);
+    }
+
+    public function testWillPassCommandLoaderFromContainer(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->method('has')
+            ->willReturnMap([
+                [CommandLoaderInterface::class, true],
+            ]);
+
+        $commandLoader = $this->createMock(CommandLoaderInterface::class);
+        $container
+            ->expects(self::once())
+            ->method('get')
+            ->with(CommandLoaderInterface::class)
+            ->willReturn($commandLoader);
+
+        $application = $this->createMock(Application::class);
+        $application
+            ->method('setCommandLoader')
+            ->willReturnCallback(static function (SymfonyCommandLoaderInterface $loader) use ($commandLoader): void {
+                self::assertInstanceOf(ContainerCommandLoader::class, $loader);
+                self::assertSame($loader->getApplicationCommandLoader(), $commandLoader);
+            });
 
         (new ApplicationProvisioner())($application, $container);
     }

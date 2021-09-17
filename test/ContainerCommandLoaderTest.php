@@ -13,6 +13,8 @@ use LaminasTest\Cli\TestAsset\ExampleCommand;
 use LaminasTest\Cli\TestAsset\ExampleCommandWithDependencies;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
 
@@ -139,5 +141,48 @@ class ContainerCommandLoaderTest extends TestCase
         $loader = new ContainerCommandLoader($container, []);
 
         $this->assertFalse($loader->has('my:command'));
+    }
+
+    public function testWillDetectCommandFromApplicationCommandLoader(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects(self::never())
+            ->method('has');
+
+        $applicationCommandLoader = $this->createMock(CommandLoaderInterface::class);
+        $applicationCommandLoader
+            ->expects(self::once())
+            ->method('has')
+            ->with('foo')
+            ->willReturn(true);
+
+        $loader = new ContainerCommandLoader($container, [], $applicationCommandLoader);
+        self::assertTrue($loader->has('foo'));
+    }
+
+    public function testWillRetrieveCommandFromCommandLoader(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects(self::never())
+            ->method('has');
+
+        $applicationCommandLoader = $this->createMock(CommandLoaderInterface::class);
+        $applicationCommandLoader
+            ->expects(self::once())
+            ->method('has')
+            ->with('foo')
+            ->willReturn(true);
+
+        $command = $this->createMock(Command::class);
+        $applicationCommandLoader
+            ->expects(self::once())
+            ->method('get')
+            ->with('foo')
+            ->willReturn($command);
+
+        $loader = new ContainerCommandLoader($container, [], $applicationCommandLoader);
+        self::assertSame($command, $loader->get('foo'));
     }
 }

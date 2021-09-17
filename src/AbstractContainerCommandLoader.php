@@ -6,7 +6,7 @@ namespace Laminas\Cli;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
+use Symfony\Component\Console\CommandLoader\CommandLoaderInterface as SymfonyCommandLoaderInterface;
 use Webmozart\Assert\Assert;
 
 use function array_key_exists;
@@ -16,7 +16,7 @@ use function sprintf;
 /**
  * @internal
  */
-abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
+abstract class AbstractContainerCommandLoader implements SymfonyCommandLoaderInterface
 {
     /** @var ContainerInterface */
     private $container;
@@ -24,14 +24,21 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
     /** @psalm-var array<string, string> */
     private $commandMap;
 
+    /** @var SymfonyCommandLoaderInterface|null */
+    private $applicationCommandLoader;
+
     /** @psalm-param array<string, string> $commandMap */
-    final public function __construct(ContainerInterface $container, array $commandMap)
-    {
+    final public function __construct(
+        ContainerInterface $container,
+        array $commandMap,
+        ?SymfonyCommandLoaderInterface $applicationCommandLoader = null
+    ) {
         $this->container = $container;
 
         Assert::isMap($commandMap);
         Assert::allString($commandMap);
-        $this->commandMap = $commandMap;
+        $this->commandMap               = $commandMap;
+        $this->applicationCommandLoader = $applicationCommandLoader;
     }
 
     public function getContainer(): ContainerInterface
@@ -39,8 +46,17 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
         return $this->container;
     }
 
+    public function getApplicationCommandLoader(): ?SymfonyCommandLoaderInterface
+    {
+        return $this->applicationCommandLoader;
+    }
+
     protected function getCommand(string $name): Command
     {
+        if ($this->applicationCommandLoader && $this->applicationCommandLoader->has($name)) {
+            return $this->applicationCommandLoader->get($name);
+        }
+
         if ($this->container->has($this->commandMap[$name])) {
             return $this->fetchCommandFromContainer($name);
         }
@@ -61,6 +77,10 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
 
     protected function hasCommand(string $name): bool
     {
+        if ($this->applicationCommandLoader && $this->applicationCommandLoader->has($name)) {
+            return true;
+        }
+
         if (! array_key_exists($name, $this->commandMap)) {
             return false;
         }

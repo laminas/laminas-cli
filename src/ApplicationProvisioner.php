@@ -13,6 +13,7 @@ namespace Laminas\Cli;
 use Laminas\Cli\Listener\TerminateListener;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\CommandLoader\CommandLoaderInterface as SymfonyCommandLoaderInterfaceAlias;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -40,9 +41,21 @@ final class ApplicationProvisioner
             : new EventDispatcher();
         Assert::isInstanceOf($dispatcher, EventDispatcherInterface::class);
 
+        $applicationCommandLoaderServiceName = CommandLoaderInterface::class;
+        $applicationCommandLoader            = null;
+        if ($container->has($applicationCommandLoaderServiceName)) {
+            /** @psalm-suppress MixedAssignment */
+            $applicationCommandLoader = $container->get($applicationCommandLoaderServiceName);
+            Assert::isInstanceOf($applicationCommandLoader, SymfonyCommandLoaderInterfaceAlias::class);
+        }
+
         $dispatcher->addListener(ConsoleEvents::TERMINATE, new TerminateListener($config));
 
-        $application->setCommandLoader(new ContainerCommandLoader($container, $commands));
+        $application->setCommandLoader(new ContainerCommandLoader(
+            $container,
+            $commands,
+            $applicationCommandLoader
+        ));
         $application->setDispatcher($dispatcher);
 
         return $application;
