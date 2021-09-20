@@ -21,8 +21,6 @@ use function in_array;
 use function is_array;
 use function sprintf;
 
-// phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidTypeFormat
-// phpcs:disable WebimpressCodingStandard.Commenting.TagWithType.InvalidParamName
 /**
  * Decorate an input instance to add a `getParam()` method.
  *
@@ -72,6 +70,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             throw new InvalidArgumentException(sprintf('Invalid parameter name: %s', $name));
         }
 
+        /** @psalm-suppress MixedAssignment */
         $value      = $this->input->getOption($name);
         $inputParam = $this->params[$name];
 
@@ -114,14 +113,10 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
 
         // set the option value so it can be reused in chains
-        /** @psalm-suppress MixedArgumentTypeCoercion */
         $this->input->setOption($name, $value);
 
         return $value;
     }
-
-    // Proxy methods implementing interface (common across symfony/console versions)
-    // phpcs:disable WebimpressCodingStandard.Functions.Param.MissingSpecification, WebimpressCodingStandard.Functions.ReturnType.ReturnValue
 
     public function getFirstArgument(): ?string
     {
@@ -139,24 +134,20 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     }
 
     /**
-     * @return mixed[]
+     * @return array<string|bool|int|float|array|null>
      */
     public function getArguments(): array
     {
         return $this->input->getArguments();
     }
 
-    /**
-     * @param string|int $name
-     * @psalm-suppress ImplementedReturnTypeMismatch
-     */
-    public function hasArgument($name): ?bool
+    public function hasArgument(string $name): bool
     {
         return $this->input->hasArgument($name);
     }
 
     /**
-     * @return mixed[]
+     * @return array<string|bool|int|float|array|null>
      */
     public function getOptions(): array
     {
@@ -189,8 +180,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         }
         return $this->input->getStream();
     }
-
-    // phpcs:enable
 
     /**
      * @param mixed $value

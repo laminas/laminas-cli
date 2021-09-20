@@ -35,6 +35,10 @@ use const PHP_EOL;
  * Consumers composing this trait can use this method to generate the initial
  * Question instance, and then further configure it (e.g., to add a normalizer
  * or validator).
+ *
+ * @see InputParamInterface
+ *
+ * @psalm-require-implements InputParamInterface
  */
 trait StandardQuestionTrait
 {
@@ -48,6 +52,10 @@ trait StandardQuestionTrait
             $this->isRequired() ? ' At least one entry is required.' : ''
         );
 
+        /**
+         * @psalm-suppress PossiblyInvalidArgument Suppress for now for backwards compatibility.
+         *                 The `$default` value passed to {@see Question::__construct} should be `null|scalar`.
+         */
         return new Question(
             sprintf(
                 '<question>%s:</question>%s%s%s > ',

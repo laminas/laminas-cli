@@ -7,8 +7,6 @@ namespace LaminasTest\Cli\Command;
 use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
-use LaminasTest\Cli\TestAsset\ParamAwareCommandStubNonHinted;
-use PackageVersions\Versions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -16,12 +14,9 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function str_replace;
-use function strstr;
-
 class ParamAwareCommandTest extends TestCase
 {
-    /** @var ParamAwareCommandStub|ParamAwareCommandStubNonHinted */
+    /** @var ParamAwareCommandStub */
     private $command;
 
     /**
@@ -44,13 +39,7 @@ class ParamAwareCommandTest extends TestCase
             )
             ->willReturn($this->questionHelper);
 
-        /** @psalm-suppress DeprecatedClass */
-        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true) ?: '';
-        $commandClass   = str_replace('v', '', $consoleVersion) >= '5.0.0'
-            ? ParamAwareCommandStub::class
-            : ParamAwareCommandStubNonHinted::class;
-
-        $this->command = new $commandClass($helperSet);
+        $this->command = new ParamAwareCommandStub($helperSet);
     }
 
     public function testAddParamProxiesToAddOption(): void
@@ -77,6 +66,10 @@ class ParamAwareCommandTest extends TestCase
     {
         /** @psalm-var InputInterface&MockObject $input */
         $input = $this->createMock(InputInterface::class);
+        $input
+            ->method('hasArgument')
+            ->willReturn(false);
+
         /** @psalm-var OutputInterface&MockObject $output */
         $output = $this->createMock(OutputInterface::class);
         $param  = (new BoolParam('test'))

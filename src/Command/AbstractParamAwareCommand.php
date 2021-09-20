@@ -7,19 +7,15 @@ declare(strict_types=1);
 namespace Laminas\Cli\Command;
 
 use Laminas\Cli\Input\InputParamInterface;
-use Laminas\Cli\Input\NonHintedParamAwareInput;
+use Laminas\Cli\Input\ParamAwareInput;
 use Laminas\Cli\Input\ParamAwareInputInterface;
-use Laminas\Cli\Input\TypeHintedParamAwareInput;
-use PackageVersions\Versions;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
-
-use function str_replace;
-use function strstr;
 
 /**
  * Provide promptable input options to your command.
@@ -91,21 +87,15 @@ abstract class AbstractParamAwareCommand extends Command
             return $input;
         }
 
-        /** @psalm-suppress DeprecatedClass */
-        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true);
-        Assert::string($consoleVersion);
-
-        $inputDecoratorClass = str_replace('v', '', $consoleVersion) >= '5.0.0'
-            ? TypeHintedParamAwareInput::class
-            : NonHintedParamAwareInput::class;
-
         $helperSet = $this->getHelperSet();
         Assert::isInstanceOf($helperSet, HelperSet::class);
 
-        return new $inputDecoratorClass(
+        $questionHelper = $helperSet->get('question');
+        Assert::isInstanceOf($questionHelper, QuestionHelper::class);
+        return new ParamAwareInput(
             $input,
             $output,
-            $helperSet->get('question'),
+            $questionHelper,
             $this->inputParams
         );
     }

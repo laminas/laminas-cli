@@ -21,7 +21,7 @@
     },
     "require": {
         "php": "^7.3 || ~8.0.0 || ~8.1.0",
-        "composer/package-versions-deprecated": "^1.10.99",
+        "composer/package-versions-deprecated": "1.11.99.4",
         "psr/container": "^1.0 || ^2.0",
         "symfony/console": "^5.3.7",
         "symfony/event-dispatcher": "^5.0",
@@ -29,7 +29,7 @@
         "webmozart/assert": "^1.9"
     },
     "require-dev": {
-        "laminas/laminas-coding-standard": "~2.0.0",
+        "laminas/laminas-coding-standard": "~2.2.0",
         "laminas/laminas-mvc": "^3.1.1",
         "laminas/laminas-servicemanager": "^3.4",
         "mikey179/vfsstream": "2.0.x-dev",
@@ -38,9 +38,6 @@
         "vimeo/psalm": "^4.10"
     },
     "autoload": {
-        "files": [
-            "src/autoload.php"
-        ],
         "psr-4": {
             "Laminas\\Cli\\": "src/"
         }

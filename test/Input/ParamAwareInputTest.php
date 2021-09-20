@@ -9,11 +9,10 @@ use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ChoiceParam;
 use Laminas\Cli\Input\InputParamInterface;
 use Laminas\Cli\Input\IntParam;
-use Laminas\Cli\Input\NonHintedParamAwareInput;
+use Laminas\Cli\Input\ParamAwareInput;
+use Laminas\Cli\Input\ParamAwareInputInterface;
 use Laminas\Cli\Input\PathParam;
 use Laminas\Cli\Input\StringParam;
-use Laminas\Cli\Input\TypeHintedParamAwareInput;
-use PackageVersions\Versions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Formatter\NullOutputFormatter;
@@ -29,9 +28,7 @@ use function fopen;
 use function fwrite;
 use function preg_match;
 use function rewind;
-use function str_replace;
 use function strpos;
-use function strstr;
 
 use const PHP_EOL;
 use const STDIN;
@@ -40,7 +37,7 @@ class ParamAwareInputTest extends TestCase
 {
     /**
      * @var string
-     * @psalm-var class-string<\Laminas\Cli\Input\ParamAwareInputInterface>
+     * @psalm-var class-string<ParamAwareInputInterface>
      */
     private $class;
 
@@ -67,11 +64,7 @@ class ParamAwareInputTest extends TestCase
 
     public function setUp(): void
     {
-        /** @psalm-suppress DeprecatedClass */
-        $consoleVersion = strstr(Versions::getVersion('symfony/console'), '@', true) ?: '';
-        $this->class    = str_replace('v', '', $consoleVersion) >= '5.0.0'
-            ? TypeHintedParamAwareInput::class
-            : NonHintedParamAwareInput::class;
+        $this->class = ParamAwareInput::class;
 
         $this->decoratedInput = $this->createMock(InputInterface::class);
         $this->output         = $this->createMock(OutputInterface::class);
