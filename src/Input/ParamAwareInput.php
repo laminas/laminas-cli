@@ -9,28 +9,26 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Decorate an input instance to add a `getParam()` method.
  *
- * Compatible with symfony/console 5.0+.
- *
  * @internal
  */
-final class TypeHintedParamAwareInput extends AbstractParamAwareInput
+final class ParamAwareInput extends AbstractParamAwareInput
 {
     protected function modifyQuestion(Question $question): void
     {
         // deliberate no-op
     }
 
-    // Proxy methods implementing interface
-    // phpcs:disable WebimpressCodingStandard.Functions.Param.MissingSpecification, WebimpressCodingStandard.Functions.ReturnType.ReturnValue
-
+    /**
+     * @param string|array $values
+     */
     public function hasParameterOption($values, bool $onlyParams = false): bool
     {
         return $this->input->hasParameterOption($values, $onlyParams);
     }
 
     /**
-     * @param string|array $values
-     * @param mixed        $default
+     * @param string|array                     $values
+     * @param string|bool|int|float|array|null $default
      * @return mixed
      */
     public function getParameterOption($values, $default = false, bool $onlyParams = false)
@@ -39,7 +37,7 @@ final class TypeHintedParamAwareInput extends AbstractParamAwareInput
     }
 
     /**
-     * @return null|string|string[]
+     * @return mixed
      */
     public function getArgument(string $name)
     {
@@ -47,7 +45,7 @@ final class TypeHintedParamAwareInput extends AbstractParamAwareInput
     }
 
     /**
-     * @param null|string|string[] $value
+     * @param mixed $value
      */
     public function setArgument(string $name, $value): void
     {
@@ -55,7 +53,7 @@ final class TypeHintedParamAwareInput extends AbstractParamAwareInput
     }
 
     /**
-     * @return null|bool|string|string[]
+     * @return mixed
      */
     public function getOption(string $name)
     {
@@ -63,7 +61,7 @@ final class TypeHintedParamAwareInput extends AbstractParamAwareInput
     }
 
     /**
-     * @param null|bool|string|string[] $value
+     * @param mixed $value
      */
     public function setOption(string $name, $value): void
     {
@@ -79,6 +77,4 @@ final class TypeHintedParamAwareInput extends AbstractParamAwareInput
     {
         $this->input->setInteractive($interactive);
     }
-
-    // phpcs:enable
 }

@@ -16,6 +16,7 @@ use LaminasTest\Cli\TestAsset\ExampleDependency;
 use LaminasTest\Cli\TestAsset\ExampleDependencyFactory;
 use LaminasTest\Cli\TestAsset\InputMapper\CustomInputMapper;
 use LaminasTest\Cli\TestAsset\ParamCommand;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
@@ -51,7 +52,7 @@ class ApplicationTest extends TestCase
     /** @psalm-param int[] $exitCodes */
     private function getApplication(array $exitCodes = []): Application
     {
-        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject */
+        /** @psalm-var ContainerInterface&MockObject */
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnMap([
             [ExampleCommand::class, true],
@@ -529,7 +530,7 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject $container */
+        /** @psalm-var ContainerInterface&MockObject $container */
         $container = $this->createMock(ContainerInterface::class);
         $container
             ->expects($this->atLeast(2))
@@ -588,7 +589,7 @@ class ApplicationTest extends TestCase
             ],
         ];
 
-        /** @psalm-var ContainerInterface&\PHPUnit\Framework\MockObject\MockObject $container */
+        /** @psalm-var ContainerInterface&MockObject $container */
         $container = $this->createMock(ContainerInterface::class);
 
         $container

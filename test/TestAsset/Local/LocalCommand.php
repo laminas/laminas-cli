@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class LocalCommand extends Command
 {
+    /** @var string|null */
     protected static $defaultName = 'local:command';
 
     public function configure(): void

@@ -19,34 +19,25 @@
     "config": {
         "sort-packages": true
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev",
-            "dev-develop": "1.1.x-dev"
-        }
-    },
     "require": {
-        "php": "^7.3 || ~8.0.0",
-        "composer/package-versions-deprecated": "^1.10.99",
-        "psr/container": "^1.0",
-        "symfony/console": "^4.3 || ^5.1.2",
-        "symfony/event-dispatcher": "^4.0 || ^5.0",
+        "php": "^7.3 || ~8.0.0 || ~8.1.0",
+        "composer/package-versions-deprecated": "^1.11.99.4",
+        "psr/container": "^1.0 || ^2.0",
+        "symfony/console": "^5.3.7",
+        "symfony/event-dispatcher": "^5.0",
         "symfony/polyfill-php80": "^1.17",
         "webmozart/assert": "^1.9"
     },
     "require-dev": {
-        "laminas/laminas-coding-standard": "~2.0.0",
+        "laminas/laminas-coding-standard": "~2.2.0",
         "laminas/laminas-mvc": "^3.1.1",
         "laminas/laminas-servicemanager": "^3.4",
         "mikey179/vfsstream": "2.0.x-dev",
-        "phpunit/phpunit": "^9.4.1",
+        "phpunit/phpunit": "^9.5.9",
         "psalm/plugin-phpunit": "^0.16.1",
         "vimeo/psalm": "^4.10"
     },
     "autoload": {
-        "files": [
-            "src/autoload.php"
-        ],
         "psr-4": {
             "Laminas\\Cli\\": "src/"
         }

@@ -120,7 +120,10 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this;
     }
 
-    // phpcs:ignore WebimpressCodingStandard.Functions.Param.MissingSpecification
+    /**
+     * @param null|string|string[] $shortcut
+     * @psalm-suppress LessSpecificImplementedReturnType
+     */
     public function setShortcut($shortcut): InputParamInterface
     {
         $this->validateShortcut($shortcut);

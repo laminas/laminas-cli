@@ -35,6 +35,9 @@ final class ArrayInputMapper implements InputMapperInterface
 
             Assert::string($old, 'Keys in input map configuration must be strings');
 
+            /** @psalm-suppress MixedAssignment The return value of `InputInterface#getOption`
+             *                  and `InputInterface#getArgument` is `mixed` and thus we have to assume it here as well.
+             */
             $params[$new] = strpos($old, '-') === 0
                 ? $input->getOption(ltrim($old, '-'))
                 : $input->getArgument($old);

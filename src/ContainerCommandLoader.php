@@ -9,7 +9,7 @@ use Symfony\Component\Console\Command\Command;
 /**
  * @internal
  */
-final class ContainerCommandLoaderTypeHint extends AbstractContainerCommandLoader
+final class ContainerCommandLoader extends AbstractContainerCommandLoader
 {
     public function has(string $name): bool
     {
