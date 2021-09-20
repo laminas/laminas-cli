@@ -368,7 +368,7 @@ return [
 ];</code></pre>
 </li>
 </ol>
-<h3 id="register-command-in-an-application-with-configprovider-class-like-mezzio">Register Command in an Application with <code>Configprovider</code> Class like Mezzio</h3>
+<h3 id="register-command-in-an-application-with-configprovider-class-like-mezzio">Register Command in an Application with <code>ConfigProvider</code> Class like Mezzio</h3>
 <p>If your component is providing a <code>ConfigProvider</code> (such as in Mezzio
 applications), please provide the configuration in that class instead:</p>
 <pre class="highlight"><code class="language-php">namespace MyNamespace;
@@ -426,8 +426,9 @@ If you want to use the tool with a different application type, or you have modif
 the default configuration and your <a href="https://www.php-fig.org/psr/psr-11">PSR-11 container</a>
 cannot be detected automatically, you can still use the laminas-cli tool.</p>
 <p>To integrate such applications with laminas-cli, you will need to create a file
-that returns a PSR-11 container. Do so in the file <code>config/container.php</code>. Such
-a file might look like the following:</p>
+that returns a PSR-11 container.
+Do so in the file <code>config/container.php</code> or if you already have such a file in another location, use the <code>--container=&lt;path&gt;</code> option.
+Such a file might look like the following:</p>
 <pre class="highlight"><code class="language-php">&lt;?php
 // File config/container.php
 
@@ -445,13 +446,13 @@ container to seed its application.</p>
 <h2 id="usage">Usage</h2>
 <h3 id="list">List</h3>
 <p>To list all available commands, run:</p>
-<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas</code></pre>
+<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas [--container=&lt;path&gt;]</code></pre>
 <h3 id="execute">Execute</h3>
 <p>To execute a specific command, run:</p>
-<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas &lt;command-name&gt;</code></pre>
+<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas [--container=&lt;path&gt;] &lt;command-name&gt;</code></pre>
 <h3 id="help">Help</h3>
 <p>To get help on a single command, run:</p>
-<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas help &lt;command-name&gt;</code></pre>
+<pre class="highlight"><code class="language-bash">$ ./vendor/bin/laminas [--container=&lt;path&gt;] help &lt;command-name&gt;</code></pre>
 
 
 
@@ -480,16 +481,6 @@ container to seed its application.</p>
 </nav>
 
 
-
-
-    <div class="help-wanted">
-        <p>
-            Found a mistake or want to contribute to the documentation?
-            <a href="https://github.com/laminas/laminas-cli/edit/master/docs/book/intro.md" target="_blank" class="help-wanted__link">
-                Edit this page on GitHub!
-            </a>
-        </p>
-    </div>
 
                 
             </div>
