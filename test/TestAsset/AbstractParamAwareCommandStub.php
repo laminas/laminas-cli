@@ -9,7 +9,7 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ParamAwareCommandStub extends AbstractParamAwareCommand
+abstract class AbstractParamAwareCommandStub extends AbstractParamAwareCommand
 {
     /** @var null|InputInterface */
     public $input;
@@ -34,7 +34,7 @@ class ParamAwareCommandStub extends AbstractParamAwareCommand
      * @param null|mixed        $default Defaults to null.
      * @return $this
      */
-    public function addOption(
+    protected function doAddOption(
         string $name,
         $shortcut = null,
         ?int $mode = null,
@@ -50,10 +50,7 @@ class ParamAwareCommandStub extends AbstractParamAwareCommand
         return $this;
     }
 
-    /**
-     * @return HelperSet
-     */
-    public function getHelperSet()
+    public function getHelperSet(): HelperSet
     {
         return $this->helperSet;
     }

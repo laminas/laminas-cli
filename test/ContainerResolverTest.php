@@ -32,8 +32,7 @@ final class ContainerResolverTest extends TestCase
         EOT);
 
         $containerPath = 'container.php';
-        /** @psalm-suppress InvalidArgument */
-        $directory = vfsStream::setup('root', null, [
+        $directory     = vfsStream::setup('root', null, [
             $containerPath => $containerFileContents,
         ]);
 
@@ -97,8 +96,7 @@ final class ContainerResolverTest extends TestCase
         EOT);
 
         $containerFileName = 'container.php';
-        /** @psalm-suppress InvalidArgument */
-        $directory = vfsStream::setup('root', null, [
+        $directory         = vfsStream::setup('root', null, [
             $containerFileName => $containerFileContents,
         ]);
 

@@ -46,16 +46,13 @@ trait StandardQuestionTrait
     {
         /** @var null|string|string[] $defaultValue */
         $defaultValue  = $this->getDefault();
+        $multiValue    = $this->getMultiLineDefaultValue($defaultValue);
         $defaultPrompt = $this->getDefaultPrompt($defaultValue);
         $multiPrompt   = sprintf(
             "\n(Multiple entries allowed; hit Return after each.%s Hit Return to stop prompting)\n",
             $this->isRequired() ? ' At least one entry is required.' : ''
         );
 
-        /**
-         * @psalm-suppress PossiblyInvalidArgument Suppress for now for backwards compatibility.
-         *                 The `$default` value passed to {@see Question::__construct} should be `null|scalar`.
-         */
         return new Question(
             sprintf(
                 '<question>%s:</question>%s%s%s > ',
@@ -64,8 +61,22 @@ trait StandardQuestionTrait
                 $defaultPrompt,
                 PHP_EOL
             ),
-            $defaultValue
+            $multiValue
         );
+    }
+
+    /**
+     * @param null|string|array $defaultValue
+     * @psalm-param null|string|scalar[] $defaultValue
+     * @return string|bool|int|float|null
+     */
+    private function getMultiLineDefaultValue($defaultValue)
+    {
+        if (! is_array($defaultValue)) {
+            return $defaultValue;
+        }
+
+        return implode(PHP_EOL, $defaultValue);
     }
 
     /**
@@ -79,12 +90,7 @@ trait StandardQuestionTrait
         }
 
         if (is_array($defaultValue)) {
-            $defaultValue = implode(', ', array_map(
-                function ($value): string {
-                    return (string) $value;
-                },
-                $defaultValue
-            ));
+            $defaultValue = implode(', ', array_map('strval', $defaultValue));
         }
 
         return sprintf(' [<comment>%s</comment>]', $defaultValue);
