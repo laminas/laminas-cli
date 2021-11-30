@@ -6,7 +6,8 @@ namespace LaminasTest\Cli\Command;
 
 use Laminas\Cli\Input\BoolParam;
 use Laminas\Cli\Input\ParamAwareInputInterface;
-use LaminasTest\Cli\TestAsset\ParamAwareCommandStub;
+use LaminasTest\Cli\TestAsset\ParamAwareCommandStub74;
+use LaminasTest\Cli\TestAsset\ParamAwareCommandStub80;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -14,9 +15,13 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function version_compare;
+
+use const PHP_VERSION;
+
 class ParamAwareCommandTest extends TestCase
 {
-    /** @var ParamAwareCommandStub */
+    /** @var ParamAwareCommandStub74|ParamAwareCommandStub80 */
     private $command;
 
     /**
@@ -39,7 +44,10 @@ class ParamAwareCommandTest extends TestCase
             )
             ->willReturn($this->questionHelper);
 
-        $this->command = new ParamAwareCommandStub($helperSet);
+        $stubClass     = version_compare(PHP_VERSION, '8.0.0', '>=')
+            ? ParamAwareCommandStub80::class
+            : ParamAwareCommandStub74::class;
+        $this->command = new $stubClass($helperSet);
     }
 
     public function testAddParamProxiesToAddOption(): void
