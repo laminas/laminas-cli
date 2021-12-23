@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Laminas\Cli;
 
-use PackageVersions\Versions;
+use Composer\InstalledVersions;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputOption;
 use Webmozart\Assert\Assert;
-
-use function strstr;
 
 /**
  * This factory is not registered in the container on purpose.
@@ -24,8 +22,7 @@ final class ApplicationFactory
 
     public function __invoke(): Application
     {
-        /** @psalm-suppress DeprecatedClass */
-        $version = strstr(Versions::getVersion('laminas/laminas-cli'), '@', true);
+        $version = InstalledVersions::getPrettyVersion('laminas/laminas-cli');
         Assert::string($version);
         $application = new Application('laminas', $version);
         $application->setAutoExit(false);
