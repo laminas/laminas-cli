@@ -51,7 +51,7 @@ final class ConsoleEventDispatcherFactory
     public function __invoke(ContainerInterface $container): EventDispatcher
     {
         $dispatcher = new EventDispatcher();
-        $dispatcher->addListener($container->get(ErrorListener::class));
+        $dispatcher->addSubscriber($container->get(ErrorListener::class));
 
         return $dispatcher;
     }
