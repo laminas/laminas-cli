@@ -5,7 +5,7 @@ During the lifetime of a console command, the application will trigger a number 
 Internally, laminas/laminas-cli itself adds a listener on the `Symfony\Component\Console\ConsoleEvents::TERMINATE` event in order to provide [command chains](command-chains.md).
 
 If you wish to subscribe to any of the various [symfony/console events](https://symfony.com/doc/current/components/console/events.html), you will need to provide an alternate event dispatcher instance.
-You may do so by defining a `Laminas\Cli\SymfonyEventDispatcher` service in your container that resolves to a `Symfony\Component\EventDispatcher\EventDispatcherInterface` instance. (We use this instead of the more generic `Symfony\Contracts\EventDispatcher\EventDispatcherInterface` so that we can use its `addListener()` method to subscribe our own listener.)
+You may do so by defining a `Laminas\Cli\SymfonyEventDispatcher` service in your container that resolves to a `Symfony\Component\EventDispatcher\EventDispatcherInterface` instance. (We use this instead of the more generic `Symfony\Contracts\EventDispatcher\EventDispatcherInterface` so that we can use its `addSubscriber()` method to subscribe our own listener.) Listeners that are `callable` can be attached using the `addListener()` method.
 
 As an example, let's say you want to register the `Symfony\Component\Console\EventListener\ErrorListener` in your console application for purposes of debugging.
 First, we will create a factory for this listener in the file `src/App/ConsoleErrorListenerFactory.php`:
@@ -51,7 +51,7 @@ final class ConsoleEventDispatcherFactory
     public function __invoke(ContainerInterface $container): EventDispatcher
     {
         $dispatcher = new EventDispatcher();
-        $dispatcher->addListener($container->get(ErrorListener::class));
+        $dispatcher->addSubscriber($container->get(ErrorListener::class));
 
         return $dispatcher;
     }
