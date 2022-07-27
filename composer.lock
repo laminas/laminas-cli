@@ -3006,12 +3006,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/bovigo/vfsStream.git",
-                "reference": "88fbc8a0b163fd00375cba0b27d8c60bc62cd936"
+                "reference": "dd9277d9d27b5406f903e6b06df99825c32ea3b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/88fbc8a0b163fd00375cba0b27d8c60bc62cd936",
-                "reference": "88fbc8a0b163fd00375cba0b27d8c60bc62cd936",
+                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/dd9277d9d27b5406f903e6b06df99825c32ea3b2",
+                "reference": "dd9277d9d27b5406f903e6b06df99825c32ea3b2",
                 "shasum": ""
             },
             "require": {
@@ -3059,7 +3059,7 @@
                 "source": "https://github.com/bovigo/vfsStream/tree/master",
                 "wiki": "https://github.com/bovigo/vfsStream/wiki"
             },
-            "time": "2022-02-23T02:40:26+00:00"
+            "time": "2022-07-26T07:37:46+00:00"
         },
         {
             "name": "myclabs/deep-copy",
