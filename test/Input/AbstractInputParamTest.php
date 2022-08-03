@@ -12,8 +12,7 @@ use Symfony\Component\Console\Question\Question;
 
 class AbstractInputParamTest extends TestCase
 {
-    /** @var AbstractInputParam */
-    private $param;
+    private AbstractInputParam $param;
 
     public function setUp(): void
     {

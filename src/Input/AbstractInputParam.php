@@ -45,18 +45,14 @@ abstract class AbstractInputParam implements InputParamInterface
     /** @var mixed */
     private $default;
 
-    /** @var string */
-    private $description = '';
+    private string $description = '';
 
     /**
      * Parameter name; must be set by class composing trait!
-     *
-     * @var string
      */
-    private $name;
+    private string $name;
 
-    /** @var bool */
-    private $required = false;
+    private bool $required = false;
 
     /** @var null|string|string[] */
     private $shortcut;

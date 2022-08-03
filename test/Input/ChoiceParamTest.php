@@ -12,10 +12,9 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 class ChoiceParamTest extends TestCase
 {
     /** @var string[] */
-    private $choices;
+    private array $choices;
 
-    /** @var ChoiceParam */
-    private $param;
+    private ChoiceParam $param;
 
     public function setUp(): void
     {

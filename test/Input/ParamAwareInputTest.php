@@ -35,11 +35,8 @@ use const STDIN;
 
 class ParamAwareInputTest extends TestCase
 {
-    /**
-     * @var string
-     * @psalm-var class-string<ParamAwareInputInterface>
-     */
-    private $class;
+    /** @psalm-var class-string<ParamAwareInputInterface> */
+    private string $class;
 
     /**
      * @var InputInterface|MockObject
@@ -60,7 +57,7 @@ class ParamAwareInputTest extends TestCase
     private $output;
 
     /** @var InputParamInterface[] */
-    private $params;
+    private array $params;
 
     public function setUp(): void
     {
@@ -610,10 +607,8 @@ class ParamAwareInputTest extends TestCase
         $this->output
             ->expects($this->any())
             ->method('write')
-            ->with($this->callback(function (string $message): bool {
-                return preg_match('/^\s*$/', $message)
-                    || false !== strpos($message, '<question>');
-            }));
+            ->with($this->callback(static fn(string $message): bool => preg_match('/^\s*$/', $message)
+                || false !== strpos($message, '<question>')));
 
         $helper = new QuestionHelper();
         $input  = new $this->class(

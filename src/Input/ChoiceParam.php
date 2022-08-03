@@ -17,8 +17,7 @@ final class ChoiceParam extends AbstractInputParam
 {
     use AllowMultipleTrait;
 
-    /** @var array */
-    private $haystack;
+    private array $haystack;
 
     /**
      * @param array $haystack Choices to choose from.
@@ -63,9 +62,7 @@ final class ChoiceParam extends AbstractInputParam
 
         if (is_array($defaultValue)) {
             $defaultValue = implode(', ', array_map(
-                static function ($value): string {
-                    return (string) $value;
-                },
+                static fn($value): string => (string) $value,
                 $defaultValue
             ));
         }

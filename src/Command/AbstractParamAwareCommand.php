@@ -30,7 +30,7 @@ use Webmozart\Assert\Assert;
 abstract class AbstractParamAwareCommand extends Command
 {
     /** @var array<string, InputParamInterface> */
-    private $inputParams = [];
+    private array $inputParams = [];
 
     /**
      * @return $this

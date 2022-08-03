@@ -38,7 +38,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     protected $output;
 
     /** @var array<string, InputParamInterface> */
-    private $params;
+    private array $params;
 
     /**
      * @param array<string, InputParamInterface> $params

@@ -13,8 +13,7 @@ use function sprintf;
 
 class BoolParamTest extends TestCase
 {
-    /** @var BoolParam */
-    private $param;
+    private BoolParam $param;
 
     public function setUp(): void
     {

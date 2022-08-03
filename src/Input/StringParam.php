@@ -22,8 +22,7 @@ final class StringParam extends AbstractInputParam
     use AllowMultipleTrait;
     use StandardQuestionTrait;
 
-    /** @var null|string */
-    private $pattern;
+    private ?string $pattern = null;
 
     public function getQuestion(): Question
     {

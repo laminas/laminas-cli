@@ -18,8 +18,7 @@ use function sprintf;
  */
 abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
     /** @psalm-var array<string, string> */
     private $commandMap;

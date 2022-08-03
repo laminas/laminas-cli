@@ -141,9 +141,8 @@ class TerminateListenerTest extends TestCase
             ->method('writeln')
             ->with($this->stringContains('Break'));
 
-        $expectedChoiceQuestion = function (Question $question): bool {
-            return (bool) preg_match('#<error>.*?This is a third-party command</error>#i', $question->getQuestion());
-        };
+        $expectedChoiceQuestion = static fn(Question $question): bool =>
+            (bool) preg_match('#<error>.*?This is a third-party command</error>#i', $question->getQuestion());
 
         $questionHelper = $this->createMock(QuestionHelper::class);
         $questionHelper
@@ -210,7 +209,7 @@ class TerminateListenerTest extends TestCase
             ->method('isInteractive')
             ->willReturn(true);
 
-        $expectedChoiceQuestion = function (Question $question): bool {
+        $expectedChoiceQuestion = static function (Question $question): bool {
             $query = $question->getQuestion();
             return ! preg_match('#<error>.*?This is a third-party command</error>#i', $query)
                 && (bool) preg_match('#<info>Executing local:command</info>#i', $query);

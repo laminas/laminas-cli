@@ -27,17 +27,13 @@ final class PathParam extends AbstractInputParam
 
     /**
      * Whether or not the path provided must exist.
-     *
-     * @var bool
      */
-    private $mustExist = false;
+    private bool $mustExist = false;
 
     /**
      * One of the TYPE_* constants
-     *
-     * @var string
      */
-    private $type;
+    private string $type;
 
     /**
      * @param string $pathType One of the TYPE_* constants, indicating whether
@@ -62,9 +58,7 @@ final class PathParam extends AbstractInputParam
 
             $foundFilesAndDirs = is_dir($inputPath) ? scandir($inputPath) : [];
 
-            return array_map(static function (string $dirOrFile) use ($inputPath): string {
-                return $inputPath . $dirOrFile;
-            }, $foundFilesAndDirs);
+            return array_map(static fn(string $dirOrFile): string => $inputPath . $dirOrFile, $foundFilesAndDirs);
         });
 
         $mustExist = $this->mustExist;
