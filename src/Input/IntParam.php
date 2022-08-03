@@ -16,11 +16,9 @@ final class IntParam extends AbstractInputParam
     use AllowMultipleTrait;
     use StandardQuestionTrait;
 
-    /** @var null|int */
-    private $max;
+    private ?int $max = null;
 
-    /** @var null|int */
-    private $min;
+    private ?int $min = null;
 
     public function getQuestion(): Question
     {

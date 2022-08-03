@@ -19,8 +19,7 @@ use const PHP_EOL;
 
 class PathParamTest extends TestCase
 {
-    /** @var PathParam */
-    private $param;
+    private PathParam $param;
 
     public function setUp(): void
     {
@@ -140,9 +139,8 @@ class PathParamTest extends TestCase
         $this->assertIsArray($paths);
         $this->assertGreaterThan(0, count($paths));
 
-        $actual = array_reduce($paths, function (bool $isValid, string $path) {
-            return $isValid && 0 === strpos($path, realpath(dirname(__DIR__)));
-        }, true);
+        $actual = array_reduce($paths, static fn(bool $isValid, string $path) =>
+            $isValid && 0 === strpos($path, (string) realpath(dirname(__DIR__))), true);
 
         $this->assertTrue($actual, 'One or more autocompletion paths were invalid');
     }

@@ -13,8 +13,7 @@ use const PHP_EOL;
 
 class StringParamTest extends TestCase
 {
-    /** @var StringParam */
-    private $param;
+    private StringParam $param;
 
     public function setUp(): void
     {

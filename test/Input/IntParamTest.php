@@ -13,8 +13,7 @@ use const PHP_EOL;
 
 class IntParamTest extends TestCase
 {
-    /** @var IntParam */
-    private $param;
+    private IntParam $param;
 
     public function setUp(): void
     {

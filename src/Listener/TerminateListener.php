@@ -48,8 +48,7 @@ final class TerminateListener
 
     private const HOME_PATH_REGEX = '#^(~|\$HOME)#';
 
-    /** @var array */
-    private $config;
+    private array $config;
 
     public function __construct(array $config)
     {

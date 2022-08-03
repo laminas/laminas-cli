@@ -542,7 +542,7 @@ class ApplicationTest extends TestCase
 
         $container
             ->method('get')
-            ->will($this->returnCallback(function (string $service) use ($config, $container) {
+            ->will($this->returnCallback(static function (string $service) use ($config, $container) {
                 switch ($service) {
                     case 'config':
                         return $config;
@@ -602,7 +602,7 @@ class ApplicationTest extends TestCase
 
         $container
             ->method('get')
-            ->will($this->returnCallback(function (string $service) use ($config, $container) {
+            ->will($this->returnCallback(static function (string $service) use ($config, $container) {
                 switch ($service) {
                     case 'config':
                         return $config;

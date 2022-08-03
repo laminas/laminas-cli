@@ -24,11 +24,8 @@ use function strpos;
  */
 final class ContainerResolver
 {
-    /**
-     * @var string
-     * @psalm-var non-empty-string
-     */
-    private $projectRoot;
+    /** @psalm-var non-empty-string */
+    private string $projectRoot;
 
     /**
      * @psalm-param non-empty-string $projectRoot
