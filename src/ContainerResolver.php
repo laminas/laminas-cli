@@ -101,6 +101,15 @@ final class ContainerResolver
             Assert::isMap($appConfig);
         }
 
+        $laminasCliConfigPath = sprintf('%s/config/laminas-cli.config.php', $this->projectRoot);
+        if (file_exists($laminasCliConfigPath)) {
+            $laminasCliConfig = include $laminasCliConfigPath;
+            Assert::isMap($laminasCliConfig);
+
+            $appConfig = ArrayUtils::merge($appConfig, $laminasCliConfig);
+            Assert::isMap($appConfig);
+        }
+
         $servicesConfig = $appConfig['service_manager'] ?? [];
         Assert::isMap($servicesConfig);
 
