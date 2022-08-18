@@ -2196,16 +2196,16 @@
         },
         {
             "name": "laminas/laminas-http",
-            "version": "2.15.1",
+            "version": "2.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-http.git",
-                "reference": "261f079c3dffcf6f123484db43c40e44c4bf1c79"
+                "reference": "7300482d3e570e81b6a6ecf6b28da1b12334bf63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-http/zipball/261f079c3dffcf6f123484db43c40e44c4bf1c79",
-                "reference": "261f079c3dffcf6f123484db43c40e44c4bf1c79",
+                "url": "https://api.github.com/repos/laminas/laminas-http/zipball/7300482d3e570e81b6a6ecf6b28da1b12334bf63",
+                "reference": "7300482d3e570e81b6a6ecf6b28da1b12334bf63",
                 "shasum": ""
             },
             "require": {
@@ -2257,7 +2257,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-12-03T10:17:11+00:00"
+            "time": "2022-08-17T17:22:15+00:00"
         },
         {
             "name": "laminas/laminas-json",
@@ -2895,16 +2895,16 @@
         },
         {
             "name": "laminas/laminas-view",
-            "version": "2.22.0",
+            "version": "2.22.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-view.git",
-                "reference": "ae32391bdec45ca9fc73dd0882cd7301ab07ecf3"
+                "reference": "dd4f49fccdc45ce9c39ec03b533d86f0ace62345"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-view/zipball/ae32391bdec45ca9fc73dd0882cd7301ab07ecf3",
-                "reference": "ae32391bdec45ca9fc73dd0882cd7301ab07ecf3",
+                "url": "https://api.github.com/repos/laminas/laminas-view/zipball/dd4f49fccdc45ce9c39ec03b533d86f0ace62345",
+                "reference": "dd4f49fccdc45ce9c39ec03b533d86f0ace62345",
                 "shasum": ""
             },
             "require": {
@@ -2998,7 +2998,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-07-19T09:25:16+00:00"
+            "time": "2022-08-17T21:06:17+00:00"
         },
         {
             "name": "mikey179/vfsstream",
