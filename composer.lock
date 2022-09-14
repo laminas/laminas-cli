@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62243e622b6976bc220b07fcab0d0b26",
+    "content-hash": "088f1d11fc6f271635c4a624cc2eed39",
     "packages": [
         {
             "name": "psr/container",
@@ -3008,43 +3008,33 @@
         },
         {
             "name": "mikey179/vfsstream",
-            "version": "dev-master",
+            "version": "v1.6.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bovigo/vfsStream.git",
-                "reference": "dd9277d9d27b5406f903e6b06df99825c32ea3b2"
+                "reference": "17d16a85e6c26ce1f3e2fa9ceeacdc2855db1e9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/dd9277d9d27b5406f903e6b06df99825c32ea3b2",
-                "reference": "dd9277d9d27b5406f903e6b06df99825c32ea3b2",
+                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/17d16a85e6c26ce1f3e2fa9ceeacdc2855db1e9f",
+                "reference": "17d16a85e6c26ce1f3e2fa9ceeacdc2855db1e9f",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2|^8.0"
+                "php": ">=5.3.0"
             },
             "require-dev": {
-                "bovigo/assert": "^6.2",
-                "bovigo/callmap": "^6.2.1",
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
-                "doctrine/coding-standard": "^8.2.1",
-                "phpstan/phpstan": "^0.12.94",
-                "phpstan/phpstan-deprecation-rules": "^0.12.6",
-                "phpstan/phpstan-phpunit": "^0.12.21",
-                "phpunit/phpunit": "^9.5.8",
-                "squizlabs/php_codesniffer": "^3.6.0"
+                "phpunit/phpunit": "^4.5|^5.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "bovigo\\vfs\\": "src",
-                    "org\\bovigo\\vfs\\": "org/bovigo/vfs"
+                "psr-0": {
+                    "org\\bovigo\\vfs\\": "src/main/php"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3065,7 +3055,7 @@
                 "source": "https://github.com/bovigo/vfsStream/tree/master",
                 "wiki": "https://github.com/bovigo/vfsStream/wiki"
             },
-            "time": "2022-07-26T07:37:46+00:00"
+            "time": "2022-02-23T02:02:42+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -5533,9 +5523,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mikey179/vfsstream": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -39,7 +39,7 @@
         "laminas/laminas-coding-standard": "~2.4.0",
         "laminas/laminas-mvc": "^3.1.1",
         "laminas/laminas-servicemanager": "^3.15.1",
-        "mikey179/vfsstream": "2.0.x-dev",
+        "mikey179/vfsstream": "1.6.11",
         "phpunit/phpunit": "^9.5.9",
         "psalm/plugin-phpunit": "^0.17.0",
         "vimeo/psalm": "^4.24.0"
