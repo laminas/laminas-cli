@@ -41,7 +41,6 @@ final class IntParam extends AbstractInputParam
         $min = $this->min;
         $max = $this->max;
         $question->setValidator(
-            /** @param mixed $value */
             static function (mixed $value) use ($min, $max): int {
                 Assert::integer($value, sprintf('Invalid value: integer expected, %s given', get_debug_type($value)));
 

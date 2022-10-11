@@ -65,7 +65,6 @@ final class PathParam extends AbstractInputParam
         $type      = $this->type;
 
         $question->setValidator(
-            /** @param mixed $value */
             static function (mixed $value) use ($mustExist, $type): string {
                 Assert::string($value, sprintf('Invalid value: string expected, %s given', get_debug_type($value)));
 
