@@ -21,4 +21,7 @@
     <rule ref="SlevomatCodingStandard.Commenting.ForbiddenComments.CommentForbidden">
         <exclude name="SlevomatCodingStandard.Commenting.ForbiddenComments.CommentForbidden"/>
     </rule>
+    <rule ref="WebimpressCodingStandard.Classes.NoNullValues.Invalid">
+        <exclude name="WebimpressCodingStandard.Classes.NoNullValues.Invalid"/>
+    </rule>
 </ruleset>
