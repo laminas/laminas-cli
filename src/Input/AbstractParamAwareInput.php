@@ -262,7 +262,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             if ($valueIsRequired && [] === $values) {
                 $question->setValidator(
                 /**
-                 * @param mixed $value
                  * @return mixed
                  */
                     static function (mixed $value) use ($validator) {
@@ -294,7 +293,6 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
         $question->setValidator(
         /**
-         * @param mixed $value
          * @return mixed
          */
             static function (mixed $value) use ($originalValidator) {

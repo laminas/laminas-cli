@@ -26,7 +26,6 @@ final class IntParam extends AbstractInputParam
 
         $question->setNormalizer(
         /**
-         * @param mixed $value
          * @return mixed
          */
             static function (mixed $value) {
