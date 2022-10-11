@@ -17,15 +17,12 @@ final class ChoiceParam extends AbstractInputParam
 {
     use AllowMultipleTrait;
 
-    private array $haystack;
-
     /**
      * @param array $haystack Choices to choose from.
      */
-    public function __construct(string $name, array $haystack)
+    public function __construct(string $name, private array $haystack)
     {
         parent::__construct($name);
-        $this->haystack = $haystack;
     }
 
     public function getQuestion(): Question

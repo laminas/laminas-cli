@@ -20,12 +20,8 @@ abstract class AbstractParamAwareCommandStub extends AbstractParamAwareCommand
     /** @var array */
     public $options = [];
 
-    /** @var HelperSet */
-    private $helperSet;
-
-    public function __construct(HelperSet $helperSet)
+    public function __construct(private HelperSet $helperSet)
     {
-        $this->helperSet = $helperSet;
         parent::__construct('test');
     }
 

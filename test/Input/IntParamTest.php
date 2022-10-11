@@ -68,9 +68,8 @@ class IntParamTest extends TestCase
 
     /**
      * @dataProvider numericInput
-     * @param mixed $value
      */
-    public function testNormalizerCastsNumericValuesToIntegers($value, int $expected): void
+    public function testNormalizerCastsNumericValuesToIntegers(mixed $value, int $expected): void
     {
         $normalizer = $this->param->getQuestion()->getNormalizer();
         $this->assertIsCallable($normalizer);
@@ -90,9 +89,8 @@ class IntParamTest extends TestCase
 
     /**
      * @dataProvider nonNumericInput
-     * @param mixed $value
      */
-    public function testNormalizerDoesNotCastNonNumericValues($value): void
+    public function testNormalizerDoesNotCastNonNumericValues(mixed $value): void
     {
         $normalizer = $this->param->getQuestion()->getNormalizer();
         $this->assertIsCallable($normalizer);
@@ -118,9 +116,8 @@ class IntParamTest extends TestCase
 
     /**
      * @dataProvider nonNumericInput
-     * @param mixed $value
      */
-    public function testValidatorRaisesExceptionIfRequiredAndNonNumeric($value): void
+    public function testValidatorRaisesExceptionIfRequiredAndNonNumeric(mixed $value): void
     {
         $this->param->setRequiredFlag(true);
         $validator = $this->param->getQuestion()->getValidator();

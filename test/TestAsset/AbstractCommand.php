@@ -19,13 +19,9 @@ abstract class AbstractCommand extends Command
     /** @var string */
     protected $optName;
 
-    /** @var int */
-    protected $statusCode;
-
-    public function __construct(int $statusCode = 0)
+    public function __construct(protected int $statusCode = 0)
     {
         parent::__construct(self::$defaultName);
-        $this->statusCode = $statusCode;
     }
 
     protected function configure(): void

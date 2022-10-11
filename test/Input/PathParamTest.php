@@ -13,7 +13,7 @@ use function array_reduce;
 use function count;
 use function dirname;
 use function realpath;
-use function strpos;
+use function str_starts_with;
 
 use const PHP_EOL;
 
@@ -139,8 +139,8 @@ class PathParamTest extends TestCase
         $this->assertIsArray($paths);
         $this->assertGreaterThan(0, count($paths));
 
-        $actual = array_reduce($paths, static fn(bool $isValid, string $path) =>
-            $isValid && 0 === strpos($path, (string) realpath(dirname(__DIR__))), true);
+        $actual = array_reduce($paths, static fn(bool $isValid, string $path): bool =>
+            $isValid && str_starts_with($path, (string) realpath(dirname(__DIR__))), true);
 
         $this->assertTrue($actual, 'One or more autocompletion paths were invalid');
     }

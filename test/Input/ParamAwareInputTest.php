@@ -28,7 +28,7 @@ use function fopen;
 use function fwrite;
 use function preg_match;
 use function rewind;
-use function strpos;
+use function str_contains;
 
 use const PHP_EOL;
 use const STDIN;
@@ -38,17 +38,11 @@ class ParamAwareInputTest extends TestCase
     /** @psalm-var class-string<ParamAwareInputInterface> */
     private string $class;
 
-    /**
-     * @var InputInterface|MockObject
-     * @psalm-var InputInterface&MockObject
-     */
-    private $decoratedInput;
+    /** @psalm-var InputInterface&MockObject */
+    private InputInterface|MockObject $decoratedInput;
 
-    /**
-     * @var QuestionHelper|MockObject
-     * @psalm-var QuestionHelper&MockObject
-     */
-    private $helper;
+    /** @psalm-var QuestionHelper&MockObject */
+    private QuestionHelper|MockObject $helper;
 
     /**
      * @var OutputInterface|MockObject
@@ -150,12 +144,11 @@ class ParamAwareInputTest extends TestCase
 
     /**
      * @dataProvider proxyMethodsAndArguments
-     * @param mixed $expectedOutput
      */
     public function testProxiesToDecoratedInput(
         string $method,
         array $arguments,
-        $expectedOutput
+        mixed $expectedOutput
     ): void {
         $this->decoratedInput
             ->expects($this->atLeastOnce())
@@ -608,7 +601,7 @@ class ParamAwareInputTest extends TestCase
             ->expects($this->any())
             ->method('write')
             ->with($this->callback(static fn(string $message): bool => preg_match('/^\s*$/', $message)
-                || false !== strpos($message, '<question>')));
+                || str_contains($message, '<question>')));
 
         $helper = new QuestionHelper();
         $input  = new $this->class(

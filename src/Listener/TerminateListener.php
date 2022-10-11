@@ -29,7 +29,7 @@ use function preg_replace;
 use function realpath;
 use function rtrim;
 use function sprintf;
-use function strpos;
+use function str_starts_with;
 use function strtolower;
 
 use const PHP_EOL;
@@ -47,11 +47,8 @@ final class TerminateListener
 
     private const HOME_PATH_REGEX = '#^(~|\$HOME)#';
 
-    private array $config;
-
-    public function __construct(array $config)
+    public function __construct(private array $config)
     {
-        $this->config = $config;
     }
 
     public function __invoke(ConsoleTerminateEvent $event): void
@@ -134,10 +131,7 @@ final class TerminateListener
         }
     }
 
-    /**
-     * @param mixed $inputMapperSpec
-     */
-    private function createInputMapper($inputMapperSpec, string $commandClass): InputMapperInterface
+    private function createInputMapper(mixed $inputMapperSpec, string $commandClass): InputMapperInterface
     {
         if (is_array($inputMapperSpec)) {
             $this->validateInputMap($inputMapperSpec, $commandClass);
@@ -218,13 +212,13 @@ final class TerminateListener
         ));
 
         $filename = $this->normalizePath($filename);
-        if (0 !== strpos($filename, $vendorDir)) {
+        if (! str_starts_with($filename, $vendorDir)) {
             return true;
         }
 
         foreach (self::ALLOWED_VENDORS as $vendor) {
             $path = $vendorDir . $vendor . '/';
-            if (0 === strpos($filename, $path)) {
+            if (str_starts_with($filename, $path)) {
                 // Matches a Laminas or Mezzio command name
                 return true;
             }

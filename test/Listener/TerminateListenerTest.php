@@ -34,17 +34,11 @@ use function rtrim;
 
 class TerminateListenerTest extends TestCase
 {
-    /**
-     * @var Command|MockObject
-     * @psalm-var Command&MockObject
-     */
-    private $command;
+    /** @psalm-var Command&MockObject */
+    private Command|MockObject $command;
 
-    /**
-     * @var InputInterface|MockObject
-     * @psalm-var InputInterface&MockObject
-     */
-    private $input;
+    /** @psalm-var InputInterface&MockObject */
+    private InputInterface|MockObject $input;
 
     /**
      * @var OutputInterface|MockObject

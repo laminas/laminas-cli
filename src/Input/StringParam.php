@@ -31,7 +31,7 @@ final class StringParam extends AbstractInputParam
 
         $question->setValidator(
             /** @param mixed $value */
-            static function ($value) use ($pattern): string {
+            static function (mixed $value) use ($pattern): string {
                 Assert::string($value, sprintf(
                     'Invalid value: string expected, %s given',
                     get_debug_type($value)

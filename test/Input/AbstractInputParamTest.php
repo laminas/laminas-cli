@@ -91,10 +91,9 @@ class AbstractInputParamTest extends TestCase
 
     /**
      * @dataProvider invalidShortcutValues
-     * @param mixed $shortcut
      */
     public function testSettingShortcutShouldRaiseExceptionForInvalidValues(
-        $shortcut,
+        mixed $shortcut,
         string $expectedMesage = 'must be null, a non-zero-length string, or an array'
     ): void {
         $this->expectException(InvalidArgumentException::class);
@@ -119,10 +118,9 @@ class AbstractInputParamTest extends TestCase
 
     /**
      * @dataProvider validShortcutValues
-     * @param mixed $shortcut
      * @psalm-param null|string|string[] $shortcut
      */
-    public function testAllowsSettingShortcutWithValidValues($shortcut): void
+    public function testAllowsSettingShortcutWithValidValues(mixed $shortcut): void
     {
         $this->param->setShortcut($shortcut);
         $this->assertSame($shortcut, $this->param->getShortcut());
