@@ -305,7 +305,7 @@ class TerminateListenerTest extends TestCase
             }
             END;
 
-        $home = $_SERVER['HOME'];
+        $home = $_SERVER['HOME'] ?? null;
         Assert::string($home);
 
         $expected = rtrim(realpath(preg_replace('#\\\\#', '/', $home)), '/') . '/';
@@ -338,7 +338,7 @@ class TerminateListenerTest extends TestCase
      */
     public function testVendorDirectoryStartingWithHomeInComposerSettingResolvesViaHomeDirectory(string $spec): void
     {
-        $home = $_SERVER['HOME'];
+        $home = $_SERVER['HOME'] ?? null;
         Assert::string($home);
 
         $subdir = $this->getFirstHomeSubdirectory($home);
