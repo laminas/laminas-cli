@@ -17,7 +17,6 @@ use Webmozart\Assert\Assert;
 
 use function array_search;
 use function file_get_contents;
-use function get_class;
 use function getcwd;
 use function gettype;
 use function is_array;
@@ -64,7 +63,7 @@ final class TerminateListener
         $command = $event->getCommand();
         Assert::isInstanceOf($command, Command::class);
 
-        $class = get_class($command);
+        $class = $command::class;
         if (
             ! isset($this->config['chains'][$class])
             || ! is_array($this->config['chains'][$class])
@@ -123,7 +122,7 @@ final class TerminateListener
 
             $params   = ['command' => $nextCommandName] + $inputMapper($input);
             $exitCode = $application->run(new ArrayInput($params), $output);
-            /** @psalm-suppress DocblockTypeContradiction */
+            /** @psalm-suppress TypeDoesNotContainType */
             if (! is_int($exitCode)) {
                 $exitCode = 0;
             }
@@ -150,7 +149,7 @@ final class TerminateListener
             'Expected array option map or %s class implementation name for %s input mapper; received "%s"',
             InputMapperInterface::class,
             $commandClass,
-            is_object($inputMapperSpec) ? get_class($inputMapperSpec) : gettype($inputMapperSpec)
+            is_object($inputMapperSpec) ? $inputMapperSpec::class : gettype($inputMapperSpec)
         ));
 
         Assert::classExists(
@@ -260,6 +259,7 @@ final class TerminateListener
             return $directory;
         }
 
+        /** @psalm-suppress RedundantCondition */
         Assert::string($_SERVER['HOME']);
 
         $updated = preg_replace(self::HOME_PATH_REGEX, $_SERVER['HOME'], $directory);

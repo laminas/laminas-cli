@@ -156,7 +156,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
     public function isInteractive(): bool
     {
-        /** @psalm-suppress RedundantCastGivenDocblockType */
+        /** @psalm-suppress RedundantCast */
         return (bool) $this->input->isInteractive();
     }
 

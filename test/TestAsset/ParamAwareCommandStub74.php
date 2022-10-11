@@ -17,7 +17,7 @@ class ParamAwareCommandStub74 extends AbstractParamAwareCommandStub
         ?int $mode = null,
         string $description = '',
         $default = null
-    ) {
+    ): static {
         return $this->doAddOption($name, $shortcut, $mode, $description, $default);
     }
 }
