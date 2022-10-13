@@ -26,10 +26,9 @@ final class IntParam extends AbstractInputParam
 
         $question->setNormalizer(
         /**
-         * @param mixed $value
          * @return mixed
          */
-            static function ($value) {
+            static function (mixed $value) {
                 if (is_numeric($value) && (string) (int) $value === $value) {
                     return (int) $value;
                 }
@@ -41,8 +40,7 @@ final class IntParam extends AbstractInputParam
         $min = $this->min;
         $max = $this->max;
         $question->setValidator(
-            /** @param mixed $value */
-            static function ($value) use ($min, $max): int {
+            static function (mixed $value) use ($min, $max): int {
                 Assert::integer($value, sprintf('Invalid value: integer expected, %s given', get_debug_type($value)));
 
                 if ($min !== null) {

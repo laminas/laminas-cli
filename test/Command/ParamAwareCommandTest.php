@@ -21,14 +21,10 @@ use const PHP_VERSION;
 
 class ParamAwareCommandTest extends TestCase
 {
-    /** @var ParamAwareCommandStub74|ParamAwareCommandStub80 */
-    private $command;
+    private ParamAwareCommandStub74|ParamAwareCommandStub80 $command;
 
-    /**
-     * @var QuestionHelper|MockObject
-     * @psalm-var QuestionHelper&MockObject
-     */
-    private $questionHelper;
+    /** @psalm-var QuestionHelper&MockObject */
+    private QuestionHelper|MockObject $questionHelper;
 
     public function setUp(): void
     {

@@ -6,12 +6,8 @@ namespace LaminasTest\Cli\TestAsset;
 
 class ExampleDependency
 {
-    /** @var string */
-    public $default;
-
-    public function __construct(string $defaultValue)
+    public function __construct(public string $default)
     {
-        $this->default = $defaultValue;
     }
 
     public function getDefault(): string

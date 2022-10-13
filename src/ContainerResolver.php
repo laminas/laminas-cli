@@ -17,22 +17,19 @@ use Webmozart\Assert\Assert;
 use function class_exists;
 use function file_exists;
 use function sprintf;
-use function strpos;
+use function str_contains;
 
 /**
  * @internal
  */
 final class ContainerResolver
 {
-    /** @psalm-var non-empty-string */
-    private string $projectRoot;
-
     /**
      * @psalm-param non-empty-string $projectRoot
      */
-    public function __construct(string $projectRoot)
-    {
-        $this->projectRoot = $projectRoot;
+    public function __construct(
+        private string $projectRoot
+    ) {
     }
 
     /**
@@ -149,7 +146,7 @@ final class ContainerResolver
             return true;
         }
 
-        if (strpos($pathToContainer, '://') !== false) {
+        if (str_contains($pathToContainer, '://')) {
             return true;
         }
 

@@ -18,16 +18,12 @@ use function sprintf;
  */
 abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
 {
-    private ContainerInterface $container;
-
     /** @psalm-var array<string, string> */
     private $commandMap;
 
     /** @psalm-param array<string, string> $commandMap */
-    final public function __construct(ContainerInterface $container, array $commandMap)
+    final public function __construct(private ContainerInterface $container, array $commandMap)
     {
-        $this->container = $container;
-
         Assert::isMap($commandMap);
         Assert::allString($commandMap);
         $this->commandMap = $commandMap;

@@ -47,19 +47,17 @@ abstract class AbstractInputParam implements InputParamInterface
 
     private string $description = '';
 
-    /**
-     * Parameter name; must be set by class composing trait!
-     */
-    private string $name;
-
     private bool $required = false;
 
     /** @var null|string|string[] */
-    private $shortcut;
+    private null|string|array $shortcut = null;
 
-    public function __construct(string $name)
-    {
-        $this->name = $name;
+    public function __construct(
+        /**
+         * Parameter name; must be set by class composing trait!
+         */
+        private string $name
+    ) {
     }
 
     /**
@@ -134,11 +132,10 @@ abstract class AbstractInputParam implements InputParamInterface
     }
 
     /**
-     * @param mixed $shortcut
      * @throws InvalidArgumentException When shortcut is an invalid type.
      * @throws InvalidArgumentException When shortcut is empty.
      */
-    private function validateShortcut($shortcut): void
+    private function validateShortcut(mixed $shortcut): void
     {
         if (null === $shortcut) {
             return;
@@ -163,8 +160,7 @@ abstract class AbstractInputParam implements InputParamInterface
 
         array_walk(
             $shortcut,
-            /** @param mixed $shortcut */
-            static function ($shortcut) {
+            static function (mixed $shortcut) {
                 Assert::stringNotEmpty($shortcut, sprintf(
                     'Only non-empty strings are allowed as shortcut names; received "%s"',
                     get_debug_type($shortcut)

@@ -28,27 +28,15 @@ use function sprintf;
  */
 abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 {
-    /** @var QuestionHelper */
-    protected $helper;
-
-    /** @var InputInterface */
-    protected $input;
-
-    /** @var OutputInterface */
-    protected $output;
-
-    /** @var array<string, InputParamInterface> */
-    private array $params;
-
     /**
      * @param array<string, InputParamInterface> $params
      */
-    public function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $helper, array $params)
-    {
-        $this->input  = $input;
-        $this->output = $output;
-        $this->helper = $helper;
-        $this->params = $params;
+    public function __construct(
+        protected InputInterface $input,
+        protected OutputInterface $output,
+        protected QuestionHelper $helper,
+        private array $params
+    ) {
     }
 
     /**
@@ -182,10 +170,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
         return $this->input->getStream();
     }
 
-    /**
-     * @param mixed $value
-     */
-    private function isParamValueProvided(InputParamInterface $param, $value): bool
+    private function isParamValueProvided(InputParamInterface $param, mixed $value): bool
     {
         $mode = $param->getOptionMode();
 
@@ -197,10 +182,9 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     }
 
     /**
-     * @param mixed $value
      * @return mixed
      */
-    private function normalizeValue($value, ?callable $normalizer)
+    private function normalizeValue(mixed $value, ?callable $normalizer)
     {
         // No normalizer: nothing to do
         if ($normalizer === null) {
@@ -217,12 +201,11 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
     }
 
     /**
-     * @param mixed $value
      * @throws InvalidArgumentException When an array value is expected, but not
      *     provided.
      */
     private function validateValue(
-        $value,
+        mixed $value,
         bool $valueIsArray,
         ?callable $validator,
         string $paramName
@@ -279,10 +262,9 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
             if ($valueIsRequired && [] === $values) {
                 $question->setValidator(
                 /**
-                 * @param mixed $value
                  * @return mixed
                  */
-                    static function ($value) use ($validator) {
+                    static function (mixed $value) use ($validator) {
                         if (null === $value || '' === $value) {
                             return $value;
                         }
@@ -311,10 +293,9 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
         $question->setValidator(
         /**
-         * @param mixed $value
          * @return mixed
          */
-            static function ($value) use ($originalValidator) {
+            static function (mixed $value) use ($originalValidator) {
                 if ($value === null) {
                     return null;
                 }
