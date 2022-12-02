@@ -1,5 +1,7 @@
 <?php
 
+/** @psalm-suppress UnevaluatedCode */
+
 declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
