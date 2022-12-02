@@ -5,6 +5,7 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     findUnusedPsalmSuppress="true"
     errorLevel="1"
+    errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
         <file name="bin/laminas"/>
