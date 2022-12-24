@@ -2875,16 +2875,16 @@
         },
         {
             "name": "laminas/laminas-view",
-            "version": "2.25.0",
+            "version": "2.25.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-view.git",
-                "reference": "77a4b6d78445ae2f30625c5af09a05ad4e4434eb"
+                "reference": "ab40dc844cb5d54739db021a9c819de115a710e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-view/zipball/77a4b6d78445ae2f30625c5af09a05ad4e4434eb",
-                "reference": "77a4b6d78445ae2f30625c5af09a05ad4e4434eb",
+                "url": "https://api.github.com/repos/laminas/laminas-view/zipball/ab40dc844cb5d54739db021a9c819de115a710e9",
+                "reference": "ab40dc844cb5d54739db021a9c819de115a710e9",
                 "shasum": ""
             },
             "require": {
@@ -2972,7 +2972,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-11-07T08:01:13+00:00"
+            "time": "2022-12-21T11:35:32+00:00"
         },
         {
             "name": "mikey179/vfsstream",
