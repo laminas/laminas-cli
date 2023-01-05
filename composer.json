@@ -36,7 +36,7 @@
         "webmozart/assert": "^1.10"
     },
     "require-dev": {
-        "laminas/laminas-coding-standard": "~2.4.0",
+        "laminas/laminas-coding-standard": "~2.5.0",
         "laminas/laminas-mvc": "^3.5.0",
         "laminas/laminas-servicemanager": "^3.19",
         "mikey179/vfsstream": "2.0.x-dev",
