@@ -100,7 +100,7 @@ abstract class AbstractInputParam implements InputParamInterface
 
     /**
      * @param mixed $defaultValue
-     * @psalm-suppress LessSpecificImplementedReturnType
+     * @return $this
      */
     public function setDefault($defaultValue): InputParamInterface
     {
@@ -108,6 +108,7 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this;
     }
 
+    /** @return $this */
     public function setDescription(string $description): InputParamInterface
     {
         $this->description = $description;
@@ -116,7 +117,7 @@ abstract class AbstractInputParam implements InputParamInterface
 
     /**
      * @param null|string|string[] $shortcut
-     * @psalm-suppress LessSpecificImplementedReturnType
+     * @return $this
      */
     public function setShortcut($shortcut): InputParamInterface
     {
@@ -125,6 +126,7 @@ abstract class AbstractInputParam implements InputParamInterface
         return $this;
     }
 
+    /** @return $this */
     public function setRequiredFlag(bool $required): InputParamInterface
     {
         $this->required = $required;

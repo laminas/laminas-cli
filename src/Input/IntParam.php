@@ -66,12 +66,14 @@ final class IntParam extends AbstractInputParam
         return $question;
     }
 
+    /** @return $this */
     public function setMin(?int $min): self
     {
         $this->min = $min;
         return $this;
     }
 
+    /** @return $this */
     public function setMax(?int $max): self
     {
         $this->max = $max;
