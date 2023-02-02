@@ -37,12 +37,12 @@
     },
     "require-dev": {
         "laminas/laminas-coding-standard": "~2.5.0",
-        "laminas/laminas-mvc": "^3.5.0",
-        "laminas/laminas-servicemanager": "^3.19",
+        "laminas/laminas-mvc": "^3.6",
+        "laminas/laminas-servicemanager": "^3.20",
         "mikey179/vfsstream": "2.0.x-dev",
-        "phpunit/phpunit": "^9.5.25",
-        "psalm/plugin-phpunit": "^0.18.0",
-        "vimeo/psalm": "^5.0"
+        "phpunit/phpunit": "^9.5.28",
+        "psalm/plugin-phpunit": "^0.18.4",
+        "vimeo/psalm": "^5.6"
     },
     "autoload": {
         "psr-4": {
