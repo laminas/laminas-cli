@@ -120,6 +120,30 @@ class Module
 }
 ```
 
+### MVC Application bootstrapping
+
+Until 1.9.x laminas-cli did not bootrap the MVC Application and therefore left the Application in an unready state
+wehen executing commands via laminas-cli. (read this [Issue](https://github.com/laminas/laminas-cli/issues/106))
+
+To allow bootstrapping the MVC Application, without breaking backward compatibility, the option `'bootstrap_mvc_application'`
+was introduced. Currently it's `false` by default to not break any Apps. This might change in the future.
+
+When enabling it, make sure not to do any HTTP-Only related stuff on Module's `onBootstrap` method.
+
+```php
+// File config/application.config.php
+
+<?php
+
+return [
+    /* ... */
+    'laminas-cli' => [
+        // execute Laminas\Mvc\Application::init(), including ::boostrap() during initialization of cli app
+        'bootstrap_mvc_application' =>  true, 
+    ]
+];
+```
+
 ## Integration in Other Applications
 
 laminas-cli supports [Laminas MVC](https://github.com/laminas/laminas-mvc-skeleton)
