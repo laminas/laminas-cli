@@ -15,13 +15,13 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
 
-use const E_USER_DEPRECATED;
-
 use function class_exists;
 use function file_exists;
 use function sprintf;
 use function str_contains;
 use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * @internal
@@ -112,7 +112,7 @@ final class ContainerResolver
             /* @deprecated MVC Application is not bootstrapped */
             trigger_error('Running laminas-cli in MVC Environment without bootstrapping '
                 . 'the MVC Application is deprecated. '
-                .'@see https://github.com/laminas/laminas-cli/issues/106', E_USER_DEPRECATED);
+                . '@see https://github.com/laminas/laminas-cli/issues/106', E_USER_DEPRECATED);
 
             $servicesConfig = $appConfig['service_manager'] ?? [];
             Assert::isMap($servicesConfig);
