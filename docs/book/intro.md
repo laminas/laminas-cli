@@ -47,6 +47,7 @@ you will need to do the following:
     ```
 
     > ### Container Config Identifier
+    >
     > - for **Laminas MVC** projects, this has to be `service_manager`
     > - for **Mezzio** projects, this has to be `dependencies`
 
