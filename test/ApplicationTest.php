@@ -81,7 +81,7 @@ class ApplicationTest extends TestCase
      *     3?:list<int>
      * }>
      */
-    public function chainAnswer(): iterable
+    public static function chainAnswer(): iterable
     {
         yield 'execute whole chain' => [
             ['Y', 'Y', 'Y'],
@@ -542,7 +542,7 @@ class ApplicationTest extends TestCase
 
         $container
             ->method('get')
-            ->will($this->returnCallback(static function (string $service) use ($config, $container) {
+            ->willReturnCallback(static function (string $service) use ($config, $container) {
                 switch ($service) {
                     case 'config':
                         return $config;
@@ -555,7 +555,7 @@ class ApplicationTest extends TestCase
                     default:
                         return null;
                 }
-            }));
+            });
 
         $application = $this->createApplicationInstance($container);
 
@@ -602,7 +602,7 @@ class ApplicationTest extends TestCase
 
         $container
             ->method('get')
-            ->will($this->returnCallback(static function (string $service) use ($config, $container) {
+            ->willReturnCallback(static function (string $service) use ($config, $container) {
                 switch ($service) {
                     case 'config':
                         return $config;
@@ -615,7 +615,7 @@ class ApplicationTest extends TestCase
                     default:
                         return null;
                 }
-            }));
+            });
 
         $application = $this->createApplicationInstance($container);
 

@@ -117,13 +117,10 @@ class ParamAwareInputTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:string,1:list<mixed>,2:mixed}>
      */
-    public function proxyMethodsAndArguments(): iterable
+    public static function proxyMethodsAndArguments(): iterable
     {
         // AbstractParamAwareInput methods
         yield 'getFirstArgument' => ['getFirstArgument', [], 'first'];
-
-        $definition = $this->createMock(InputDefinition::class);
-        yield 'bind' => ['bind', [$definition], null];
 
         yield 'validate' => ['validate', [], null];
         yield 'getArguments' => ['getArguments', [], ['first', 'second']];
@@ -150,6 +147,29 @@ class ParamAwareInputTest extends TestCase
         array $arguments,
         mixed $expectedOutput
     ): void {
+        $this->decoratedInput
+            ->expects($this->atLeastOnce())
+            ->method($method)
+            ->with(...$arguments)
+            ->willReturn($expectedOutput);
+
+        $input = new $this->class(
+            $this->decoratedInput,
+            $this->output,
+            $this->helper,
+            $this->params
+        );
+
+        $this->assertSame($expectedOutput, $input->$method(...$arguments));
+    }
+
+    public function testProxiesToDecoratedInputWithInputDefinition(): void
+    {
+        $definition     = $this->createMock(InputDefinition::class);
+        $method         = 'bind';
+        $arguments      = [$definition];
+        $expectedOutput = null;
+
         $this->decoratedInput
             ->expects($this->atLeastOnce())
             ->method($method)
@@ -477,7 +497,7 @@ class ParamAwareInputTest extends TestCase
                 $this->equalTo($this->output),
                 $this->isInstanceOf(Question::class)
             )
-            ->will($this->onConsecutiveCalls(10, 2, 7, null));
+            ->willReturnOnConsecutiveCalls(10, 2, 7, null);
 
         $this->assertSame([10, 2, 7], $input->getParam('multi-int-with-default'));
     }
@@ -550,7 +570,7 @@ class ParamAwareInputTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:class-string<InputParamInterface>,1?:list<mixed>}>
      */
-    public function paramTypesToTestAgainstFalseRequiredFlag(): iterable
+    public static function paramTypesToTestAgainstFalseRequiredFlag(): iterable
     {
         yield 'IntParam'    => [IntParam::class];
         yield 'PathParam'   => [PathParam::class, [PathParam::TYPE_DIR]];

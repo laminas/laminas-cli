@@ -39,7 +39,7 @@ class ChoiceParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:?string,1:string}>
      */
-    public function defaultChoices(): iterable
+    public static function defaultChoices(): iterable
     {
         $question = '<question>Which color?</question>';
 

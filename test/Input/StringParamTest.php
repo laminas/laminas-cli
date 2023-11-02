@@ -29,7 +29,7 @@ class StringParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:?string,1:string}>
      */
-    public function defaultValues(): iterable
+    public static function defaultValues(): iterable
     {
         $question = '<question>A string:</question>';
         $suffix   = PHP_EOL . ' > ';

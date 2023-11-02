@@ -27,9 +27,9 @@ final class ContainerResolverTest extends TestCase
 {
     public function testWillLoadContainerFromInputOption(): void
     {
-        $containerFileContents = sprintf(<<<EOT
+        $containerFileContents = <<<EOT
             <?php return new \Laminas\ServiceManager\ServiceManager();
-        EOT);
+        EOT;
 
         $containerPath = 'container.php';
         $directory     = vfsStream::setup('root', null, [
@@ -67,11 +67,11 @@ final class ContainerResolverTest extends TestCase
 
     public function testWillLoadContainerFromMezzioContainerPath(): void
     {
-        $containerFileContents = sprintf(<<<EOT
+        $containerFileContents = <<<EOT
             <?php \$container = new \Laminas\ServiceManager\ServiceManager();
             \$container->setService('foo', 'bar');
             return \$container;
-        EOT);
+        EOT;
 
         $directory = vfsStream::setup('root', null, [
             'config' => [
@@ -91,9 +91,9 @@ final class ContainerResolverTest extends TestCase
 
     public function testCanHandleAbsolutePathForContainerOption(): void
     {
-        $containerFileContents = sprintf(<<<EOT
+        $containerFileContents = <<<EOT
             <?php return new \Laminas\ServiceManager\ServiceManager();
-        EOT);
+        EOT;
 
         $containerFileName = 'container.php';
         $directory         = vfsStream::setup('root', null, [

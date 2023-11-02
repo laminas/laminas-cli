@@ -73,7 +73,7 @@ class AbstractInputParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:mixed,1?:string}>
      */
-    public function invalidShortcutValues(): iterable
+    public static function invalidShortcutValues(): iterable
     {
         yield 'bool'                   => [true];
         yield 'int'                    => [1];
@@ -105,7 +105,7 @@ class AbstractInputParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:null|list<string>|string}>
      */
-    public function validShortcutValues(): iterable
+    public static function validShortcutValues(): iterable
     {
         yield 'null'                    => [null];
         yield 'string'                  => ['s'];

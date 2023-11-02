@@ -51,6 +51,7 @@ final class StringParam extends AbstractInputParam
     }
 
     /**
+     * @param non-empty-string $pattern
      * @throws InvalidArgumentException If PCRE pattern is invalid.
      */
     public function setPattern(string $pattern): self
@@ -62,6 +63,9 @@ final class StringParam extends AbstractInputParam
         return $this;
     }
 
+    /**
+     * @param non-empty-string $pattern
+     */
     private function validatePattern(string $pattern): bool
     {
         // phpcs:ignore WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps

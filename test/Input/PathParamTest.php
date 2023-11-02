@@ -35,7 +35,7 @@ class PathParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:?string,1:string}>
      */
-    public function defaultValues(): iterable
+    public static function defaultValues(): iterable
     {
         $question = '<question>Selected path:</question>';
         $suffix   = PHP_EOL . ' > ';
