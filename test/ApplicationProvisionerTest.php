@@ -48,10 +48,6 @@ final class ApplicationProvisionerTest extends TestCase
         $container
             ->expects($this->exactly(2))
             ->method('get')
-            ->withConsecutive(
-                ['config'],
-                ['Laminas\Cli\SymfonyEventDispatcher']
-            )
             ->willReturnOnConsecutiveCalls(
                 $config,
                 $dispatcher

@@ -28,7 +28,7 @@ class BoolParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:bool,1:string}>
      */
-    public function defaultValues(): iterable
+    public static function defaultValues(): iterable
     {
         yield 'false' => [false, 'y/N'];
         yield 'true'  => [true, 'Y/n'];

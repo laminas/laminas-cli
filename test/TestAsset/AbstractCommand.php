@@ -13,6 +13,8 @@ use Webmozart\Assert\Assert;
 
 abstract class AbstractCommand extends Command
 {
+    /** @var string|null The default command name */
+    protected static $commandName;
     /** @var string */
     protected $argName;
 
@@ -21,16 +23,16 @@ abstract class AbstractCommand extends Command
 
     public function __construct(protected int $statusCode = 0)
     {
-        parent::__construct(self::$defaultName);
+        parent::__construct(self::$commandName);
     }
 
     protected function configure(): void
     {
-        Assert::stringNotEmpty(static::$defaultName);
+        Assert::stringNotEmpty(static::$commandName);
         Assert::stringNotEmpty($this->argName);
         Assert::stringNotEmpty($this->optName);
 
-        $name = static::$defaultName ?? '';
+        $name = static::$commandName ?? '';
 
         $this->setDescription('Description of ' . $name);
         $this->addArgument($this->argName, InputArgument::OPTIONAL);

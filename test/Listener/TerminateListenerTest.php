@@ -278,7 +278,7 @@ class TerminateListenerTest extends TestCase
     /**
      * @psalm-return array<string, array{0: string}>
      */
-    public function homeDirectorySpecifications(): array
+    public static function homeDirectorySpecifications(): array
     {
         return [
             '$HOME' => ['$HOME'],

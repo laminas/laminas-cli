@@ -29,7 +29,7 @@ class IntParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:int|null,1:string}>
      */
-    public function defaultValues(): iterable
+    public static function defaultValues(): iterable
     {
         $question = '<question>A number:</question>';
         $suffix   = PHP_EOL . ' > ';
@@ -59,7 +59,7 @@ class IntParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:numeric,1:int}>
      */
-    public function numericInput(): iterable
+    public static function numericInput(): iterable
     {
         yield 'string zero'    => ['0', 0];
         yield 'string integer' => ['1', 1];
@@ -79,7 +79,7 @@ class IntParamTest extends TestCase
     /**
      * @psalm-return iterable<non-empty-string,array{0:mixed}>
      */
-    public function nonNumericInput(): iterable
+    public static function nonNumericInput(): iterable
     {
         yield 'string'              => ['string'];
         yield 'string float zero'   => ['0.0'];

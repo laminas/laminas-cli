@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
-    bootstrap="./vendor/autoload.php"
-    colors="true">
-    <coverage>
-        <include>
-            <directory suffix=".php">./src</directory>
-        </include>
-
-        <exclude>
-            <file>./src/autoload.php</file>
-        </exclude>
-    </coverage>
-
-    <testsuites>
-        <testsuite name="laminas-cli">
-            <directory>./test/</directory>
-        </testsuite>
-    </testsuites>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+        bootstrap="./vendor/autoload.php"
+        colors="true">
+  <coverage/>
+  <testsuites>
+    <testsuite name="laminas-cli">
+      <directory>./test/</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+    <exclude>
+      <file>./src/autoload.php</file>
+    </exclude>
+  </source>
 </phpunit>
