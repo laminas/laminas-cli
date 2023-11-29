@@ -29,17 +29,13 @@ final class ParamAwareInput extends AbstractParamAwareInput
     /**
      * @param string|array                     $values
      * @param string|bool|int|float|array|null $default
-     * @return mixed
      */
-    public function getParameterOption($values, $default = false, bool $onlyParams = false)
+    public function getParameterOption($values, $default = false, bool $onlyParams = false): mixed
     {
         return $this->input->getParameterOption($values, $default, $onlyParams);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getArgument(string $name)
+    public function getArgument(string $name): mixed
     {
         return $this->input->getArgument($name);
     }
@@ -52,10 +48,7 @@ final class ParamAwareInput extends AbstractParamAwareInput
         $this->input->setArgument($name, $value);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getOption(string $name)
+    public function getOption(string $name): mixed
     {
         return $this->input->getOption($name);
     }

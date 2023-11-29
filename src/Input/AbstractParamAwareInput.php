@@ -306,4 +306,9 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
         return $originalValidator;
     }
+
+    public function __toString(): string
+    {
+        return '';
+    }
 }
