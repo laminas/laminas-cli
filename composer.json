@@ -40,9 +40,9 @@
         "laminas/laminas-mvc": "^3.7.0",
         "laminas/laminas-servicemanager": "^3.22.1",
         "mikey179/vfsstream": "2.0.x-dev",
-        "phpunit/phpunit": "^10.4.2",
+        "phpunit/phpunit": "^10.5.5",
         "psalm/plugin-phpunit": "^0.18.4",
-        "vimeo/psalm": "^5.16"
+        "vimeo/psalm": "^5.18"
     },
     "autoload": {
         "psr-4": {
