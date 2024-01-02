@@ -15,8 +15,10 @@ use Laminas\Cli\Input\PathParam;
 use Laminas\Cli\Input\StringParam;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Symfony\Component\Console\Formatter\NullOutputFormatter;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StreamableInputInterface;
@@ -147,11 +149,15 @@ class ParamAwareInputTest extends TestCase
         array $arguments,
         mixed $expectedOutput
     ): void {
-        $this->decoratedInput
-            ->expects($this->atLeastOnce())
+        $invokation = $this->decoratedInput
+            ->expects(self::atLeastOnce())
             ->method($method)
-            ->with(...$arguments)
-            ->willReturn($expectedOutput);
+            ->with(...$arguments);
+
+        $reflectionMethod = new ReflectionMethod(InputInterface::class, $method);
+        if ((string) $reflectionMethod->getReturnType() !== 'void') {
+            $invokation->willReturn($expectedOutput);
+        }
 
         $input = new $this->class(
             $this->decoratedInput,
@@ -160,7 +166,7 @@ class ParamAwareInputTest extends TestCase
             $this->params
         );
 
-        $this->assertSame($expectedOutput, $input->$method(...$arguments));
+        self::assertSame($expectedOutput, $input->$method(...$arguments));
     }
 
     public function testProxiesToDecoratedInputWithInputDefinition(): void
@@ -171,10 +177,9 @@ class ParamAwareInputTest extends TestCase
         $expectedOutput = null;
 
         $this->decoratedInput
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method($method)
-            ->with(...$arguments)
-            ->willReturn($expectedOutput);
+            ->with(...$arguments);
 
         $input = new $this->class(
             $this->decoratedInput,
@@ -214,8 +219,7 @@ class ParamAwareInputTest extends TestCase
         $decoratedInput
             ->expects($this->atLeastOnce())
             ->method('setStream')
-            ->with($this->identicalTo(STDIN))
-            ->willReturn(null);
+            ->with($this->identicalTo(STDIN));
 
         $input = new $this->class(
             $decoratedInput,
@@ -632,5 +636,25 @@ class ParamAwareInputTest extends TestCase
         );
 
         $this->assertNull($input->getParam('non-required'));
+    }
+
+    public function testThatCastingToAStringProxiesToTheUnderlyingInputImplementation(): void
+    {
+        /**
+         * Mocking a concrete class here because `__toString` is not part of the InputInterface contract
+         */
+        $decoratedInput = $this->createMock(ArrayInput::class);
+        $decoratedInput->expects(self::atLeastOnce())
+            ->method('__toString')
+            ->willReturn('something');
+
+        $input = new $this->class(
+            $decoratedInput,
+            $this->output,
+            $this->helper,
+            $this->params,
+        );
+
+        self::assertSame('something', $input->__toString());
     }
 }

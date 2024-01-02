@@ -3,19 +3,23 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
         bootstrap="./vendor/autoload.php"
-        colors="true">
-  <coverage/>
-  <testsuites>
-    <testsuite name="laminas-cli">
-      <directory>./test/</directory>
-    </testsuite>
-  </testsuites>
-  <source>
-    <include>
-      <directory suffix=".php">./src</directory>
-    </include>
-    <exclude>
-      <file>./src/autoload.php</file>
-    </exclude>
-  </source>
+        colors="true"
+        displayDetailsOnSkippedTests="true"
+        displayDetailsOnIncompleteTests="true"
+        displayDetailsOnTestsThatTriggerDeprecations="true"
+        displayDetailsOnTestsThatTriggerErrors="true"
+        displayDetailsOnTestsThatTriggerNotices="true"
+        displayDetailsOnTestsThatTriggerWarnings="true"
+>
+    <coverage/>
+    <testsuites>
+        <testsuite name="laminas-cli">
+            <directory>./test/</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </source>
 </phpunit>

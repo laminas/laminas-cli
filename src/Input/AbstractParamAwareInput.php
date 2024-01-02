@@ -306,4 +306,12 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface
 
         return $originalValidator;
     }
+
+    /**
+     * Returns a stringified representation of the args passed to the command.
+     */
+    public function __toString(): string
+    {
+        return $this->input->__toString();
+    }
 }
