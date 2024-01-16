@@ -6,6 +6,7 @@ namespace Laminas\Cli;
 
 use InvalidArgumentException;
 use Laminas\ModuleManager\ModuleManagerInterface;
+use Laminas\Mvc\Application;
 use Laminas\Mvc\Service\ServiceManagerConfig;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Stdlib\ArrayUtils;
@@ -18,6 +19,9 @@ use function class_exists;
 use function file_exists;
 use function sprintf;
 use function str_contains;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * @internal
@@ -98,18 +102,31 @@ final class ContainerResolver
             Assert::isMap($appConfig);
         }
 
-        $servicesConfig = $appConfig['service_manager'] ?? [];
-        Assert::isMap($servicesConfig);
+        Assert::classExists(Application::class);
 
-        $smConfig = new ServiceManagerConfig($servicesConfig);
+        if ($appConfig['laminas-cli']['bootstrap_mvc_application'] ?? false) {
+            // initialize & bootstrap MVC Application
+            $mvcApplication = Application::init($appConfig);
+            $serviceManager = $mvcApplication->getServiceManager();
+        } else {
+            /* @deprecated MVC Application is not bootstrapped */
+            trigger_error('Running laminas-cli in MVC Environment without bootstrapping '
+                . 'the MVC Application is deprecated. '
+                . '@see https://github.com/laminas/laminas-cli/issues/106', E_USER_DEPRECATED);
 
-        $serviceManager = new ServiceManager();
-        $smConfig->configureServiceManager($serviceManager);
-        $serviceManager->setService('ApplicationConfig', $appConfig);
+            $servicesConfig = $appConfig['service_manager'] ?? [];
+            Assert::isMap($servicesConfig);
 
-        $moduleManager = $serviceManager->get('ModuleManager');
-        Assert::isInstanceOf($moduleManager, ModuleManagerInterface::class);
-        $moduleManager->loadModules();
+            $smConfig = new ServiceManagerConfig($servicesConfig);
+
+            $serviceManager = new ServiceManager();
+            $smConfig->configureServiceManager($serviceManager);
+            $serviceManager->setService('ApplicationConfig', $appConfig);
+
+            $moduleManager = $serviceManager->get('ModuleManager');
+            Assert::isInstanceOf($moduleManager, ModuleManagerInterface::class);
+            $moduleManager->loadModules();
+        }
 
         return $serviceManager;
     }
