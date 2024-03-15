@@ -38,7 +38,7 @@
     "require-dev": {
         "laminas/laminas-coding-standard": "~2.5.0",
         "laminas/laminas-mvc": "^3.7.0",
-        "laminas/laminas-servicemanager": "^3.22.1",
+        "laminas/laminas-servicemanager": "^4.0.0",
         "mikey179/vfsstream": "2.0.x-dev",
         "phpunit/phpunit": "^10.5.5",
         "psalm/plugin-phpunit": "^0.19.0",
