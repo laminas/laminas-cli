@@ -24,6 +24,7 @@ use Symfony\Component\Console\Tester\ApplicationTester;
 
 use function array_filter;
 use function current;
+use function sprintf;
 
 /** @psalm-suppress PropertyNotSetInConstructor */
 class ApplicationTest extends TestCase
@@ -273,10 +274,18 @@ class ApplicationTest extends TestCase
         self::assertSame(current(array_filter($exitCodes)) ?: 0, $statusCode);
         $display = $applicationTester->getDisplay();
         foreach ($contains as $str) {
-            self::assertStringContainsString($str, $display, 'Output does not contain ' . $str . "\n" . $display);
+            self::assertStringContainsString($str, $display, sprintf(
+                'Output does not contain %s\n%s',
+                $str,
+                $display
+            ));
         }
         foreach ($doesNotContain as $str) {
-            self::assertStringNotContainsString($str, $display, 'Output contains ' . $str . "\n" . $display);
+            self::assertStringNotContainsString($str, $display, sprintf(
+                'Output contains %s\n%s',
+                $str,
+                $display
+            ));
         }
     }
 
