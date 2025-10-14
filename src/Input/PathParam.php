@@ -9,9 +9,12 @@ use Symfony\Component\Console\Question\Question;
 use Webmozart\Assert\Assert;
 
 use function array_map;
+use function assert;
 use function get_debug_type;
 use function in_array;
+use function is_array;
 use function is_dir;
+use function is_string;
 use function preg_replace;
 use function rtrim;
 use function scandir;
@@ -54,9 +57,11 @@ final class PathParam extends AbstractInputParam
             // to keep only the last directory and generate suggestions for it
             $inputPath = preg_replace('%(/|^)[^/]*$%', '$1', $userInput);
             $inputPath = $inputPath === '' ? '.' : $inputPath;
+            assert(is_string($inputPath));
             $inputPath = rtrim($inputPath, '/\\') . '/';
 
             $foundFilesAndDirs = is_dir($inputPath) ? scandir($inputPath) : [];
+            assert(is_array($foundFilesAndDirs));
 
             return array_map(static fn(string $dirOrFile): string => $inputPath . $dirOrFile, $foundFilesAndDirs);
         });

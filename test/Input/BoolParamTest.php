@@ -11,7 +11,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 use function sprintf;
 
-class BoolParamTest extends TestCase
+final class BoolParamTest extends TestCase
 {
     private BoolParam $param;
 

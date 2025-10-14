@@ -32,7 +32,7 @@ use function readdir;
 use function realpath;
 use function rtrim;
 
-class TerminateListenerTest extends TestCase
+final class TerminateListenerTest extends TestCase
 {
     /** @psalm-var Command&MockObject */
     private Command|MockObject $command;
@@ -117,12 +117,13 @@ class TerminateListenerTest extends TestCase
             ],
         ]);
 
+        $projectRoot = getcwd();
+        self::assertNotFalse($projectRoot);
         $thirdPartyCommand = new ShowCommand(new PluginListFactory(
-            getcwd(),
-            getcwd() . '/vendor/vimeo/psalm'
+            $projectRoot,
+            $projectRoot . '/vendor/vimeo/psalm',
         ));
         $r                 = new ReflectionMethod($thirdPartyCommand, 'configure');
-        $r->setAccessible(true);
         $r->invoke($thirdPartyCommand);
 
         $this->input
@@ -145,7 +146,7 @@ class TerminateListenerTest extends TestCase
             ->with(
                 $this->equalTo($this->input),
                 $this->equalTo($this->output),
-                $this->callback($expectedChoiceQuestion)
+                $this->callback($expectedChoiceQuestion),
             )
             ->willReturn('n');
 
@@ -175,7 +176,7 @@ class TerminateListenerTest extends TestCase
             $command,
             $this->input,
             $this->output,
-            0
+            0,
         );
 
         $this->assertNull($listener($event));
@@ -216,7 +217,7 @@ class TerminateListenerTest extends TestCase
             ->with(
                 $this->equalTo($this->input),
                 $this->equalTo($this->output),
-                $this->callback($expectedChoiceQuestion)
+                $this->callback($expectedChoiceQuestion),
             )
             ->willReturn('y');
 
@@ -246,7 +247,7 @@ class TerminateListenerTest extends TestCase
             $command,
             $this->input,
             $this->output,
-            0
+            0,
         );
 
         $this->assertNull($listener($event));
@@ -254,7 +255,7 @@ class TerminateListenerTest extends TestCase
 
     public function testVendorDirectoryCanBeResolvedViaComposerSetting(): void
     {
-        $path         = realpath(__DIR__);
+        $path         = $this->realpath(__DIR__);
         $composerJson = <<<END
             {
                 "config": {
@@ -263,15 +264,14 @@ class TerminateListenerTest extends TestCase
             }
             END;
 
-        $expected = rtrim(realpath(preg_replace('#\\\\#', '/', __DIR__)), '/') . '/';
+        $expected = rtrim($this->realpath($this->pregReplace('#\\\\#', '/', __DIR__)), '/') . '/';
 
         $listener = new TerminateListener([]);
         $r        = new ReflectionMethod($listener, 'getVendorDirectory');
-        $r->setAccessible(true);
 
         $this->assertSame(
             $expected,
-            $r->invoke($listener, $composerJson)
+            $r->invoke($listener, $composerJson),
         );
     }
 
@@ -302,14 +302,13 @@ class TerminateListenerTest extends TestCase
         $home = $_SERVER['HOME'] ?? null;
         Assert::string($home);
 
-        $expected = rtrim(realpath(preg_replace('#\\\\#', '/', $home)), '/') . '/';
+        $expected = rtrim($this->realpath($this->pregReplace('#\\\\#', '/', $home)), '/') . '/';
         $listener = new TerminateListener([]);
         $r        = new ReflectionMethod($listener, 'getVendorDirectory');
-        $r->setAccessible(true);
 
         $this->assertSame(
             $expected,
-            $r->invoke($listener, $composerJson)
+            $r->invoke($listener, $composerJson),
         );
     }
 
@@ -317,6 +316,7 @@ class TerminateListenerTest extends TestCase
     {
         Assert::directory($home);
         $handle = opendir($home);
+        self::assertNotFalse($handle);
         while (false !== ($entry = readdir($handle))) {
             $path = $home . '/' . $entry;
             if (! preg_match('/^\.{1,2}$/', $entry) && is_dir($path)) {
@@ -348,14 +348,30 @@ class TerminateListenerTest extends TestCase
             }
             END;
 
-        $expected = rtrim(realpath(preg_replace('#\\\\#', '/', $home)), '/') . '/' . $subdir . '/';
+        $expected = rtrim($this->realpath($this->pregReplace('#\\\\#', '/', $home)), '/') . '/' . $subdir . '/';
         $listener = new TerminateListener([]);
         $r        = new ReflectionMethod($listener, 'getVendorDirectory');
-        $r->setAccessible(true);
 
         $this->assertSame(
             $expected,
-            $r->invoke($listener, $composerJson)
+            $r->invoke($listener, $composerJson),
         );
+    }
+
+    private function realpath(string $path): string
+    {
+        $path = realpath($path);
+        self::assertIsString($path);
+
+        return $path;
+    }
+
+    /** @param non-empty-string $pattern */
+    private function pregReplace(string $pattern, string $replace, string $subject): string
+    {
+        $value = preg_replace($pattern, $replace, $subject);
+        self::assertIsString($value);
+
+        return $value;
     }
 }

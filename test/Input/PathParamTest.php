@@ -17,7 +17,7 @@ use function str_starts_with;
 
 use const PHP_EOL;
 
-class PathParamTest extends TestCase
+final class PathParamTest extends TestCase
 {
     private PathParam $param;
 

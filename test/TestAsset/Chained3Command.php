@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Cli\TestAsset;
 
-class Chained3Command extends AbstractCommand
+final class Chained3Command extends AbstractCommand
 {
     /** @var string|null */
     protected static $commandName = 'example:chained-3';

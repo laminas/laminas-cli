@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 use const PHP_EOL;
 
-class StringParamTest extends TestCase
+final class StringParamTest extends TestCase
 {
     private StringParam $param;
 

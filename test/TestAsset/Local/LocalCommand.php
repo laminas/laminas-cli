@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LocalCommand extends Command
+final class LocalCommand extends Command
 {
     /** @var string|null */
     protected static $commandName = 'local:command';

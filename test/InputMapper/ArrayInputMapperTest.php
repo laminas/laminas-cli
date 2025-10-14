@@ -8,7 +8,7 @@ use Laminas\Cli\Input\Mapper\ArrayInputMapper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 
-class ArrayInputMapperTest extends TestCase
+final class ArrayInputMapperTest extends TestCase
 {
     public function testMapArgumentsAndOptions(): void
     {

@@ -6,7 +6,7 @@ namespace LaminasTest\Cli\TestAsset;
 
 use Psr\Container\ContainerInterface;
 
-class ExampleDependencyFactory
+final class ExampleDependencyFactory
 {
     public function __invoke(ContainerInterface $container): ExampleDependency
     {

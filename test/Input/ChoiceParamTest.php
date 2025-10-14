@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class ChoiceParamTest extends TestCase
+final class ChoiceParamTest extends TestCase
 {
     /** @var string[] */
     private array $choices;

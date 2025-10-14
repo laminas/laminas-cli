@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
 
-class ParamCommand extends AbstractParamAwareCommand
+final class ParamCommand extends AbstractParamAwareCommand
 {
     protected function configure(): void
     {

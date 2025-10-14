@@ -187,6 +187,7 @@ final class TerminateListener
     private function getVendorDirectory(?string $composerJson = null): string
     {
         $basePath = getcwd();
+        Assert::string($basePath);
         if (null === $composerJson) {
             $composerJson = file_get_contents($basePath . '/composer.json');
             Assert::string($composerJson);
@@ -199,9 +200,11 @@ final class TerminateListener
         Assert::string($vendorDir);
 
         $vendorDir = $this->resolveHomePath($vendorDir);
+        $vendorDir = realpath($vendorDir);
+        Assert::string($vendorDir);
         Assert::directory($vendorDir);
 
-        $vendorDir = $this->normalizePath(realpath($vendorDir));
+        $vendorDir = $this->normalizePath($vendorDir);
         return rtrim($vendorDir, '/') . '/';
     }
 
@@ -236,7 +239,10 @@ final class TerminateListener
 
     private function normalizePath(string $path): string
     {
-        return preg_replace('#\\\\#', '/', $path);
+        $path = preg_replace('#\\\\#', '/', $path);
+        Assert::string($path);
+
+        return $path;
     }
 
     /**

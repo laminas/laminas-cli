@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 
 /** @psalm-suppress PropertyNotSetInConstructor */
-class ApplicationFactoryTest extends TestCase
+final class ApplicationFactoryTest extends TestCase
 {
     public function testPullsEventDispatcherFromContainerWhenPresent(): void
     {

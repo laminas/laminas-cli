@@ -35,7 +35,7 @@ use function str_contains;
 use const PHP_EOL;
 use const STDIN;
 
-class ParamAwareInputTest extends TestCase
+final class ParamAwareInputTest extends TestCase
 {
     /** @psalm-var class-string<ParamAwareInputInterface> */
     private string $class;
@@ -106,6 +106,7 @@ class ParamAwareInputTest extends TestCase
     public function mockStream(array $inputs)
     {
         $stream = fopen('php://memory', 'r+', false);
+        self::assertNotFalse($stream);
 
         foreach ($inputs as $input) {
             fwrite($stream, $input . PHP_EOL);
