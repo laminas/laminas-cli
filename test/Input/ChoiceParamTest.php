@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaminasTest\Cli\Input;
 
 use Laminas\Cli\Input\ChoiceParam;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -49,9 +50,7 @@ final class ChoiceParamTest extends TestCase
         yield 'Green'      => ['Green', $question . ' [<comment>Green</comment>]'];
     }
 
-    /**
-     * @dataProvider defaultChoices
-     */
+    #[DataProvider('defaultChoices')]
     public function testQuestionReturnedIncludesChoicesAndDefault(
         ?string $default,
         string $expectedQuestionText

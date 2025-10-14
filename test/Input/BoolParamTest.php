@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LaminasTest\Cli\Input;
 
 use Laminas\Cli\Input\BoolParam;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -34,9 +35,7 @@ final class BoolParamTest extends TestCase
         yield 'true'  => [true, 'Y/n'];
     }
 
-    /**
-     * @dataProvider defaultValues
-     */
+    #[DataProvider('defaultValues')]
     public function testReturnsConfirmationQuestionUsingDescriptionAndDefault(
         bool $default,
         string $expectedDefaultString

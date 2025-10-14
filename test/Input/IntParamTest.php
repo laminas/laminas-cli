@@ -6,6 +6,7 @@ namespace LaminasTest\Cli\Input;
 
 use InvalidArgumentException;
 use Laminas\Cli\Input\IntParam;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -38,9 +39,7 @@ final class IntParamTest extends TestCase
         yield 'integer' => [1, $question . ' [<comment>1</comment>]' . $suffix];
     }
 
-    /**
-     * @dataProvider defaultValues
-     */
+    #[DataProvider('defaultValues')]
     public function testCreatesStandardQuestionUsingDefaultValue(
         ?int $default,
         string $expectedQuestionText
@@ -66,9 +65,7 @@ final class IntParamTest extends TestCase
         yield 'integer'        => [1, 1];
     }
 
-    /**
-     * @dataProvider numericInput
-     */
+    #[DataProvider('numericInput')]
     public function testNormalizerCastsNumericValuesToIntegers(mixed $value, int $expected): void
     {
         $normalizer = $this->param->getQuestion()->getNormalizer();
@@ -87,9 +84,7 @@ final class IntParamTest extends TestCase
         yield 'float'               => [1.1];
     }
 
-    /**
-     * @dataProvider nonNumericInput
-     */
+    #[DataProvider('nonNumericInput')]
     public function testNormalizerDoesNotCastNonNumericValues(mixed $value): void
     {
         $normalizer = $this->param->getQuestion()->getNormalizer();
@@ -114,9 +109,7 @@ final class IntParamTest extends TestCase
         $validator(null);
     }
 
-    /**
-     * @dataProvider nonNumericInput
-     */
+    #[DataProvider('nonNumericInput')]
     public function testValidatorRaisesExceptionIfRequiredAndNonNumeric(mixed $value): void
     {
         $this->param->setRequiredFlag(true);
