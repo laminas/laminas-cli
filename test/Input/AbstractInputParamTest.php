@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Console\Question\Question;
 
-class AbstractInputParamTest extends TestCase
+final class AbstractInputParamTest extends TestCase
 {
     private AbstractInputParam $param;
 

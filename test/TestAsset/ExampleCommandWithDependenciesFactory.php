@@ -7,7 +7,7 @@ namespace LaminasTest\Cli\TestAsset;
 use Psr\Container\ContainerInterface;
 use Webmozart\Assert\Assert;
 
-class ExampleCommandWithDependenciesFactory
+final class ExampleCommandWithDependenciesFactory
 {
     public function __invoke(ContainerInterface $container): ExampleCommandWithDependencies
     {

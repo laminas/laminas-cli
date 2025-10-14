@@ -14,7 +14,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ParamAwareCommandTest extends TestCase
+final class ParamAwareCommandTest extends TestCase
 {
     private ParamAwareCommandStub80 $command;
 

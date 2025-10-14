@@ -27,7 +27,7 @@ use function current;
 use function is_int;
 
 /** @psalm-suppress PropertyNotSetInConstructor */
-class ApplicationTest extends TestCase
+final class ApplicationTest extends TestCase
 {
     public static function getValidConfiguration(): array
     {

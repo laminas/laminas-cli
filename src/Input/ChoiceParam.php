@@ -18,7 +18,7 @@ final class ChoiceParam extends AbstractInputParam
     use AllowMultipleTrait;
 
     /**
-     * @param array $haystack Choices to choose from.
+     * @param array<array-key, scalar> $haystack Choices to choose from.
      */
     public function __construct(string $name, private array $haystack)
     {

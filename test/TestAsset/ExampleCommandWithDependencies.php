@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ExampleCommandWithDependencies extends Command
+final class ExampleCommandWithDependencies extends Command
 {
     /** @var string|null */
     protected static $commandName = 'example:command-with-deps';

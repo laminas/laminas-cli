@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Assert\Assert;
 
 /** @psalm-suppress PropertyNotSetInConstructor */
-class ContainerCommandLoaderTest extends TestCase
+final class ContainerCommandLoaderTest extends TestCase
 {
     public function testGetCommandHasName(): void
     {

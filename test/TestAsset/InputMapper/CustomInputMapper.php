@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 use function ucwords;
 
-class CustomInputMapper implements InputMapperInterface
+final class CustomInputMapper implements InputMapperInterface
 {
     public function __invoke(InputInterface $input): array
     {

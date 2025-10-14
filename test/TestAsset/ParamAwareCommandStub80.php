@@ -6,7 +6,7 @@ namespace LaminasTest\Cli\TestAsset;
 
 use Closure;
 
-class ParamAwareCommandStub80 extends AbstractParamAwareCommandStub
+final class ParamAwareCommandStub80 extends AbstractParamAwareCommandStub
 {
     public function addOption(
         string $name,
