@@ -16,6 +16,7 @@ use LaminasTest\Cli\TestAsset\ExampleDependency;
 use LaminasTest\Cli\TestAsset\ExampleDependencyFactory;
 use LaminasTest\Cli\TestAsset\InputMapper\CustomInputMapper;
 use LaminasTest\Cli\TestAsset\ParamCommand;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -244,12 +245,12 @@ final class ApplicationTest extends TestCase
     }
 
     /**
-     * @dataProvider chainAnswer
      * @param string[] $answers
      * @param string[] $contains
      * @param string[] $doesNotContain
      * @param int[]    $exitCodes
      */
+    #[DataProvider('chainAnswer')]
     public function testChainCommand(
         array $answers,
         array $contains,

@@ -6,6 +6,7 @@ namespace LaminasTest\Cli\Input;
 
 use InvalidArgumentException;
 use Laminas\Cli\Input\StringParam;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -38,9 +39,7 @@ final class StringParamTest extends TestCase
         yield 'string' => ['string', $question . ' [<comment>string</comment>]' . $suffix];
     }
 
-    /**
-     * @dataProvider defaultValues
-     */
+    #[DataProvider('defaultValues')]
     public function testCreatesStandardQuestionUsingDefaultValue(
         ?string $default,
         string $expectedQuestionText

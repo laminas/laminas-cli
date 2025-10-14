@@ -6,6 +6,7 @@ namespace LaminasTest\Cli\Input;
 
 use InvalidArgumentException;
 use Laminas\Cli\Input\PathParam;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -44,9 +45,7 @@ final class PathParamTest extends TestCase
         yield 'path' => ['path', $question . ' [<comment>path</comment>]' . $suffix];
     }
 
-    /**
-     * @dataProvider defaultValues
-     */
+    #[DataProvider('defaultValues')]
     public function testCreatesStandardQuestionUsingDefaultValue(
         ?string $default,
         string $expectedQuestionText

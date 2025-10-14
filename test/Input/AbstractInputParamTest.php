@@ -6,6 +6,7 @@ namespace LaminasTest\Cli\Input;
 
 use InvalidArgumentException;
 use Laminas\Cli\Input\AbstractInputParam;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Console\Question\Question;
@@ -89,9 +90,7 @@ final class AbstractInputParamTest extends TestCase
         yield 'array with object'      => [[(object) ['foo' => 'bar']], 'Only non-empty strings'];
     }
 
-    /**
-     * @dataProvider invalidShortcutValues
-     */
+    #[DataProvider('invalidShortcutValues')]
     public function testSettingShortcutShouldRaiseExceptionForInvalidValues(
         mixed $shortcut,
         string $expectedMesage = 'must be null, a non-zero-length string, or an array'
@@ -117,9 +116,9 @@ final class AbstractInputParamTest extends TestCase
     }
 
     /**
-     * @dataProvider validShortcutValues
      * @psalm-param null|string|string[] $shortcut
      */
+    #[DataProvider('validShortcutValues')]
     public function testAllowsSettingShortcutWithValidValues(mixed $shortcut): void
     {
         $this->param->setShortcut($shortcut);

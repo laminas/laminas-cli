@@ -13,6 +13,7 @@ use Laminas\Cli\Input\ParamAwareInput;
 use Laminas\Cli\Input\ParamAwareInputInterface;
 use Laminas\Cli\Input\PathParam;
 use Laminas\Cli\Input\StringParam;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
@@ -142,9 +143,7 @@ final class ParamAwareInputTest extends TestCase
         yield 'setInteractive' => ['setInteractive', [true], null];
     }
 
-    /**
-     * @dataProvider proxyMethodsAndArguments
-     */
+    #[DataProvider('proxyMethodsAndArguments')]
     public function testProxiesToDecoratedInput(
         string $method,
         array $arguments,
@@ -583,9 +582,9 @@ final class ParamAwareInputTest extends TestCase
     }
 
     /**
-     * @dataProvider paramTypesToTestAgainstFalseRequiredFlag
      * @psalm-param class-string<InputParamInterface> $class
      */
+    #[DataProvider('paramTypesToTestAgainstFalseRequiredFlag')]
     public function testGetParamAllowsEmptyValuesForParamsWithValidationIfParamIsNotRequired(
         string $class,
         array $additionalArgs = []

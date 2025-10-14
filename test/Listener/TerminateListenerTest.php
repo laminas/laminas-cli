@@ -8,6 +8,7 @@ use Laminas\Cli\Listener\TerminateListener;
 use LaminasTest\Cli\ApplicationTest;
 use LaminasTest\Cli\TestAsset\ExampleCommand;
 use Local\LocalCommand;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psalm\Internal\PluginManager\Command\ShowCommand;
@@ -286,9 +287,7 @@ final class TerminateListenerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider homeDirectorySpecifications
-     */
+    #[DataProvider('homeDirectorySpecifications')]
     public function testVendorDirectorySpecifiedAsHomeInComposerSettingResolvesToHomeDirectory(string $spec): void
     {
         $composerJson = <<<END
@@ -327,9 +326,7 @@ final class TerminateListenerTest extends TestCase
         return null;
     }
 
-    /**
-     * @dataProvider homeDirectorySpecifications
-     */
+    #[DataProvider('homeDirectorySpecifications')]
     public function testVendorDirectoryStartingWithHomeInComposerSettingResolvesViaHomeDirectory(string $spec): void
     {
         $home = $_SERVER['HOME'] ?? null;
