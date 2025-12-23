@@ -245,7 +245,7 @@ final class ApplicationTest extends TestCase
     }
 
     /**
-     * @param string[] $answers
+     * @param list<string> $answers
      * @param string[] $contains
      * @param string[] $doesNotContain
      * @param int[]    $exitCodes

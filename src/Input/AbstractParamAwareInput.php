@@ -20,6 +20,7 @@ use function array_walk;
 use function get_debug_type;
 use function in_array;
 use function is_array;
+use function is_callable;
 use function sprintf;
 
 /**
@@ -97,7 +98,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface, Stri
         $value = $this->askQuestion($question, $valueIsArray, $inputParam->isRequired());
 
         // Reset the validator if we prepended it earlier.
-        if ($originalValidator !== null) {
+        if (is_callable($originalValidator)) {
             $question->setValidator($originalValidator);
         }
 
@@ -285,6 +286,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface, Stri
         return $values;
     }
 
+    /** @return callable(mixed): mixed|null */
     private function prependSkipValidator(Question $question): ?callable
     {
         $originalValidator = $question->getValidator();
@@ -293,10 +295,7 @@ abstract class AbstractParamAwareInput implements ParamAwareInputInterface, Stri
         }
 
         $question->setValidator(
-        /**
-         * @return mixed
-         */
-            static function (mixed $value) use ($originalValidator) {
+            static function (mixed $value) use ($originalValidator): mixed {
                 if ($value === null) {
                     return null;
                 }

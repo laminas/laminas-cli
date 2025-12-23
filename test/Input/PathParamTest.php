@@ -135,7 +135,6 @@ final class PathParamTest extends TestCase
         $this->assertIsCallable($autocompleter);
 
         $paths = $autocompleter(__DIR__);
-        $this->assertIsArray($paths);
         $this->assertGreaterThan(0, count($paths));
 
         $actual = array_reduce($paths, static fn(bool $isValid, string $path): bool =>
