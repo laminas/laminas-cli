@@ -49,7 +49,7 @@ final class ContainerCommandLoaderTest extends TestCase
 
         $container = (new ContainerResolver(__DIR__ . '/TestAsset'))->resolve($input);
 
-        $config = $container->get('ApplicationConfig');
+        $config = $container->get('config');
         Assert::isMap($config);
         Assert::keyExists($config, 'laminas-cli');
 

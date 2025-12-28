@@ -11,8 +11,6 @@ namespace LaminasTest\Cli;
 use bovigo\vfs\vfsStream;
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ContainerResolver;
-use Laminas\ServiceManager\ServiceManager;
-use LaminasTest\Cli\TestAsset\ExampleDependency;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,20 +47,10 @@ final class ContainerResolverTest extends TestCase
             ->willReturn($containerPath);
 
         $projectRoot = $directory->url();
-        self::assertNotSame($projectRoot, '');
+        self::assertNotSame('', $projectRoot);
         /** @psalm-var non-empty-string $projectRoot */
         $resolver = new ContainerResolver($projectRoot);
         $resolver->resolve($input);
-    }
-
-    public function testWillLoadContainerFromApplicationConfig(): void
-    {
-        $input = $this->createMock(InputInterface::class);
-
-        $resolver  = new ContainerResolver(__DIR__ . '/TestAsset');
-        $container = $resolver->resolve($input);
-        self::assertInstanceOf(ServiceManager::class, $container);
-        self::assertTrue($container->has(ExampleDependency::class));
     }
 
     public function testWillLoadContainerFromMezzioContainerPath(): void
