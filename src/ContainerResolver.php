@@ -21,6 +21,9 @@ use function str_contains;
 
 /**
  * @internal
+ *
+ * @psalm-internal Laminas\Cli
+ * @psalm-internal LaminasTest\Cli
  */
 final class ContainerResolver
 {
