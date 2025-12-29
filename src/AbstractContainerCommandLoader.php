@@ -15,6 +15,9 @@ use function sprintf;
 
 /**
  * @internal
+ *
+ * @psalm-internal Laminas\Cli
+ * @psalm-internal LaminasTest\Cli
  */
 abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
 {

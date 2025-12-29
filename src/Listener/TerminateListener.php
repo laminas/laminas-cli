@@ -36,6 +36,9 @@ use const PHP_EOL;
 
 /**
  * @internal
+ *
+ * @psalm-internal Laminas\Cli
+ * @psalm-internal LaminasTest\Cli
  */
 final class TerminateListener
 {

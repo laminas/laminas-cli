@@ -6,6 +6,7 @@ namespace LaminasTest\Cli;
 
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ApplicationProvisioner;
+use Laminas\ServiceManager\ServiceManager;
 use LaminasTest\Cli\TestAsset\Chained1Command;
 use LaminasTest\Cli\TestAsset\Chained2Command;
 use LaminasTest\Cli\TestAsset\Chained3Command;
@@ -54,21 +55,17 @@ final class ApplicationTest extends TestCase
     /** @psalm-param int[] $exitCodes */
     private function getApplication(array $exitCodes = []): Application
     {
-        /** @psalm-var ContainerInterface&MockObject */
-        $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')->willReturnMap([
-            [ExampleCommand::class, true],
-            [Chained1Command::class, true],
-            [Chained2Command::class, true],
-            [Chained3Command::class, true],
-        ]);
-        $container->method('get')->willReturnMap([
-            ['config', ['laminas-cli' => $this->getValidConfiguration()]],
-            [ExampleCommand::class, new ExampleCommand($exitCodes[0] ?? 0)],
-            [Chained1Command::class, new Chained1Command($exitCodes[1] ?? 0)],
-            [Chained2Command::class, new Chained2Command($exitCodes[2] ?? 0)],
-            [Chained3Command::class, new Chained3Command($exitCodes[3] ?? 0)],
-        ]);
+        $smConfig = [
+            'services' => [
+                'config'               => ['laminas-cli' => self::getValidConfiguration()],
+                ExampleCommand::class  => new ExampleCommand($exitCodes[0] ?? 0),
+                Chained1Command::class => new Chained1Command($exitCodes[1] ?? 0),
+                Chained2Command::class => new Chained2Command($exitCodes[2] ?? 0),
+                Chained3Command::class => new Chained3Command($exitCodes[3] ?? 0),
+            ],
+        ];
+
+        $container = new ServiceManager($smConfig);
 
         return $this->createApplicationInstance($container);
     }
@@ -286,15 +283,9 @@ final class ApplicationTest extends TestCase
 
     public function testPassCustomParams(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')->willReturnMap([
-            [ExampleCommand::class, true],
-            [Chained1Command::class, true],
-        ]);
-        $container->method('get')->willReturnMap([
-            [
-                'config',
-                [
+        $config      = [
+            'services' => [
+                'config'               => [
                     'laminas-cli' => [
                         'commands' => [
                             'example:command-name' => ExampleCommand::class,
@@ -310,11 +301,11 @@ final class ApplicationTest extends TestCase
                         ],
                     ],
                 ],
+                ExampleCommand::class  => new ExampleCommand(),
+                Chained1Command::class => new Chained1Command(),
             ],
-            [ExampleCommand::class, new ExampleCommand()],
-            [Chained1Command::class, new Chained1Command()],
-        ]);
-
+        ];
+        $container   = new ServiceManager($config);
         $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);
@@ -345,15 +336,9 @@ final class ApplicationTest extends TestCase
 
     public function testCustomInputMapper(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')->willReturnMap([
-            [ExampleCommand::class, true],
-            [Chained1Command::class, true],
-        ]);
-        $container->method('get')->willReturnMap([
-            [
-                'config',
-                [
+        $config = [
+            'services' => [
+                'config'               => [
                     'laminas-cli' => [
                         'commands' => [
                             'example:command-name' => ExampleCommand::class,
@@ -366,10 +351,12 @@ final class ApplicationTest extends TestCase
                         ],
                     ],
                 ],
+                ExampleCommand::class  => new ExampleCommand(0),
+                Chained1Command::class => new Chained1Command(0),
             ],
-            [ExampleCommand::class, new ExampleCommand()],
-            [Chained1Command::class, new Chained1Command()],
-        ]);
+        ];
+
+        $container = new ServiceManager($config);
 
         $application = $this->createApplicationInstance($container);
 
@@ -425,15 +412,9 @@ final class ApplicationTest extends TestCase
 
     public function testParamInput(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')->willReturnMap([
-            [ParamCommand::class, true],
-            [Chained1Command::class, true],
-        ]);
-        $container->method('get')->willReturnMap([
-            [
-                'config',
-                [
+        $config      = [
+            'services' => [
+                'config'               => [
                     'laminas-cli' => [
                         'commands' => [
                             'example:param'     => ParamCommand::class,
@@ -446,11 +427,11 @@ final class ApplicationTest extends TestCase
                         ],
                     ],
                 ],
+                ParamCommand::class    => new ParamCommand(),
+                Chained1Command::class => new Chained1Command(),
             ],
-            [ParamCommand::class, new ParamCommand()],
-            [Chained1Command::class, new Chained1Command()],
-        ]);
-
+        ];
+        $container   = new ServiceManager($config);
         $application = $this->createApplicationInstance($container);
 
         $applicationTester = new ApplicationTester($application);

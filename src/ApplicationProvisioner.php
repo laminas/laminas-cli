@@ -18,6 +18,9 @@ use Webmozart\Assert\Assert;
 
 /**
  * @internal
+ *
+ * @psalm-internal Laminas\Cli
+ * @psalm-internal LaminasTest\Cli
  */
 final class ApplicationProvisioner
 {

@@ -6,8 +6,10 @@
     findUnusedPsalmSuppress="true"
     findUnusedCode="false"
     findUnusedBaselineEntry="true"
+    findUnusedIssueHandlerSuppression="true"
     errorLevel="1"
     errorBaseline="psalm-baseline.xml"
+    ensureOverrideAttribute="false"
 >
     <projectFiles>
         <file name="bin/laminas"/>
@@ -31,19 +33,6 @@
                 <directory name="test/"/>
             </errorLevel>
         </InternalMethod>
-
-        <PropertyNotSetInConstructor>
-            <errorLevel type="suppress">
-                <file name="test/**/*Test.php"/>
-            </errorLevel>
-        </PropertyNotSetInConstructor>
-
-        <MissingOverrideAttribute>
-            <errorLevel type="suppress">
-                <directory name="src" />
-                <directory name="test" />
-            </errorLevel>
-        </MissingOverrideAttribute>
     </issueHandlers>
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>

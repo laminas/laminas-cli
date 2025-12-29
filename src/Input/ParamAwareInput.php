@@ -10,6 +10,9 @@ use Symfony\Component\Console\Question\Question;
  * Decorate an input instance to add a `getParam()` method.
  *
  * @internal
+ *
+ * @psalm-internal Laminas\Cli
+ * @psalm-internal LaminasTest\Cli
  */
 final class ParamAwareInput extends AbstractParamAwareInput
 {

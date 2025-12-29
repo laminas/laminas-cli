@@ -8,6 +8,9 @@ use Symfony\Component\Console\Command\Command;
 
 /**
  * @internal
+ *
+ * @psalm-internal Laminas\Cli
+ * @psalm-internal LaminasTest\Cli
  */
 final class ContainerCommandLoader extends AbstractContainerCommandLoader
 {
