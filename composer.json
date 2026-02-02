@@ -39,7 +39,7 @@
         "laminas/laminas-mvc": "^3.8.0",
         "laminas/laminas-servicemanager": "^3.24.0",
         "mikey179/vfsstream": "2.0.x-dev",
-        "phpunit/phpunit": "^11.5.46",
+        "phpunit/phpunit": "^12.0.0",
         "psalm/plugin-phpunit": "^0.19.5",
         "vimeo/psalm": "^6.14.3"
     },
