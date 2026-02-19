@@ -165,6 +165,7 @@ final class TerminateListener
             InputMapperInterface::class
         ));
 
+        /** @psalm-var InputMapperInterface This needs forcing because sa assertions in Webmozart are broken */
         return new $inputMapperSpec();
     }
 

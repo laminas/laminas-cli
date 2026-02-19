@@ -42,7 +42,6 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
 
         $class = $this->commandMap[$name];
         Assert::classExists($class, sprintf('Command "%s" maps to class "%s", which does not exist', $name, $class));
-        /** @psalm-suppress DocblockTypeContradiction */
         Assert::subclassOf($class, Command::class, sprintf(
             'Command "%s" maps to class "%s", which does not extend %s',
             $name,
