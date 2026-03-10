@@ -11,6 +11,7 @@ use Webmozart\Assert\Assert;
 
 use function array_key_exists;
 use function array_keys;
+use function is_callable;
 use function sprintf;
 
 /**
@@ -77,6 +78,11 @@ abstract class AbstractContainerCommandLoader implements CommandLoaderInterface
     private function fetchCommandFromContainer(string $name): Command
     {
         $command = $this->container->get($this->commandMap[$name]);
+
+        if (! $command instanceof Command && is_callable($command)) {
+            $command = new Command(null, $command);
+        }
+
         Assert::isInstanceOf($command, Command::class);
         $command->setName($name);
         return $command;

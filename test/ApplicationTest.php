@@ -6,6 +6,7 @@ namespace LaminasTest\Cli;
 
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ApplicationProvisioner;
+use LaminasTest\Cli\TestAsset\AttributeCommand;
 use LaminasTest\Cli\TestAsset\Chained1Command;
 use LaminasTest\Cli\TestAsset\Chained2Command;
 use LaminasTest\Cli\TestAsset\Chained3Command;
@@ -21,6 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\ApplicationTester;
 
 use function array_filter;
@@ -641,6 +643,46 @@ final class ApplicationTest extends TestCase
         foreach ($contains as $str) {
             self::assertStringContainsString($str, $display);
         }
+    }
+
+    public function testCommandWithAttribute(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container->method('has')
+            ->willReturnMap([
+                ['Laminas\Cli\SymfonyEventDispatcher', false],
+                [AttributeCommand::class, true],
+            ]);
+
+        $container->method('get')->willReturnMap([
+            [
+                'config',
+                [
+                    'laminas-cli' => [
+                        'commands' => [
+                            'example:param' => AttributeCommand::class,
+                        ],
+                    ],
+                ],
+            ],
+            [AttributeCommand::class, new AttributeCommand()],
+        ]);
+
+        $application       = $this->createApplicationInstance($container);
+        $applicationTester = new ApplicationTester($application);
+        $applicationTester->setInputs(['Y']);
+        $statusCode = $applicationTester->run(
+            [
+                'command' => 'example:param',
+                'name'    => 'fezfez',
+            ],
+            [
+                'interactive' => false,
+            ]
+        );
+
+        self::assertSame(Command::SUCCESS, $statusCode);
+        self::assertSame('Hello fezfez', $applicationTester->getDisplay());
     }
 
     private function createApplicationInstance(ContainerInterface $container): Application
