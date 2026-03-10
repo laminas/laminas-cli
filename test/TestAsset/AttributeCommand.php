@@ -11,7 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'app:my-command')]
-final readonly class AttributCommand
+final readonly class AttributeCommand
 {
     public function __invoke(
         SymfonyStyle $io,

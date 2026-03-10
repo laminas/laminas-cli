@@ -6,7 +6,7 @@ namespace LaminasTest\Cli;
 
 use Laminas\Cli\ApplicationFactory;
 use Laminas\Cli\ApplicationProvisioner;
-use LaminasTest\Cli\TestAsset\AttributCommand;
+use LaminasTest\Cli\TestAsset\AttributeCommand;
 use LaminasTest\Cli\TestAsset\Chained1Command;
 use LaminasTest\Cli\TestAsset\Chained2Command;
 use LaminasTest\Cli\TestAsset\Chained3Command;
@@ -651,7 +651,7 @@ final class ApplicationTest extends TestCase
         $container->method('has')
             ->willReturnMap([
                 ['Laminas\Cli\SymfonyEventDispatcher', false],
-                [AttributCommand::class, true],
+                [AttributeCommand::class, true],
             ]);
 
         $container->method('get')->willReturnMap([
@@ -660,12 +660,12 @@ final class ApplicationTest extends TestCase
                 [
                     'laminas-cli' => [
                         'commands' => [
-                            'example:param' => AttributCommand::class,
+                            'example:param' => AttributeCommand::class,
                         ],
                     ],
                 ],
             ],
-            [AttributCommand::class, new AttributCommand()],
+            [AttributeCommand::class, new AttributeCommand()],
         ]);
 
         $application       = $this->createApplicationInstance($container);
