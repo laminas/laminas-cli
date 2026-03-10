@@ -2,30 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://docs.laminas.dev/laminas-cli/</loc>
-         <lastmod>2026-02-19</lastmod>
+         <lastmod>2026-03-10</lastmod>
     </url>
     <url>
          <loc>https://docs.laminas.dev/laminas-cli/autocompletion/</loc>
-         <lastmod>2026-02-19</lastmod>
+         <lastmod>2026-03-10</lastmod>
     </url>
     <url>
          <loc>https://docs.laminas.dev/laminas-cli/command-chains/</loc>
-         <lastmod>2026-02-19</lastmod>
+         <lastmod>2026-03-10</lastmod>
     </url>
     <url>
          <loc>https://docs.laminas.dev/laminas-cli/command-params/</loc>
-         <lastmod>2026-02-19</lastmod>
+         <lastmod>2026-03-10</lastmod>
     </url>
     <url>
          <loc>https://docs.laminas.dev/laminas-cli/events/</loc>
-         <lastmod>2026-02-19</lastmod>
+         <lastmod>2026-03-10</lastmod>
     </url>
     <url>
          <loc>https://docs.laminas.dev/laminas-cli/faq/</loc>
-         <lastmod>2026-02-19</lastmod>
+         <lastmod>2026-03-10</lastmod>
     </url>
     <url>
          <loc>https://docs.laminas.dev/laminas-cli/intro/</loc>
-         <lastmod>2026-02-19</lastmod>
+         <lastmod>2026-03-10</lastmod>
     </url>
 </urlset>
